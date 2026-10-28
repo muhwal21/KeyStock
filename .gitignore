@@ -4,6 +4,8 @@
 node_modules/
 client/dist/
 server/uploads/
-.DS_Store
 *.log
+*.bundle
+.DS_Store
+Thumbs.db
 
