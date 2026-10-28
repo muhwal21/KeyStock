@@ -169,7 +169,23 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 <template>
   <div class="modal-backdrop" @click.self="!busy && emit('close')">
     <section class="modal-card detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
-      <div v-if="loading && !product" class="loading-inline detail-loading"><span class="spinner"></span> Memuat detail produk...</div>
+      <div v-if="loading && !product" class="detail-skeleton" role="status" aria-label="Memuat detail produk">
+        <div class="detail-skeleton-gallery" aria-hidden="true">
+          <span class="skeleton detail-skeleton-image"></span>
+          <div class="detail-skeleton-thumbs"><span v-for="item in 4" :key="item" class="skeleton"></span></div>
+        </div>
+        <div class="detail-skeleton-info" aria-hidden="true">
+          <span class="skeleton skeleton-line line-short"></span><span class="skeleton skeleton-line line-title"></span>
+          <span class="skeleton skeleton-line line-pills"></span><span class="skeleton skeleton-line line-description"></span>
+          <span class="skeleton skeleton-line line-section"></span>
+          <div class="detail-skeleton-prices"><span v-for="item in 6" :key="item" class="skeleton"></span></div>
+          <span class="skeleton skeleton-line line-section"></span>
+          <div class="detail-skeleton-stats"><span v-for="item in 4" :key="item" class="skeleton"></span></div>
+          <span class="skeleton skeleton-line line-section"></span>
+          <span class="skeleton skeleton-line line-history"></span><span class="skeleton skeleton-line line-history"></span>
+        </div>
+        <span class="visually-hidden">Memuat detail produk...</span>
+      </div>
       <div v-else-if="errorMessage && !product" class="detail-error">
         <div class="notice error-notice">{{ errorMessage }}</div>
         <button class="button secondary" type="button" @click="emit('close')">Tutup</button>
