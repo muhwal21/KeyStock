@@ -42,6 +42,7 @@ export const username = z.string().trim().toLowerCase()
 export const loginSchema = z.object({
   identifier: z.string().trim().toLowerCase().min(1, 'Username atau email wajib diisi.').max(190),
   password: z.string().min(1, 'Kata sandi wajib diisi.').max(128),
+  rememberMe: z.boolean().default(false),
 });
 
 const strongPassword = z.string()

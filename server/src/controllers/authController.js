@@ -42,8 +42,9 @@ export async function login(req, res, next) {
       return res.status(401).json({ message: 'Username/email atau kata sandi tidak sesuai.' });
     }
 
-    const token = await createAccessToken(user);
-    issueAccessCookie(res, token);
+    const rememberMe = req.body.rememberMe === true;
+    const token = await createAccessToken(user, { rememberMe });
+    issueAccessCookie(res, token, { rememberMe });
     const csrfToken = issueCsrfToken(res);
     return res.json({ user: publicUser(user), csrfToken });
   } catch (error) {

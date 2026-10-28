@@ -88,7 +88,7 @@ const resetToken = ref(new URLSearchParams(window.location.search).get('resetTok
 const authMode = ref(resetToken.value ? 'reset' : 'login');
 const registrationSubmitted = ref(false);
 const showPassword = ref(false);
-const loginForm = reactive({ identifier: '', password: '' });
+const loginForm = reactive({ identifier: '', password: '', rememberMe: false });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
 const forgotForm = reactive({ email: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
@@ -942,12 +942,13 @@ onMounted(async () => {
         <form v-else-if="authMode === 'login'" class="auth-form" @submit.prevent="submitLogin">
           <div class="auth-field">
             <label for="identifier">Username atau email</label>
-            <div class="input-wrap"><AtSign :size="17" /><input id="identifier" v-model="loginForm.identifier" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="mis. penguji atau nama@email.com" required /></div>
+            <div class="input-wrap"><AtSign :size="17" /><input id="identifier" v-model="loginForm.identifier" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Username atau email" required /></div>
           </div>
           <div class="auth-field">
             <label for="password">Kata sandi</label>
             <div class="input-wrap"><Lock :size="17" /><input id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" placeholder="Masukkan kata sandi" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
           </div>
+          <label class="remember-check"><input v-model="loginForm.rememberMe" type="checkbox" /><span>Ingat saya</span></label>
           <button class="button primary full auth-submit" type="submit" :disabled="busy">
             <span class="spinner small-spinner" v-if="busy"></span>
             {{ busy ? 'Memeriksa...' : 'Masuk ke inventaris' }}
@@ -1010,7 +1011,7 @@ onMounted(async () => {
       <ul class="auth-points">
         <li><Boxes :size="16" /> Stok real-time</li>
         <li><History :size="16" /> Riwayat tercatat</li>
-        <li><Users :size="16" /> Akses admin, staff &amp; penguji</li>
+        <li><Users :size="16" /> Akses tim inventaris</li>
       </ul>
     </main>
 
@@ -1035,7 +1036,7 @@ onMounted(async () => {
         <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
         <div class="user-chip">
           <div class="avatar">{{ user.name?.slice(0, 1).toUpperCase() }}</div>
-          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Penguji' : 'Staff' }}</span></div>
+          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Viewer' : 'Staff' }}</span></div>
         </div>
         <button class="round-button" type="button" title="Keluar" aria-label="Keluar" :disabled="busy" @click="logout"><LogOut :size="17" /></button>
       </div>
@@ -1249,7 +1250,7 @@ onMounted(async () => {
 
         <template v-else-if="activePage === 'users'">
           <section class="page-heading">
-            <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran admin/staff/penguji, dan kelola akses akun.</p></div>
+            <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran, dan kelola akses akun.</p></div>
           </section>
           <section class="supplier-summary-grid">
             <article class="supplier-summary-card"><span class="supplier-summary-icon"><UserCheck :size="17" /></span><div><small>Pengguna aktif</small><strong>{{ users.filter((entry) => entry.is_active).length }}</strong></div></article>
@@ -1262,7 +1263,7 @@ onMounted(async () => {
             <div v-else class="table-scroll"><table class="data-table user-table stack-table"><thead><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Catatan stok</th><th>Bergabung</th><th>Aksi</th></tr></thead><tbody>
               <tr v-for="entry in users" :key="entry.id" :class="{ 'is-inactive': !entry.is_active }">
                 <td class="cell-primary"><div class="user-cell"><div class="avatar">{{ entry.name?.slice(0, 1).toUpperCase() }}</div><div><strong>{{ entry.name }} <span v-if="entry.id === user.id" class="you-tag">Anda</span></strong><small>@{{ entry.username ?? '—' }} · {{ entry.email }}</small></div></div></td>
-                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Penguji</option></select></td>
+                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Viewer</option></select></td>
                 <td data-label="Status"><span class="stock-badge" :class="entry.approval_status === 'pending' ? 'low' : entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.approval_status === 'pending' ? 'Menunggu review' : entry.approval_status === 'rejected' ? 'Ditolak' : entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                 <td data-label="Catatan stok">{{ formatNumber(entry.movement_count) }} catatan</td>
                 <td data-label="Bergabung">{{ formatDate(entry.createdAt ?? entry.created_at) }}</td>
@@ -1273,7 +1274,7 @@ onMounted(async () => {
           </section>
           <section class="panel access-panel">
             <div class="panel-heading"><div><div class="panel-kicker">AKSES PENGGUNA</div><h2>Rincian hak akses</h2><p>Setiap peran memiliki akses sesuai tanggung jawabnya.</p></div></div>
-            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Penguji</th></tr></thead><tbody>
+            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Viewer</th></tr></thead><tbody>
               <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.lecturer ? 'yes' : 'no'">{{ rule.lecturer ? 'Boleh' : 'Tidak' }}</span></td></tr>
             </tbody></table></div>
           </section>
