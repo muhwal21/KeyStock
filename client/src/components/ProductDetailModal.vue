@@ -16,7 +16,7 @@ const props = defineProps({
   productId: { type: [Number, String], required: true },
   isAdmin: { type: Boolean, default: false },
 });
-const emit = defineEmits(['close', 'edit', 'record', 'changed']);
+const emit = defineEmits(['close', 'edit', 'record', 'changed', 'busy']);
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const loading = ref(true);
@@ -37,6 +37,11 @@ const money = computed(() => (product.value ? pricing(product.value) : null));
 const status = computed(() => (product.value ? stockState(product.value) : null));
 const currency = computed(() => product.value?.currency ?? 'IDR');
 const supplier = computed(() => product.value?.supplier ?? null);
+
+function setBusy(value) {
+  busy.value = value;
+  emit('busy', value);
+}
 
 async function load() {
   loading.value = true;
@@ -62,7 +67,7 @@ function showImage(index) {
 }
 
 async function saveOrder(ids, nextIndex) {
-  busy.value = true;
+  setBusy(true);
   notice.value = '';
   try {
     const data = await put(`/products/${props.productId}/images/order`, { ids });
@@ -72,7 +77,7 @@ async function saveOrder(ids, nextIndex) {
   } catch (error) {
     notice.value = error.message;
   } finally {
-    busy.value = false;
+    setBusy(false);
   }
 }
 
@@ -96,7 +101,7 @@ async function deleteImage(image) {
     pendingDelete.value = image.id;
     return;
   }
-  busy.value = true;
+  setBusy(true);
   notice.value = '';
   try {
     await remove(`/products/${props.productId}/images/${image.id}`);
@@ -106,7 +111,7 @@ async function deleteImage(image) {
   } catch (error) {
     notice.value = error.message;
   } finally {
-    busy.value = false;
+    setBusy(false);
   }
 }
 
@@ -114,7 +119,7 @@ async function uploadFiles(event) {
   const files = [...(event.target.files ?? [])];
   event.target.value = '';
   if (!files.length) return;
-  busy.value = true;
+  setBusy(true);
   notice.value = '';
   let uploaded = 0;
   try {
@@ -138,12 +143,12 @@ async function uploadFiles(event) {
       activeIndex.value = images.value.length - 1;
       emit('changed');
     }
-    busy.value = false;
+    setBusy(false);
   }
 }
 
 function onKeydown(event) {
-  if (event.key === 'Escape') emit('close');
+  if (event.key === 'Escape' && !busy.value) emit('close');
   if (event.target.closest?.('input, textarea, select')) return;
   if (event.key === 'ArrowLeft') showImage(activeIndex.value - 1);
   if (event.key === 'ArrowRight') showImage(activeIndex.value + 1);
@@ -162,7 +167,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 </script>
 
 <template>
-  <div class="modal-backdrop" @click.self="emit('close')">
+  <div class="modal-backdrop" @click.self="!busy && emit('close')">
     <section class="modal-card detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
       <div v-if="loading && !product" class="loading-inline detail-loading"><span class="spinner"></span> Memuat detail produk...</div>
       <div v-else-if="errorMessage && !product" class="detail-error">
@@ -172,7 +177,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
       <div v-else-if="product" class="detail-layout">
         <div class="detail-gallery">
-          <button class="icon-button subtle detail-close-mobile" type="button" title="Tutup" aria-label="Tutup" @click="emit('close')"><X :size="18" /></button>
+          <button class="icon-button subtle detail-close-mobile" type="button" title="Tutup" aria-label="Tutup" :disabled="busy" @click="emit('close')"><X :size="18" /></button>
           <div class="gallery-main">
             <img :src="currentImage?.url ?? PLACEHOLDER_IMAGE" :alt="`Foto ${product.name}`" @error="onImageError" />
             <span v-if="images.length && activeIndex === 0" class="gallery-badge">Foto utama</span>
@@ -215,7 +220,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
                 <span class="location-tag">Min. {{ formatNumber(product.reorder_point) }} unit</span>
               </div>
             </div>
-            <button class="icon-button subtle" type="button" title="Tutup" aria-label="Tutup" @click="emit('close')"><X :size="18" /></button>
+            <button class="icon-button subtle" type="button" title="Tutup" aria-label="Tutup" :disabled="busy" @click="emit('close')"><X :size="18" /></button>
           </header>
 
           <p v-if="product.description" class="detail-description">{{ product.description }}</p>

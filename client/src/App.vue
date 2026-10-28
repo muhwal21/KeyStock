@@ -81,6 +81,7 @@ const editingProduct = ref(null);
 const editingSupplier = ref(null);
 // Product detail dialog: id of the open product, and the product to reopen after an edit.
 const detailProductId = ref(null);
+const detailBusy = ref(false);
 const detailReturnId = ref(null);
 // Validation feedback shown inside the open dialog (page notices sit behind the backdrop).
 const formError = ref('');
@@ -96,7 +97,7 @@ const forgotForm = reactive({ email: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
 const hasUnsavedChanges = computed(() => {
   if (busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
-    || pendingConfirmation.value || detailProductId.value) return true;
+    || pendingConfirmation.value || detailBusy.value) return true;
   if (user.value) return false;
   if (authMode.value === 'register') return Object.values(registerForm).some(Boolean);
   if (authMode.value === 'forgot') return Boolean(forgotForm.email);
@@ -299,15 +300,24 @@ function openProductDetail(productOrId) {
   detailProductId.value = id;
 }
 
+function closeProductDetail() {
+  detailProductId.value = null;
+  detailBusy.value = false;
+}
+
 function editFromDetail(product) {
   detailReturnId.value = product.id;
-  detailProductId.value = null;
+  closeProductDetail();
   openEditProduct(product);
 }
 
 function recordFromDetail(product) {
-  detailProductId.value = null;
+  closeProductDetail();
   openMovement(product);
+}
+
+function setDetailBusy(value) {
+  detailBusy.value = value;
 }
 
 function focusProductSearch() {
@@ -987,7 +997,7 @@ onMounted(async () => {
   }
   dataSyncTimer = window.setInterval(syncAutomatically, 20_000);
   if (import.meta.env.PROD) {
-    versionCheckTimer = window.setInterval(checkForNewVersion, 30_000);
+    versionCheckTimer = window.setInterval(checkForNewVersion, 10_000);
     void checkForNewVersion();
   }
 });
@@ -1523,10 +1533,11 @@ onBeforeUnmount(() => {
       v-if="detailProductId"
       :product-id="detailProductId"
       :is-admin="user.role === 'admin'"
-      @close="detailProductId = null"
+      @close="closeProductDetail"
       @edit="editFromDetail"
       @record="recordFromDetail"
       @changed="loadAll({ clear: false })"
+      @busy="setDetailBusy"
     />
 
     <div v-if="pendingConfirmation" class="modal-backdrop confirmation-backdrop" @click.self="cancelPendingConfirmation">
