@@ -22,7 +22,7 @@ export async function getDashboard(req, res, next) {
       Product.count({ where: { is_active: true } }),
       Product.findAll({ attributes: ['warehouse_stock', 'reorder_point', 'purchase_price', 'selling_price', 'currency'], where: { is_active: true } }),
       Product.findAll({
-        where: { is_active: true, [Op.and]: [literal('warehouse_stock <= reorder_point')] },
+        where: { is_active: true, [Op.and]: [literal('warehouse_stock > 0 AND warehouse_stock <= reorder_point')] },
         include: [
           { model: Category, as: 'category', attributes: ['name'] },
           { model: Supplier, as: 'supplier', attributes: ['id', 'name', 'phone'] },
@@ -49,7 +49,7 @@ export async function getDashboard(req, res, next) {
 
     const levels = stockRows.map((product) => product.warehouse_stock);
     const totalStock = levels.reduce((sum, value) => sum + value, 0);
-    const lowStockCount = stockRows.filter((product) => product.warehouse_stock <= product.reorder_point).length;
+    const lowStockCount = stockRows.filter((product) => product.warehouse_stock > 0 && product.warehouse_stock <= product.reorder_point).length;
     const outOfStockCount = levels.filter((value) => value === 0).length;
     const stockStats = levels.length
       ? { min: Math.min(...levels), avg: Math.round(totalStock / levels.length), max: Math.max(...levels) }

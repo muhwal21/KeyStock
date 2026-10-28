@@ -142,7 +142,7 @@ const productStats = computed(() => {
   return {
     sku: rows.length,
     units: rows.reduce((sum, product) => sum + Number(product.warehouse_stock || 0), 0),
-    lowStock: rows.filter((product) => Number(product.warehouse_stock) <= Number(product.reorder_point)).length,
+    lowStock: rows.filter((product) => Number(product.warehouse_stock) > 0 && Number(product.warehouse_stock) <= Number(product.reorder_point)).length,
     supplied: rows.filter((product) => product.supplier_id).length,
   };
 });
@@ -224,14 +224,14 @@ const passwordChecks = computed(() => {
   ];
 });
 
-const overviewProduct = computed(() => (
-  catalog.value.find((product) => String(product.id) === String(overviewProductId.value)) ?? null
-));
-
-const overviewProductMovements = computed(() => (
-  movements.value.filter((item) => String(item.product?.id ?? item.product_id) === String(overviewProductId.value))
-));
-const overviewLastMovement = computed(() => overviewProductMovements.value[0] ?? null);
+const outOfStockProducts = computed(() => catalog.value
+  .filter((product) => Number(product.warehouse_stock) === 0)
+  .sort((a, b) => a.name.localeCompare(b.name)));
+const restockProducts = computed(() => catalog.value
+  .filter((product) => Number(product.warehouse_stock) > 0 && Number(product.warehouse_stock) <= Number(product.reorder_point))
+  .sort((a, b) => Number(a.warehouse_stock) - Number(b.warehouse_stock) || a.name.localeCompare(b.name)));
+const outOfStockCount = computed(() => Number(dashboard.value.summary?.outOfStockCount ?? outOfStockProducts.value.length));
+const restockCount = computed(() => Number(dashboard.value.summary?.lowStockCount ?? restockProducts.value.length));
 
 const activityFilters = [
   { id: '', label: 'Semua' },
@@ -263,7 +263,7 @@ function setActivityFilter(id) {
   activityPage.value = 1;
 }
 
-// Keep the product-detail card pointed at a real product: prefer the most urgent restock item.
+// Keep the selected rack product pointed at a real product for its detail highlight.
 function ensureOverviewProduct() {
   const exists = catalog.value.some((product) => String(product.id) === String(overviewProductId.value));
   if (exists) return;
@@ -399,7 +399,7 @@ async function loadAll({ clear = true } = {}) {
 }
 
 function hasProductFilters() {
-  return Boolean(searchQuery.value.trim() || selectedCategory.value || stockFilter.value === 'low');
+  return Boolean(searchQuery.value.trim() || selectedCategory.value || stockFilter.value !== 'all');
 }
 
 function productQuery() {
@@ -407,6 +407,7 @@ function productQuery() {
   if (searchQuery.value.trim()) params.set('search', searchQuery.value.trim());
   if (selectedCategory.value) params.set('categoryId', selectedCategory.value);
   if (stockFilter.value === 'low') params.set('lowStock', 'true');
+  if (stockFilter.value === 'out') params.set('outOfStock', 'true');
   const query = params.toString() ? `?${params}` : '';
   return `/products${query}`;
 }
@@ -451,6 +452,11 @@ async function navigate(page) {
 
 function showLowStock() {
   stockFilter.value = 'low';
+  navigate('products');
+}
+
+function showOutOfStock() {
+  stockFilter.value = 'out';
   navigate('products');
 }
 
@@ -1014,29 +1020,44 @@ onMounted(async () => {
               <RackMap compact :products="catalog" :selected-id="overviewProductId" @select="(id) => { overviewProductId = String(id); openProductDetail(id); }" />
             </section>
 
-            <article class="panel history-card">
-              <div class="card-head"><h2>Detail produk</h2><button class="round-button small" type="button" title="Buka detail produk" aria-label="Buka detail produk" @click="openProductDetail(overviewProduct)"><ArrowUpRight :size="16" /></button></div>
-              <div v-if="overviewProduct" class="history-inner">
-                <label class="item-select"><span>Item ID:</span><select v-model="overviewProductId" aria-label="Pilih produk"><option v-for="product in catalog" :key="product.id" :value="String(product.id)">#{{ product.sku }}</option></select><ChevronDown :size="15" /></label>
-                <p class="history-name">{{ overviewProduct.name }}</p>
-                <dl class="kv-list">
-                  <div><dt>Lokasi rak</dt><dd>{{ overviewProduct.storage_location || '—' }} · Gudang utama</dd></div>
-                  <div><dt>Pergerakan terakhir</dt><dd>{{ overviewLastMovement ? formatDate(overviewLastMovement.createdAt ?? overviewLastMovement.created_at) : '—' }}</dd></div>
-                  <div><dt>Kategori</dt><dd>{{ overviewProduct.category?.name ?? '—' }} – {{ overviewProduct.brand }}</dd></div>
-                  <div><dt>Batas minimum</dt><dd>{{ formatNumber(overviewProduct.reorder_point) }} unit</dd></div>
-                  <div><dt>Sisa stok</dt><dd><span class="stock-count" :class="stockState(overviewProduct).tone">{{ formatNumber(overviewProduct.warehouse_stock) }} unit</span></dd></div>
-                </dl>
+            <article class="panel stock-priority-card" aria-labelledby="stock-priority-title">
+              <div class="card-head stock-priority-card-head">
+                <div><h2 id="stock-priority-title">Prioritas stok</h2><p>Produk yang habis atau mendekati batas minimum.</p></div>
               </div>
-              <div v-else class="empty-state compact-empty"><strong>Belum ada produk</strong></div>
-              <ul v-if="overviewProductMovements.length" class="mini-history" aria-label="Riwayat terakhir produk">
-                <li v-for="item in overviewProductMovements.slice(0, 3)" :key="item.id"><span class="status-pill" :class="`kind-${item.movement_type.toLowerCase()}`">{{ movementLabel(item.movement_type) }}</span><strong :class="movementTone(item.movement_type)">{{ movementSign(item.movement_type) }}{{ formatNumber(item.quantity) }}</strong><small>{{ formatDate(item.createdAt ?? item.created_at) }}</small></li>
-              </ul>
-              <div v-if="overviewProduct" class="supplier-strip">
-                <div class="avatar">{{ (overviewProduct.supplier?.name ?? '?').slice(0, 1).toUpperCase() }}</div>
-                <div class="supplier-strip-name"><small>Supplier</small><strong>{{ overviewProduct.supplier?.name ?? 'Belum ditentukan' }}</strong></div>
-                <a class="round-button wa-round" :class="{ disabled: !whatsappUrl(overviewProduct.supplier?.phone) }" :href="whatsappUrl(overviewProduct.supplier?.phone) ?? undefined" target="_blank" rel="noopener noreferrer" :title="overviewProduct.supplier?.phone ? 'Chat WhatsApp supplier' : 'Nomor WhatsApp belum dicatat'" :aria-label="overviewProduct.supplier?.phone ? `WhatsApp ${overviewProduct.supplier.name}` : 'Nomor WhatsApp belum dicatat'"><MessageCircle :size="16" /></a>
-                <a class="round-button" :class="{ disabled: !overviewProduct.supplier?.email }" :href="overviewProduct.supplier?.email ? `mailto:${overviewProduct.supplier.email}` : undefined" :title="overviewProduct.supplier?.email || 'Email supplier belum dicatat'" :aria-label="overviewProduct.supplier?.email ? `Email ${overviewProduct.supplier.name}` : 'Email supplier belum dicatat'"><Mail :size="16" /></a>
-                <a class="round-button solid" :class="{ disabled: !overviewProduct.supplier?.phone }" :href="telUrl(overviewProduct.supplier?.phone) ?? undefined" :title="overviewProduct.supplier?.phone || 'Telepon supplier belum dicatat'" :aria-label="overviewProduct.supplier?.phone ? `Telepon ${overviewProduct.supplier.name}` : 'Telepon supplier belum dicatat'"><Phone :size="16" /></a>
+              <div class="stock-priority-grid">
+                <section class="stock-priority-group is-empty" aria-labelledby="out-of-stock-title">
+                  <div class="stock-priority-heading">
+                    <span class="stock-priority-icon"><PackageX :size="17" /></span>
+                    <div><h3 id="out-of-stock-title">Stok habis</h3><small>{{ formatNumber(outOfStockCount) }} SKU</small></div>
+                    <button v-if="outOfStockCount > 3" class="stock-priority-link" type="button" @click="showOutOfStock">Lihat semua <ArrowRight :size="13" /></button>
+                  </div>
+                  <ul v-if="outOfStockProducts.length" class="stock-priority-list">
+                    <li v-for="product in outOfStockProducts.slice(0, 3)" :key="product.id">
+                      <button class="stock-priority-item" type="button" :aria-label="`Buka detail ${product.name}, stok habis`" @click="openProductDetail(product)">
+                        <span class="priority-product-copy"><strong>{{ product.name }}</strong><small>#{{ product.sku }} · {{ product.storage_location || 'Lokasi belum dicatat' }}</small></span>
+                        <span class="priority-stock is-empty"><strong>{{ formatNumber(product.warehouse_stock) }}</strong><small>min. {{ formatNumber(product.reorder_point) }}</small></span>
+                      </button>
+                    </li>
+                  </ul>
+                  <div v-else class="stock-priority-empty"><Check :size="15" /> Tidak ada stok habis</div>
+                </section>
+
+                <section class="stock-priority-group is-low" aria-labelledby="restock-title">
+                  <div class="stock-priority-heading">
+                    <span class="stock-priority-icon"><AlertTriangle :size="17" /></span>
+                    <div><h3 id="restock-title">Perlu restock</h3><small>{{ formatNumber(restockCount) }} SKU</small></div>
+                    <button v-if="restockCount > 3" class="stock-priority-link" type="button" @click="showLowStock">Lihat semua <ArrowRight :size="13" /></button>
+                  </div>
+                  <ul v-if="restockProducts.length" class="stock-priority-list">
+                    <li v-for="product in restockProducts.slice(0, 3)" :key="product.id">
+                      <button class="stock-priority-item" type="button" :aria-label="`Buka detail ${product.name}, tersisa ${formatNumber(product.warehouse_stock)} unit`" @click="openProductDetail(product)">
+                        <span class="priority-product-copy"><strong>{{ product.name }}</strong><small>#{{ product.sku }} · {{ product.storage_location || 'Lokasi belum dicatat' }}</small></span>
+                        <span class="priority-stock is-low"><strong>{{ formatNumber(product.warehouse_stock) }}</strong><small>min. {{ formatNumber(product.reorder_point) }}</small></span>
+                      </button>
+                    </li>
+                  </ul>
+                  <div v-else class="stock-priority-empty"><Check :size="15" /> Tidak ada produk perlu restock</div>
+                </section>
               </div>
             </article>
 
@@ -1109,7 +1130,7 @@ onMounted(async () => {
             <div class="table-toolbar"><div class="search-field"><Search :size="17" /><input v-model="searchQuery" type="search" placeholder="Cari nama, SKU, atau brand..." @keydown.enter="applyProductFilters" /><button v-if="searchQuery" class="clear-search" aria-label="Hapus pencarian" @click="searchQuery = ''; applyProductFilters()"><X :size="14" /></button></div>
               <select v-model="selectedCategory" class="filter-select" aria-label="Filter kategori" @change="applyProductFilters"><option value="">Semua kategori</option><option v-for="category in categories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select>
               <select v-model="selectedSupplier" class="filter-select" aria-label="Filter supplier"><option value="">Semua supplier</option><option v-for="supplier in suppliers.filter((entry) => entry.is_active)" :key="supplier.id" :value="String(supplier.id)">{{ supplier.name }}</option></select>
-              <select v-model="stockFilter" class="filter-select stock-filter" aria-label="Filter kondisi stok" @change="applyProductFilters"><option value="all">Semua stok</option><option value="low">Perlu restock</option></select>
+              <select v-model="stockFilter" class="filter-select stock-filter" aria-label="Filter kondisi stok" @change="applyProductFilters"><option value="all">Semua stok</option><option value="out">Stok habis</option><option value="low">Perlu restock</option></select>
             </div>
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat produk...</div>
             <div v-else-if="filteredProducts.length" class="table-scroll"><table class="data-table product-table stack-table"><thead><tr><th>Produk</th><th>Supplier / kontak</th><th>Harga beli / jual</th><th>Stok</th><th>Lokasi</th><th>Kondisi</th><th>Aksi</th></tr></thead><tbody>

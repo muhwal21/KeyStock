@@ -22,7 +22,8 @@ export async function listProducts(req, res, next) {
       ];
     }
     if (Number.isInteger(categoryId) && categoryId > 0) where.category_id = categoryId;
-    if (req.query.lowStock === 'true') where[Op.and] = [literal('warehouse_stock <= reorder_point')];
+    if (req.query.lowStock === 'true') where[Op.and] = [literal('warehouse_stock > 0 AND warehouse_stock <= reorder_point')];
+    if (req.query.outOfStock === 'true') where.warehouse_stock = 0;
 
     const products = await Product.findAll({ where, include: productIncludes, order: [['name', 'ASC']] });
     return res.json({ products });
