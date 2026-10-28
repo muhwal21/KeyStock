@@ -17,7 +17,6 @@
     "db:sync": "npm --workspace server run db:sync",
     "db:seed": "npm --workspace server run db:seed",
     "db:fresh": "npm --workspace server run db:fresh",
-    "assets:download": "node scripts/download-product-images.mjs",
     "build": "npm --workspace client run build",
     "start": "npm --workspace server run start"
   },

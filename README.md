@@ -14,14 +14,14 @@ KeyStock adalah aplikasi inventaris keyboard mekanis dan aksesori. Antarmuka mem
 ## Susunan folder
 
 ```text
-client/                 antarmuka Vue dan gambar produk
-server/                 Express API, model, validasi, dan layanan inventaris
-database/               skema MySQL dan dump demo
-scripts/                utilitas aset
-screenshots/             tangkapan layar fitur aplikasi
-Dockerfile               image aplikasi untuk VPS
+client/                  antarmuka Vue, komponen, dan aset produk
+server/                  Express API, model, validasi, dan layanan inventaris
+database/                skema MySQL dan dump demo
+.github/workflows/       otomatisasi deploy VPS
+Dockerfile               image aplikasi produksi
 docker-compose.yml       aplikasi, MySQL privat, dan HTTPS Caddy
 compose.dev.yml          MySQL lokal untuk pengembangan
+package.json             skrip workspace dan dependensi monorepo
 ```
 
 ## Menjalankan di komputer lokal
@@ -72,7 +72,3 @@ Perintah deploy mengambil perubahan terbaru, membangun image aplikasi, menjalank
 ## Keamanan
 
 JWT disimpan dalam cookie `HttpOnly`; request yang mengubah data juga memerlukan token CSRF. Di produksi cookie memakai `Secure` dan hanya dikirim melalui HTTPS. Password akun minimal 12 dan maksimal 128 karakter; frasa sandi boleh memakai spasi tanpa kewajiban campuran karakter. Password di-hash dengan bcrypt. Token reset hanya disimpan sebagai hash, berlaku 30 menit, sekali pakai, dan merotasi versi sesi. Pendaftaran publik tidak mendapat akses sampai disetujui admin. Atur `JWT_SECRET` dan password database yang berbeda untuk setiap lingkungan.
-
-## Screenshot
-
-Contoh layar aplikasi ada di [`screenshots/`](screenshots/). Foto produk katalog bersumber dari Noir Gear dan Work Louder; pastikan izin penggunaan aset sebelum memakainya untuk toko yang dipublikasikan.
