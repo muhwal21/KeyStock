@@ -183,7 +183,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .user-meta span { margin-top: 1px; color: var(--muted); font-size: 11px; }
 
 .main-area { position: relative; min-height: calc(100vh - 76px); isolation: isolate; }
-.main-area::before { position: absolute; z-index: 0; inset: 0; background-image: radial-gradient(circle at 1px 1px, var(--dashboard-dot) 1px, transparent 1.15px); background-size: 24px 24px; content: ''; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 92% 88% at 50% 36%, transparent 5%, rgba(0, 0, 0, .60) 68%, #000 100%); mask-image: radial-gradient(ellipse 92% 88% at 50% 36%, transparent 5%, rgba(0, 0, 0, .60) 68%, #000 100%); }
+.main-area::before { position: absolute; z-index: 0; inset: 0; background-image: radial-gradient(circle at 1px 1px, var(--dashboard-dot) 1px, transparent 1.15px); background-size: 24px 24px; content: ''; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 84% 76% at 50% 36%, transparent 18%, rgba(0, 0, 0, .04) 38%, rgba(0, 0, 0, .18) 60%, rgba(0, 0, 0, .48) 82%, #000 100%); mask-image: radial-gradient(ellipse 84% 76% at 50% 36%, transparent 18%, rgba(0, 0, 0, .04) 38%, rgba(0, 0, 0, .18) 60%, rgba(0, 0, 0, .48) 82%, #000 100%); }
 .content-wrap { position: relative; z-index: 1; width: min(100%, 1440px); margin: 0 auto; padding: 18px 28px 28px; }
 
 /* ------------------------------------------------------------------ Page headings and KPI chips */
