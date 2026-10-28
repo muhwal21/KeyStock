@@ -173,16 +173,15 @@ async function upsertAccount(account) {
   const previousEmailUser = account.previousEmail && account.previousEmail !== account.email
     ? await User.unscoped().findOne({ where: { email: account.previousEmail } })
     : null;
-  if (emailUser && previousEmailUser && emailUser.id !== previousEmailUser.id) {
-    throw new Error(`Email baru ${account.email} sudah digunakan akun lain.`);
-  }
-  const user = emailUser ?? previousEmailUser;
   const usernameOwner = await User.unscoped().findOne({ where: { username: account.username } });
-  if (usernameOwner && (!user || usernameOwner.id !== user.id)) {
-    throw new Error(`Username "${account.username}" sudah dipakai akun lain.`);
+  const matchedUsers = [emailUser, previousEmailUser, usernameOwner].filter(Boolean);
+  const distinctUsers = new Map(matchedUsers.map((matchedUser) => [matchedUser.id, matchedUser]));
+  if (distinctUsers.size > 1) {
+    throw new Error(`Email atau username akun ${account.username} menunjuk ke pengguna yang berbeda.`);
   }
+  const user = emailUser ?? previousEmailUser ?? usernameOwner;
   if (user && user.role !== account.role) {
-    throw new Error(`Email ${account.email} sudah terhubung ke peran lain; akun tidak diubah.`);
+    throw new Error(`Akun ${account.username} sudah terhubung ke peran lain; akun tidak diubah.`);
   }
 
   if (!user) {
