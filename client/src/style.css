@@ -222,22 +222,38 @@ button.restock-alert:hover { color: var(--ink); text-decoration: underline; }
 .toolbar-actions { display: flex; align-items: center; gap: 8px; padding-left: 16px; border-left: 1px solid var(--line); }
 
 /* Overview grid */
-.overview-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; }
-.analytic-card, .history-card, .finance-card { display: flex; flex-direction: column; padding: 18px; }
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-areas: "activity rack" "history finance";
+  gap: 12px;
+  margin-bottom: 14px;
+  align-items: stretch;
+}
+.analytic-card, .history-card, .finance-card { display: flex; flex-direction: column; padding: 14px; }
+.overview-grid .card-head { margin-bottom: 10px; }
+.analytic-card { grid-area: activity; min-height: 0; }
+.history-card { grid-area: history; }
+.finance-card { grid-area: finance; }
 .segmented { display: flex; gap: 2px; margin-left: auto; }
 .segmented button, .pill-filters button { display: inline-flex; min-height: 30px; align-items: center; gap: 6px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); background: transparent; font-size: 12px; font-weight: 500; white-space: nowrap; }
 .segmented button:hover, .pill-filters button:hover { color: var(--ink); }
 .segmented button.active, .pill-filters button.active { color: var(--ink); border-color: var(--line-strong); background: var(--surface); }
 .segmented button.active::before, .pill-filters button.active::before { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); content: ''; }
-.stat-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
 .stat-trio > div:nth-child(2) { text-align: center; }
 .stat-trio > div:nth-child(3) { text-align: right; }
-.stat-trio strong { display: inline-flex; align-items: flex-start; gap: 2px; color: var(--ink); font-size: 34px; font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+.stat-trio strong { display: inline-flex; align-items: flex-start; gap: 2px; color: var(--ink); font-size: 28px; font-weight: 500; letter-spacing: -.04em; line-height: 1; }
 .stat-trio strong svg { margin-top: 2px; color: var(--muted); }
-.stat-trio span { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; }
+.stat-trio span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
+
+.overview-grid .heatmap-grid { grid-template-rows: repeat(var(--rows), minmax(20px, 1fr)) auto; gap: 4px; }
+.overview-grid .heatmap-cell { min-height: 20px; border-radius: 5px; }
+.overview-grid .heatmap-legend { gap: 6px 10px; margin-top: 7px; }
 
 /* Profit and loss card */
-.finance-hero { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 4px 12px; margin-bottom: 14px; }
+.finance-hero { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 4px 10px; margin-bottom: 8px; }
+.overview-grid .finance-hero .icon-box { width: 36px; height: 36px; flex-basis: 36px; }
 .finance-hero small { display: block; color: var(--muted); font-size: 12px; }
 .finance-hero strong { display: block; margin-top: 2px; color: var(--ink); font-size: clamp(22px, 2.1vw, 28px); font-weight: 600; letter-spacing: -.035em; line-height: 1.1; overflow-wrap: anywhere; }
 .finance-hero .kpi-delta { grid-column: 2; margin: 0; color: var(--muted); }
@@ -246,22 +262,22 @@ button.restock-alert:hover { color: var(--ink); text-decoration: underline; }
 .finance-bar { display: flex; height: 10px; overflow: hidden; border-radius: 999px; background: var(--surface-3); }
 .finance-bar .cogs { background: var(--ink-2); }
 .finance-bar .profit { flex: 1; background: repeating-linear-gradient(135deg, var(--line-strong) 0 3px, transparent 3px 6px); }
-.finance-bar-legend { display: flex; gap: 14px; margin: 8px 0 12px; color: var(--muted); font-size: 11px; }
+.finance-bar-legend { display: flex; gap: 14px; margin: 6px 0 8px; color: var(--muted); font-size: 11px; }
 .finance-bar-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .finance-bar-legend i { width: 10px; height: 10px; border-radius: 3px; }
 .finance-bar-legend i.cogs { background: var(--ink-2); }
 .finance-bar-legend i.profit { background: repeating-linear-gradient(135deg, var(--line-strong) 0 2px, transparent 2px 4px); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.finance-list { display: grid; gap: 9px; margin: 0 0 14px; }
+.finance-list { display: grid; gap: 6px; margin: 0 0 8px; }
 .finance-list > div { display: flex; justify-content: space-between; gap: 12px; }
 .finance-list dt { color: var(--muted); font-size: 12px; }
 .finance-list dd { margin: 0; color: var(--ink-2); font-size: 12px; font-weight: 500; text-align: right; white-space: nowrap; }
 .finance-list .subtotal { padding-top: 9px; border-top: 1px dashed var(--line); }
 .finance-list .subtotal dt, .finance-list .subtotal dd { color: var(--ink); font-weight: 600; }
 .finance-foot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: auto; overflow: hidden; border: 1px solid var(--line-soft); border-radius: var(--radius-inner); background: var(--line-soft); }
-.finance-foot > div { min-width: 0; padding: 10px 12px; background: var(--surface-2); }
+.finance-foot > div { min-width: 0; padding: 7px 9px; background: var(--surface-2); }
 .finance-foot small { display: block; color: var(--muted); font-size: 11px; }
 .finance-foot strong { display: block; margin-top: 3px; overflow: hidden; color: var(--ink); font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.finance-note { margin: 10px 0 0; color: var(--muted); font-size: 11px; }
+.finance-note { margin: 7px 0 0; color: var(--muted); font-size: 11px; }
 
 /* Heatmap */
 .heatmap { display: flex; flex: 1; flex-direction: column; }
@@ -302,7 +318,7 @@ button.restock-alert:hover { color: var(--ink); text-decoration: underline; }
 .supplier-strip .round-button { width: 36px; height: 36px; flex-basis: 36px; }
 
 /* Rack map: front view of the shelving */
-.rack-panel { margin-bottom: 14px; padding: 18px 20px 14px; }
+.rack-panel { grid-area: rack; min-width: 0; margin: 0; padding: 18px 20px 14px; }
 .rack-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: -4px 0 14px; }
 .rack-legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 11.5px; }
 .rack-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -342,6 +358,52 @@ button.rack-box:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba
 .rack-floor { height: 6px; margin: 0 0 0 26px; border-radius: 3px; background: var(--surface-3); }
 .rack-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 12px; }
 .rack-foot strong { color: var(--ink-2); font-weight: 600; }
+
+/* Compact map used beside the activity chart on the inventory overview. */
+.rack-map.compact .rack-toolbar { align-items: center; justify-content: space-between; gap: 6px 10px; margin: -2px 0 7px; }
+.rack-map.compact .rack-legend { gap: 5px 9px; font-size: 10px; }
+.rack-map.compact .rack-filters { width: auto; max-width: 100%; margin-left: auto; overflow-x: auto; }
+.rack-map.compact .rack-filters button { min-height: 26px; padding: 0 8px; font-size: 10.5px; }
+.rack-map.compact .rack-grid { gap: 7px 12px; }
+.rack-map.compact .rack-title { gap: 5px; margin: 0 0 4px 21px; }
+.rack-map.compact .rack-title strong { font-size: 11.5px; }
+.rack-map.compact .rack-title span { font-size: 10px; }
+.rack-map.compact .rack-title small { font-size: 9.5px; }
+.rack-map.compact .rack-scroll { padding-left: 21px; }
+.rack-map.compact .rack-frame { min-width: calc(var(--slots) * 46px); padding: 0 6px; border-width: 3px; }
+.rack-map.compact .rack-level { min-height: 34px; gap: 4px; padding: 2px 1px 0; border-bottom-width: 4px; }
+.rack-map.compact .rack-level-label { bottom: -6px; left: -38px; font-size: 9px; }
+.rack-map.compact .rack-box { min-height: 23px; padding: 3px 3px 2px; border-radius: 5px 5px 2px 2px; }
+.rack-map.compact .rack-box::before { height: 2px; }
+.rack-map.compact .rack-box-qty { font-size: 10px; }
+.rack-map.compact .rack-box-qty small { font-size: 7px; }
+.rack-map.compact .rack-box-code { font-size: 7px; }
+.rack-map.compact .rack-floor { height: 3px; }
+.rack-map.compact .rack-foot { gap: 5px 8px; margin-top: 7px; padding-top: 6px; font-size: 9px; }
+
+.overview-grid .rack-panel { padding: 14px; }
+.overview-grid .history-inner { margin-bottom: 8px; padding: 9px 11px; }
+.overview-grid .item-select { padding-bottom: 7px; }
+.overview-grid .history-name { margin: 6px 0 8px; font-size: 12px; }
+.overview-grid .kv-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px; }
+.overview-grid .kv-list > div { display: block; }
+.overview-grid .kv-list dt { font-size: 10.5px; }
+.overview-grid .kv-list dd { margin-top: 3px; font-size: 11px; text-align: left; }
+.overview-grid .mini-history { gap: 6px; margin-bottom: 8px; }
+.overview-grid .mini-history li { gap: 8px; font-size: 11px; }
+.overview-grid .mini-history small { font-size: 10px; }
+.overview-grid .supplier-strip { gap: 8px; padding: 7px 8px; }
+.overview-grid .supplier-strip .round-button { width: 30px; height: 30px; flex-basis: 30px; }
+.overview-grid .finance-hero strong { font-size: 24px; }
+.overview-grid .finance-list { gap: 5px; }
+.overview-grid .finance-list dt, .overview-grid .finance-list dd { font-size: 11px; }
+
+@media (min-width: 1181px) {
+  .overview-grid .finance-foot { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .overview-grid .finance-foot > div { padding: 6px 7px; }
+  .overview-grid .finance-foot small { font-size: 9.5px; }
+  .overview-grid .finance-foot strong { font-size: 11.5px; }
+}
 
 /* Recent activity card */
 .activity-card { padding: 16px 18px 8px; }
@@ -611,8 +673,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 
 /* ------------------------------------------------------------------ Responsive */
 @media (max-width: 1180px) {
-  .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .analytic-card { grid-column: 1 / -1; }
+  .overview-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
   .finance-hero strong { font-size: 26px; }
   .page-head { flex-direction: column; align-items: stretch; }
   .kpi-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -624,6 +685,9 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 
 /* Below 900px the pill navigation becomes a floating bottom tab bar. */
 @media (max-width: 900px) {
+  .overview-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "activity" "rack" "history" "finance"; }
+  .analytic-card { min-height: 0; }
+  .rack-map.compact .rack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-header { min-height: 64px; grid-template-columns: auto 1fr; padding: 0 16px; backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--canvas); }
   .top-nav { position: fixed; z-index: 30; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); left: 10px; display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 4px; padding: 6px; border-radius: 22px; box-shadow: var(--shadow-pop); }
   .nav-item { min-height: 50px; flex-direction: column; gap: 3px; padding: 4px 2px; border-radius: 16px; }
@@ -640,6 +704,16 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .page-heading { flex-direction: column; align-items: stretch; }
   .product-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .supplier-grid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 901px) {
+  .content-wrap { padding-top: 12px; padding-bottom: 18px; }
+  .page-head { gap: 16px; margin-bottom: 12px; }
+  .page-title h1 { font-size: clamp(26px, 2.1vw, 30px); }
+  .page-title p { margin-top: 3px; font-size: 12.5px; }
+  .kpi-chip { padding: 8px 12px 8px 10px; grid-template-columns: 36px auto 1fr; column-gap: 10px; }
+  .kpi-icon { width: 36px; height: 36px; }
+  .overview-toolbar { margin-bottom: 12px; padding-top: 7px; padding-bottom: 7px; }
 }
 
 /* Tables become stacked cards on narrow screens instead of scrolling sideways. */
@@ -675,7 +749,6 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .toolbar-title small { font-size: 11px; }
   .toolbar-actions { width: 100%; }
   .toolbar-actions .button { flex: 1; padding: 0 10px; }
-  .overview-grid { grid-template-columns: 1fr; }
   .analytic-card .card-head { flex-wrap: wrap; }
   .analytic-card .segmented { order: 3; width: 100%; margin-left: 0; }
   .stat-trio strong { font-size: 26px; }

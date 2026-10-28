@@ -1009,6 +1009,11 @@ onMounted(async () => {
               <ActivityHeatmap :activity="dashboard.activity ?? []" :days="heatmapDays" />
             </article>
 
+            <section class="panel rack-panel" aria-labelledby="rack-map-title">
+              <div class="card-head"><h2 id="rack-map-title">Peta rak gudang</h2><span class="card-note">Tinggi kardus = jumlah stok</span></div>
+              <RackMap compact :products="catalog" :selected-id="overviewProductId" @select="(id) => { overviewProductId = String(id); openProductDetail(id); }" />
+            </section>
+
             <article class="panel history-card">
               <div class="card-head"><h2>Detail produk</h2><button class="round-button small" type="button" title="Buka detail produk" aria-label="Buka detail produk" @click="openProductDetail(overviewProduct)"><ArrowUpRight :size="16" /></button></div>
               <div v-if="overviewProduct" class="history-inner">
@@ -1058,11 +1063,6 @@ onMounted(async () => {
               </div>
               <p v-if="finance.unpricedSales || finance.excludedForeignCurrency" class="finance-note">{{ formatNumber((finance.unpricedSales ?? 0) + (finance.excludedForeignCurrency ?? 0)) }} penjualan tanpa harga rupiah tidak dihitung.</p>
             </article>
-          </section>
-
-          <section class="panel rack-panel">
-            <div class="card-head"><h2>Peta rak gudang</h2><span class="card-note">Tinggi kardus = jumlah stok</span></div>
-            <RackMap :products="catalog" :selected-id="overviewProductId" @select="(id) => { overviewProductId = String(id); openProductDetail(id); }" />
           </section>
 
           <section class="panel activity-card">

@@ -8,6 +8,7 @@ import { parseLocation } from '../utils/format.js';
 const props = defineProps({
   products: { type: Array, default: () => [] },
   selectedId: { type: [String, Number], default: '' },
+  compact: { type: Boolean, default: false },
 });
 const emit = defineEmits(['select']);
 
@@ -68,13 +69,15 @@ function boxState(product) {
 
 function boxHeight(product) {
   const stock = Number(product.warehouse_stock);
-  if (stock === 0) return '44px';
-  return `${Math.round(44 + (Math.min(stock, maxStock.value) / maxStock.value) * 40)}px`;
+  const minimum = props.compact ? 23 : 44;
+  const range = props.compact ? 8 : 40;
+  if (stock === 0) return `${minimum}px`;
+  return `${Math.round(minimum + (Math.min(stock, maxStock.value) / maxStock.value) * range)}px`;
 }
 </script>
 
 <template>
-  <div class="rack-map">
+  <div class="rack-map" :class="{ compact }">
     <div class="rack-toolbar">
       <div class="rack-legend">
         <span><i class="good"></i>Aman</span>
