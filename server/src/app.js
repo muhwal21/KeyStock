@@ -1,26 +1,108 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import cors from 'cors';
 import express from 'express';
+import session from 'express-session';
 import helmet from 'helmet';
-import { config } from './config.js';
+import { config, isProduction } from './config.js';
+import { sequelize } from './models/index.js';
+import apiRoutes from './routes/apiRoutes.js';
+import { csrfProtection } from './middleware/csrf.js';
+import { errorHandler, notFound } from './middleware/errorHandler.js';
+
+const require = createRequire(import.meta.url);
+const MySQLStore = require('express-mysql-session')(session);
+const sessionStore = new MySQLStore({
+  ...config.database,
+  database: config.database.name,
+  createDatabaseTable: true,
+  clearExpired: true,
+  expiration: 8 * 60 * 60 * 1000,
+  checkExpirationInterval: 15 * 60 * 1000,
+  schema: {
+    tableName: 'sessions',
+    columnNames: { session_id: 'session_id', expires: 'expires', data: 'data' },
+  },
+});
 
 const app = express();
+let persistenceReady;
+
+function ensurePersistence() {
+  if (!persistenceReady) {
+    persistenceReady = Promise.all([
+      sequelize.authenticate(),
+      sessionStore.onReady(),
+    ]).catch((error) => {
+      persistenceReady = undefined;
+      throw error;
+    });
+  }
+  return persistenceReady;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await ensurePersistence();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+if (isProduction) app.set('trust proxy', 1);
 
 app.disable('x-powered-by');
-app.use(helmet());
-app.use(cors({ origin: config.clientOrigin }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'same-site' },
+  // Content Security Policy: scripts may only come from this origin, so an injected
+  // <script> or inline event handler would not run even if markup slipped through.
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      connectSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+    },
+  },
+}));
+app.use(cors({ origin: config.clientOrigin, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
+app.use(session({
+  name: config.sessionCookieName,
+  secret: config.sessionSecret,
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'lax',
+    maxAge: 8 * 60 * 60 * 1000,
+  },
+}));
 
-app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok' });
-});
+app.use('/api', csrfProtection, apiRoutes);
 
-app.use('/api', (_request, response) => {
-  response.status(404).json({ message: 'Endpoint API tidak ditemukan.' });
-});
+if (isProduction) {
+  const currentFile = fileURLToPath(import.meta.url);
+  const clientDist = path.resolve(path.dirname(currentFile), '../../client/dist');
+  app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+  app.get(/.*/, (req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
+    return res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
-app.use((error, _request, response, _next) => {
-  console.error(error);
-  response.status(500).json({ message: 'Terjadi kesalahan pada server.' });
-});
+app.use(notFound);
+app.use(errorHandler);
 
-export { app };
+export { app, sessionStore, ensurePersistence };
