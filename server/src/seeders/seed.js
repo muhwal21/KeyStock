@@ -128,7 +128,7 @@ function productDefaults(source, categoryId, supplierId, index) {
 // DOSEN (read-only role) and STAFF are optional.
 const accountSpecs = [
   { key: 'ADMIN', role: 'admin', name: 'Admin', username: 'admin', required: true },
-  { key: 'DOSEN', role: 'lecturer', name: 'Dosen', username: 'dosen' },
+  { key: 'DOSEN', role: 'lecturer', name: 'Viewer', username: 'dosen' },
   { key: 'STAFF', role: 'staff', name: 'Staff', username: 'staff' },
 ];
 
