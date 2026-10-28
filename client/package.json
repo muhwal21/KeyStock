@@ -1,5 +1,5 @@
 {
-  "name": "@keystock/client",
+  "name": "@mechanical-keyboard-inventory/client",
   "version": "0.1.0",
   "private": true,
   "type": "module",
