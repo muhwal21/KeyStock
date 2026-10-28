@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: keystock-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Atur DB_ROOT_PASSWORD di .env}
+      MYSQL_DATABASE: ${DB_NAME:?Atur DB_NAME di .env}
+      MYSQL_USER: ${DB_USER:?Atur DB_USER di .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Atur DB_PASSWORD di .env}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - keystock_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  keystock_mysql_data:
