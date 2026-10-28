@@ -63,7 +63,9 @@ Compose utama menjalankan aplikasi, MySQL tanpa port publik, serta Caddy untuk H
 
 5. Setelah DNS mengarah ke VPS dan port `80`/`443` dapat diakses, Caddy akan meminta sertifikat HTTPS untuk domain tersebut.
 
-Untuk menerapkan perubahan berikutnya, jalankan `git pull` lalu `docker compose up -d --build`. Backup MySQL secara berkala dan simpan salinannya di luar VPS. Volume Docker menjaga data saat container diperbarui, tetapi bukan pengganti backup.
+Deploy otomatis berjalan setelah commit di-push ke branch `main`, setelah akses deploy diaktifkan. Siapkan GitHub Actions repository variables `VPS_HOST` dan `VPS_USER`, serta secrets `DEPLOY_SSH_KEY` dan `DEPLOY_KNOWN_HOSTS`. Tambahkan public key deploy ke `authorized_keys` VPS dengan forced command yang hanya menjalankan deploy KeyStock, lalu set variable `DEPLOY_ENABLED` menjadi `true`. Workflow menolak host SSH yang tidak cocok dengan `DEPLOY_KNOWN_HOSTS`.
+
+Perintah deploy mengambil perubahan terbaru, membangun image aplikasi, menjalankan sinkronisasi skema database yang aman untuk data yang ada, lalu menunggu container sehat. Jangan jalankan `db:fresh` pada VPS. Backup MySQL secara berkala dan simpan salinannya di luar VPS. Volume Docker menjaga data saat container diperbarui, tetapi bukan pengganti backup.
 
 `database/keystock-demo.sql` berisi perintah reset tabel dan data demo. Impor hanya ke database kosong atau database demo yang memang boleh ditimpa.
 
