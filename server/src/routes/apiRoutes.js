@@ -1,16 +1,17 @@
 import express, { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { login, getCsrfToken, getCurrentUser, logout, register } from '../controllers/authController.js';
+import { login, getCsrfToken, getCurrentUser, logout, register, requestPasswordReset, resetPassword } from '../controllers/authController.js';
 import { getDashboard } from '../controllers/dashboardController.js';
 import { createProduct, deleteProduct, getProduct, listCategories, listProducts, updateProduct } from '../controllers/productController.js';
 import { deleteImage, listImages, reorderImages, sendImageFile, uploadImage } from '../controllers/productImageController.js';
 import { archiveSupplier, createSupplier, listSuppliers, updateSupplier } from '../controllers/supplierController.js';
 import { createMovement, listMovements } from '../controllers/stockMovementController.js';
-import { listUsers, updateUser } from '../controllers/userController.js';
+import { listUsers, reviewUser, updateUser } from '../controllers/userController.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import {
-  imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, supplierSchema, userUpdateSchema,
+  emailSchema, imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, resetPasswordSchema,
+  reviewUserSchema, supplierSchema, userUpdateSchema,
 } from '../middleware/validators.js';
 
 const router = Router();
@@ -30,12 +31,21 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Terlalu banyak pendaftaran dari jaringan ini. Coba lagi nanti.' },
 });
+const resetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { message: 'Terlalu banyak permintaan pemulihan. Coba lagi beberapa menit.' },
+});
 
 router.get('/health', (req, res) => res.json({ status: 'ok' }));
 router.get('/auth/csrf', getCsrfToken);
 router.get('/auth/me', getCurrentUser);
 router.post('/auth/register', registerLimiter, validateBody(registerSchema), register);
 router.post('/auth/login', loginLimiter, validateBody(loginSchema), login);
+router.post('/auth/forgot-password', resetLimiter, validateBody(emailSchema), requestPasswordReset);
+router.post('/auth/reset-password', resetLimiter, validateBody(resetPasswordSchema), resetPassword);
 router.post('/auth/logout', logout);
 
 router.use(requireAuth);
@@ -56,8 +66,9 @@ router.post('/products/:id/images', requireRole('admin'), imageBody, uploadImage
 router.put('/products/:id/images/order', requireRole('admin'), validateBody(imageOrderSchema), reorderImages);
 router.delete('/products/:id/images/:imageId', requireRole('admin'), deleteImage);
 router.get('/stock-movements', listMovements);
-router.post('/stock-movements', validateBody(movementSchema), createMovement);
+router.post('/stock-movements', requireRole('admin', 'staff'), validateBody(movementSchema), createMovement);
 router.get('/users', requireRole('admin'), listUsers);
 router.patch('/users/:id', requireRole('admin'), validateBody(userUpdateSchema), updateUser);
+router.patch('/users/:id/review', requireRole('admin'), validateBody(reviewUserSchema), reviewUser);
 
 export default router;

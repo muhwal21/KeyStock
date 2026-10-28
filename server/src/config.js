@@ -30,6 +30,16 @@ export const config = {
   nodeEnv,
   port: Number(process.env.PORT ?? 3000),
   clientOrigin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173',
+  publicAppUrl: process.env.PUBLIC_APP_URL ?? process.env.CLIENT_ORIGIN ?? 'http://localhost:5173',
+  seedAdminEmail: env.SEED_ADMIN_EMAIL ?? '',
+  smtp: {
+    host: env.SMTP_HOST ?? '',
+    port: Number(env.SMTP_PORT ?? 587),
+    secure: env.SMTP_SECURE === 'true',
+    user: env.SMTP_USER ?? '',
+    password: env.SMTP_PASSWORD ?? '',
+    from: env.SMTP_FROM ?? '',
+  },
   jwtSecret: env.JWT_SECRET,
   jwtExpiresSeconds,
   accessCookieName: env.ACCESS_COOKIE_NAME ?? 'keystock.access',
@@ -44,3 +54,4 @@ export const config = {
 };
 
 export const isProduction = config.nodeEnv === 'production';
+export const isEmailConfigured = Boolean(config.smtp.host && config.smtp.user && config.smtp.password && config.smtp.from);

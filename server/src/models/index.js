@@ -17,9 +17,19 @@ export const User = sequelize.define('User', {
   username: { type: DataTypes.STRING(40), allowNull: true, unique: true },
   email: { type: DataTypes.STRING(190), allowNull: false, unique: true, validate: { isEmail: true } },
   password_hash: { type: DataTypes.STRING(255), allowNull: false },
-  role: { type: DataTypes.ENUM('admin', 'staff'), allowNull: false, defaultValue: 'staff' },
+  role: { type: DataTypes.ENUM('admin', 'staff', 'lecturer'), allowNull: false, defaultValue: 'staff' },
   is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+  approval_status: { type: DataTypes.ENUM('pending', 'approved', 'rejected'), allowNull: false, defaultValue: 'approved' },
+  token_version: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 },
 }, { tableName: 'users', defaultScope: { attributes: { exclude: ['password_hash'] } }, scopes: { withPassword: { attributes: {} } } });
+
+export const PasswordReset = sequelize.define('PasswordReset', {
+  id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+  user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+  token_hash: { type: DataTypes.STRING(64), allowNull: false, unique: true },
+  expires_at: { type: DataTypes.DATE, allowNull: false },
+  used_at: { type: DataTypes.DATE, allowNull: true },
+}, { tableName: 'password_resets', indexes: [{ fields: ['user_id'] }, { fields: ['expires_at'] }] });
 
 export const Category = sequelize.define('Category', {
   id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },

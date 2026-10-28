@@ -17,7 +17,7 @@ export async function resolveAuthenticatedUser(req) {
   if (!Number.isSafeInteger(userId) || userId < 1) return null;
 
   const user = await User.findByPk(userId);
-  return user?.is_active ? user : null;
+  return user?.is_active && user.approval_status === 'approved' && (payload.ver ?? 0) === (user.token_version ?? 0) ? user : null;
 }
 
 export async function requireAuth(req, res, next) {

@@ -25,6 +25,19 @@ async function migrateUsernames(queryInterface) {
   }
 }
 
+async function migrateAuthFields(queryInterface) {
+  const columns = await queryInterface.describeTable('users');
+  if (!columns.approval_status) {
+    await queryInterface.addColumn('users', 'approval_status', {
+      type: DataTypes.ENUM('pending', 'approved', 'rejected'), allowNull: false, defaultValue: 'approved',
+    });
+  }
+  if (!columns.token_version) {
+    await queryInterface.addColumn('users', 'token_version', { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 });
+  }
+  await sequelize.query("ALTER TABLE users MODIFY role ENUM('admin','staff','lecturer') NOT NULL DEFAULT 'staff'");
+}
+
 // Products created before the gallery existed get their single image_url as the first photo.
 async function migrateProductImages() {
   const products = await Product.findAll({ attributes: ['id', 'image_url'], where: { image_url: { [Op.ne]: null } } });
@@ -59,6 +72,7 @@ async function migrateMovementFinance(queryInterface) {
 export async function migrateInventoryFields() {
   const queryInterface = sequelize.getQueryInterface();
   await migrateUsernames(queryInterface);
+  await migrateAuthFields(queryInterface);
   await migrateMovementFinance(queryInterface);
   const columns = await queryInterface.describeTable('products');
 

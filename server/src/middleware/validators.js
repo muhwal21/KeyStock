@@ -41,27 +41,35 @@ export const username = z.string().trim().toLowerCase()
 // Login accepts either the username or the email address in one field.
 export const loginSchema = z.object({
   identifier: z.string().trim().toLowerCase().min(1, 'Username atau email wajib diisi.').max(190),
-  password: z.string().min(1, 'Kata sandi wajib diisi.').max(200),
+  password: z.string().min(1, 'Kata sandi wajib diisi.').max(128),
 });
 
 export const registerSchema = z.object({
   name: plainText({ min: 2, max: 120, label: 'Nama' }),
   username,
   email,
-  password: z.string()
-    .min(8, 'Kata sandi minimal 8 karakter.')
-    .max(200, 'Kata sandi maksimal 200 karakter.')
-    .regex(/[A-Za-z]/, 'Kata sandi harus mengandung huruf.')
-    .regex(/[0-9]/, 'Kata sandi harus mengandung angka.'),
-  password_confirmation: z.string(),
+  password: z.string().min(12, 'Gunakan kata sandi minimal 12 karakter. Frasa sandi boleh memakai spasi.')
+    .max(128, 'Kata sandi maksimal 128 karakter.'),
+  password_confirmation: z.string().max(128),
+}).refine((data) => data.password === data.password_confirmation, {
+  path: ['password_confirmation'], message: 'Konfirmasi kata sandi tidak sama.',
+});
+
+export const emailSchema = z.object({ email });
+export const resetPasswordSchema = z.object({
+  token: z.string().min(32).max(200),
+  password: z.string().min(12, 'Gunakan kata sandi minimal 12 karakter. Frasa sandi boleh memakai spasi.')
+    .max(128, 'Kata sandi maksimal 128 karakter.'),
+  password_confirmation: z.string().max(128),
 }).refine((data) => data.password === data.password_confirmation, {
   path: ['password_confirmation'], message: 'Konfirmasi kata sandi tidak sama.',
 });
 
 export const userUpdateSchema = z.object({
-  role: z.enum(['admin', 'staff']),
+  role: z.enum(['admin', 'staff', 'lecturer']),
   is_active: z.boolean(),
 });
+export const reviewUserSchema = z.object({ action: z.enum(['approve', 'reject']) });
 
 export const productSchema = z.object({
   sku: z.string().trim().min(2, 'SKU minimal 2 karakter.').max(100).regex(/^[A-Za-z0-9._-]+$/, 'SKU hanya boleh berisi huruf, angka, titik, garis bawah, atau tanda hubung.'),

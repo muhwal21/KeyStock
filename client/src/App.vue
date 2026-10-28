@@ -84,10 +84,17 @@ const detailReturnId = ref(null);
 const formError = ref('');
 const fieldErrors = ref({});
 
-const authMode = ref('login'); // 'login' or 'register'
+const resetToken = ref(new URLSearchParams(window.location.search).get('resetToken') ?? '');
+const authMode = ref(resetToken.value ? 'reset' : 'login');
+const registrationSubmitted = ref(false);
+const registrationEmail = ref('');
+const registrationEmailSent = ref(false);
+const registrationEmailConfigured = ref(false);
 const showPassword = ref(false);
 const loginForm = reactive({ identifier: '', password: '' });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
+const forgotForm = reactive({ email: '' });
+const resetForm = reactive({ password: '', password_confirmation: '' });
 const productForm = reactive({
   sku: '', name: '', brand: '', category_id: '', supplier_id: '', description: '',
   price_min: '', price_max: '', purchase_price: '', selling_price: '', currency: 'IDR',
@@ -119,12 +126,12 @@ const navItems = computed(() => (user.value?.role === 'admin'
   : baseNavItems));
 
 const roleRules = [
-  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, staff: true },
-  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, staff: true },
-  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, staff: false },
-  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, staff: false },
-  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, staff: false },
-  { action: 'Mengubah peran dan menonaktifkan pengguna', admin: true, staff: false },
+  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, staff: true, lecturer: true },
+  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, staff: true, lecturer: false },
+  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, staff: false, lecturer: false },
+  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, staff: false, lecturer: false },
+  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, staff: false, lecturer: false },
+  { action: 'Mengubah peran, menyetujui, dan menonaktifkan pengguna', admin: true, staff: false, lecturer: false },
 ];
 
 watchEffect(() => {
@@ -218,9 +225,9 @@ const filteredMovements = computed(() => {
 const passwordChecks = computed(() => {
   const value = registerForm.password;
   return [
-    { label: 'Minimal 8 karakter', ok: value.length >= 8 },
-    { label: 'Ada huruf', ok: /[A-Za-z]/.test(value) },
-    { label: 'Ada angka', ok: /[0-9]/.test(value) },
+    { label: 'Minimal 12 karakter', ok: value.length >= 12 },
+    { label: 'Maksimal 128 karakter', ok: value.length <= 128 },
+    { label: 'Boleh memakai spasi sebagai frasa sandi', ok: true },
   ];
 });
 
@@ -480,6 +487,7 @@ async function submitLogin() {
 
 function switchAuthMode(mode) {
   authMode.value = mode;
+  registrationSubmitted.value = false;
   showPassword.value = false;
   clearNotices();
   clearFormErrors();
@@ -492,17 +500,50 @@ async function submitRegister() {
   try {
     if (!csrfToken.value) await refreshCsrf();
     const result = await post('/auth/register', registerForm);
-    user.value = result.user;
-    csrfToken.value = result.csrfToken;
-    setCsrfToken(result.csrfToken);
+    registrationEmail.value = registerForm.email;
+    registrationEmailSent.value = result.emailNotificationSent;
+    registrationEmailConfigured.value = result.emailConfigured;
     Object.assign(registerForm, { name: '', username: '', email: '', password: '', password_confirmation: '' });
+    registrationSubmitted.value = true;
     authMode.value = 'login';
+    successMessage.value = result.message;
     apiUnavailable.value = false;
-    await loadAll();
-    showSuccess(`Akun dibuat. Selamat datang, ${result.user.name} — Anda masuk sebagai staff.`);
   } catch (error) {
     errorMessage.value = error.message || 'Pendaftaran gagal. Coba lagi.';
     fieldErrors.value = error.fields ?? {};
+  } finally {
+    busy.value = false;
+  }
+}
+
+async function submitForgotPassword() {
+  busy.value = true;
+  clearNotices();
+  try {
+    if (!csrfToken.value) await refreshCsrf();
+    const result = await post('/auth/forgot-password', forgotForm);
+    successMessage.value = result.message;
+  } catch (error) {
+    handleError(error);
+  } finally {
+    busy.value = false;
+  }
+}
+
+async function submitPasswordReset() {
+  busy.value = true;
+  clearNotices();
+  try {
+    if (!csrfToken.value) await refreshCsrf();
+    const result = await post('/auth/reset-password', { token: resetToken.value, ...resetForm });
+    resetToken.value = '';
+    user.value = null;
+    Object.assign(resetForm, { password: '', password_confirmation: '' });
+    window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`);
+    switchAuthMode('login');
+    successMessage.value = result.message;
+  } catch (error) {
+    handleError(error);
   } finally {
     busy.value = false;
   }
@@ -723,6 +764,32 @@ function toggleUserActive(target) {
   };
 }
 
+function reviewAccount(target, action) {
+  pendingConfirmation.value = {
+    title: action === 'approve' ? 'Setujui pendaftaran ini?' : 'Tolak pendaftaran ini?',
+    message: action === 'approve'
+      ? `${target.name} akan dapat masuk sebagai staff setelah disetujui.`
+      : `Pendaftaran ${target.name} akan ditolak dan akunnya tidak dapat masuk.`,
+    confirmLabel: action === 'approve' ? 'Setujui akun' : 'Tolak akun',
+    busyLabel: action === 'approve' ? 'Menyetujui...' : 'Menolak...',
+    action: async () => {
+      busy.value = true;
+      clearNotices();
+      try {
+        const result = await patch(`/users/${target.id}/review`, { action });
+        Object.assign(target, result.user);
+        showSuccess(result.emailSent
+          ? `Pendaftaran ${target.name} diperbarui dan email hasil review dikirim.`
+          : `Pendaftaran ${target.name} diperbarui. ${result.emailConfigured ? 'Email belum terkirim; periksa konfigurasi SMTP.' : 'Email belum terkirim karena SMTP belum disetel.'}`);
+      } catch (error) {
+        handleError(error);
+      } finally {
+        busy.value = false;
+      }
+    },
+  };
+}
+
 function cancelPendingConfirmation() {
   if (!busy.value) pendingConfirmation.value = null;
 }
@@ -849,7 +916,7 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-else-if="!user" class="auth-page">
+  <div v-else-if="!user || resetToken" class="auth-page">
     <header class="auth-topbar">
       <span class="brand"><span class="brand-mark"><Keyboard :size="18" /></span><strong>KeyStock</strong></span>
       <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
@@ -858,20 +925,26 @@ onMounted(async () => {
     <main class="auth-main">
       <section class="auth-card" aria-labelledby="auth-title">
         <div class="auth-card-head">
-          <span class="auth-icon"><component :is="authMode === 'login' ? LogIn : UserPlus" :size="22" /></span>
+          <span class="auth-icon"><component :is="authMode === 'register' ? UserPlus : LogIn" :size="22" /></span>
           <span class="auth-kicker"><span class="eyebrow-dot"></span> Inventaris gudang keyboard</span>
-          <h1 id="auth-title">{{ authMode === 'login' ? 'Masuk ke KeyStock' : 'Buat akun staff' }}</h1>
-          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : 'Akun baru berperan sebagai staff. Admin dapat mengubah peran dari halaman Pengguna.' }}</p>
+          <h1 id="auth-title">{{ authMode === 'login' ? 'Masuk ke KeyStock' : authMode === 'register' ? 'Daftar akun' : authMode === 'forgot' ? 'Lupa kata sandi?' : 'Buat kata sandi baru' }}</h1>
+          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : authMode === 'register' ? 'Pendaftaran akun staff akan ditinjau oleh admin.' : authMode === 'forgot' ? 'Kami akan mengirim tautan pemulihan ke email akun Anda.' : 'Pilih kata sandi baru untuk akun KeyStock Anda.' }}</p>
         </div>
 
-        <div class="auth-tabs" role="tablist" aria-label="Pilih masuk atau daftar">
+        <div v-if="!registrationSubmitted && ['login', 'register'].includes(authMode)" class="auth-tabs" role="tablist" aria-label="Pilih masuk atau daftar">
           <button type="button" role="tab" :aria-selected="authMode === 'login'" :class="{ active: authMode === 'login' }" @click="switchAuthMode('login')">Masuk</button>
           <button type="button" role="tab" :aria-selected="authMode === 'register'" :class="{ active: authMode === 'register' }" @click="switchAuthMode('register')">Daftar akun</button>
         </div>
 
         <div v-if="errorMessage" class="notice error-notice" role="alert"><AlertTriangle :size="17" />{{ errorMessage }}</div>
+        <div v-if="successMessage" class="notice success-notice" role="status"><Check :size="17" />{{ successMessage }}</div>
 
-        <form v-if="authMode === 'login'" class="auth-form" @submit.prevent="submitLogin">
+        <section v-if="registrationSubmitted" class="auth-form">
+          <div class="empty-state"><div class="empty-icon"><ShieldCheck :size="22" /></div><strong>Pendaftaran menunggu review admin</strong><span>Permintaan akun staff Anda sudah tersimpan. <template v-if="registrationEmailSent">Admin telah mendapat notifikasi email dan hasil review akan dikirim ke {{ registrationEmail }}.</template><template v-else-if="registrationEmailConfigured">Admin dapat meninjau pendaftaran di halaman Pengguna; notifikasi email belum berhasil terkirim.</template><template v-else>Email hasil review belum aktif. Admin dapat meninjau pendaftaran dari halaman Pengguna.</template></span></div>
+          <button class="button primary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
+        </section>
+
+        <form v-else-if="authMode === 'login'" class="auth-form" @submit.prevent="submitLogin">
           <div class="auth-field">
             <label for="identifier">Username atau email</label>
             <div class="input-wrap"><AtSign :size="17" /><input id="identifier" v-model="loginForm.identifier" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="mis. dosen atau nama@email.com" required /></div>
@@ -885,9 +958,10 @@ onMounted(async () => {
             {{ busy ? 'Memeriksa...' : 'Masuk ke inventaris' }}
             <ArrowRight v-if="!busy" :size="17" />
           </button>
+          <button class="button secondary full" type="button" @click="switchAuthMode('forgot')">Lupa kata sandi?</button>
         </form>
 
-        <form v-else class="auth-form" novalidate @submit.prevent="submitRegister">
+        <form v-else-if="authMode === 'register'" class="auth-form" novalidate @submit.prevent="submitRegister">
           <div class="auth-field">
             <label for="register-name">Nama lengkap</label>
             <div class="input-wrap" :class="{ invalid: fieldErrors.name }"><User :size="17" /><input id="register-name" v-model="registerForm.name" autocomplete="name" maxlength="120" placeholder="Nama Anda" required /></div>
@@ -905,7 +979,7 @@ onMounted(async () => {
           </div>
           <div class="auth-field">
             <label for="register-password">Kata sandi</label>
-            <div class="input-wrap" :class="{ invalid: fieldErrors.password }"><Lock :size="17" /><input id="register-password" v-model="registerForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="8" placeholder="Buat kata sandi" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
+            <div class="input-wrap" :class="{ invalid: fieldErrors.password }"><Lock :size="17" /><input id="register-password" v-model="registerForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Min. 12 karakter" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
             <ul class="password-checks" aria-label="Syarat kata sandi">
               <li v-for="rule in passwordChecks" :key="rule.label" :class="{ ok: rule.ok }"><Check :size="13" />{{ rule.label }}</li>
             </ul>
@@ -918,18 +992,30 @@ onMounted(async () => {
           </div>
           <button class="button primary full auth-submit" type="submit" :disabled="busy">
             <span class="spinner small-spinner" v-if="busy"></span>
-            {{ busy ? 'Membuat akun...' : 'Buat akun staff' }}
+            {{ busy ? 'Menyimpan...' : 'Kirim pendaftaran' }}
             <ArrowRight v-if="!busy" :size="17" />
           </button>
         </form>
 
-        <p class="auth-footnote"><ShieldCheck :size="15" /> Sesi tersimpan di server dan dilindungi token CSRF.</p>
+        <form v-else-if="authMode === 'forgot'" class="auth-form" @submit.prevent="submitForgotPassword">
+          <div class="auth-field"><label for="forgot-email">Email akun</label><div class="input-wrap"><Mail :size="17" /><input id="forgot-email" v-model="forgotForm.email" type="email" autocomplete="email" maxlength="190" placeholder="nama@email.com" required /></div></div>
+          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim...' : 'Kirim tautan pemulihan' }}<ArrowRight v-if="!busy" :size="17" /></button>
+          <button class="button secondary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
+        </form>
+
+        <form v-else class="auth-form" @submit.prevent="submitPasswordReset">
+          <div class="auth-field"><label for="reset-password">Kata sandi baru</label><div class="input-wrap"><Lock :size="17" /><input id="reset-password" v-model="resetForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Min. 12 karakter" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div></div>
+          <div class="auth-field"><label for="reset-confirmation">Ulangi kata sandi</label><div class="input-wrap"><Lock :size="17" /><input id="reset-confirmation" v-model="resetForm.password_confirmation" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Ketik ulang kata sandi" required /></div></div>
+          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Menyimpan...' : 'Simpan kata sandi' }}<ArrowRight v-if="!busy" :size="17" /></button>
+        </form>
+
+        <p v-if="authMode === 'login' && !registrationSubmitted" class="auth-footnote"><ShieldCheck :size="15" /> Sesi tersimpan di server dan dilindungi token CSRF.</p>
       </section>
 
       <ul class="auth-points">
         <li><Boxes :size="16" /> Stok real-time</li>
         <li><History :size="16" /> Riwayat tercatat</li>
-        <li><Users :size="16" /> Akses admin &amp; staff</li>
+        <li><Users :size="16" /> Akses admin, staff &amp; dosen</li>
       </ul>
     </main>
 
@@ -954,7 +1040,7 @@ onMounted(async () => {
         <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
         <div class="user-chip">
           <div class="avatar">{{ user.name?.slice(0, 1).toUpperCase() }}</div>
-          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : 'Staff' }}</span></div>
+          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Dosen' : 'Staff' }}</span></div>
         </div>
         <button class="round-button" type="button" title="Keluar" aria-label="Keluar" :disabled="busy" @click="logout"><LogOut :size="17" /></button>
       </div>
@@ -994,7 +1080,7 @@ onMounted(async () => {
             <div class="toolbar-actions">
               <button class="round-button" type="button" title="Unduh stok (CSV)" aria-label="Unduh stok (CSV)" @click="exportInventoryCsv"><Download :size="17" /></button>
               <button class="button secondary pill" type="button" :disabled="loading" @click="refreshDashboard"><RefreshCw :size="15" :class="{ spinning: loading }" /> Muat ulang</button>
-              <button class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
+              <button v-if="user.role !== 'lecturer'" class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
             </div>
           </section>
 
@@ -1141,7 +1227,7 @@ onMounted(async () => {
                 <td data-label="Stok" class="span-2"><span class="stock-count" :class="stockState(product).tone">{{ formatNumber(product.warehouse_stock) }} <small>unit</small></span><small class="cell-subtext">min. {{ formatNumber(product.reorder_point) }}</small></td>
                 <td data-label="Lokasi" class="span-2"><span class="location-tag">{{ product.storage_location || '—' }}</span></td>
                 <td data-label="Kondisi" class="span-2"><span class="stock-badge" :class="stockState(product).tone"><span></span>{{ stockState(product).label }}</span></td>
-                <td class="cell-actions"><div class="row-actions"><button class="icon-button subtle" type="button" title="Lihat detail" aria-label="Lihat detail produk" @click="openProductDetail(product)"><Eye :size="15" /></button><button class="icon-button subtle" title="Catat pergerakan stok" aria-label="Catat pergerakan stok" @click="openMovement(product)"><ArrowDownUp :size="15" /></button><template v-if="user.role === 'admin'"><button class="icon-button subtle" title="Edit produk" aria-label="Edit produk" @click="openEditProduct(product)"><Settings :size="15" /></button><button class="icon-button danger-quiet" title="Arsipkan produk" aria-label="Arsipkan produk" @click="archiveProduct(product)"><X :size="15" /></button></template></div></td>
+                <td class="cell-actions"><div class="row-actions"><button class="icon-button subtle" type="button" title="Lihat detail" aria-label="Lihat detail produk" @click="openProductDetail(product)"><Eye :size="15" /></button><button v-if="user.role !== 'lecturer'" class="icon-button subtle" title="Catat pergerakan stok" aria-label="Catat pergerakan stok" @click="openMovement(product)"><ArrowDownUp :size="15" /></button><template v-if="user.role === 'admin'"><button class="icon-button subtle" title="Edit produk" aria-label="Edit produk" @click="openEditProduct(product)"><Settings :size="15" /></button><button class="icon-button danger-quiet" title="Arsipkan produk" aria-label="Arsipkan produk" @click="archiveProduct(product)"><X :size="15" /></button></template></div></td>
               </tr>
             </tbody></table></div>
             <div v-else class="empty-state"><div class="empty-icon"><Package :size="22" /></div><strong>Produk tidak ditemukan</strong><span>Ubah kata pencarian atau filter, lalu coba lagi.</span><button v-if="user.role === 'admin'" class="button secondary small-button" @click="openCreateProduct()"><Plus :size="15" /> Tambah produk pertama</button></div>
@@ -1168,11 +1254,12 @@ onMounted(async () => {
 
         <template v-else-if="activePage === 'users'">
           <section class="page-heading">
-            <div><h1>Pengguna</h1><p>Atur peran admin/staff dan nonaktifkan akun yang tidak lagi dipakai.</p></div>
+            <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran admin/staff/dosen, dan kelola akses akun.</p></div>
           </section>
           <section class="supplier-summary-grid">
             <article class="supplier-summary-card"><span class="supplier-summary-icon"><UserCheck :size="17" /></span><div><small>Pengguna aktif</small><strong>{{ users.filter((entry) => entry.is_active).length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><ShieldCheck :size="17" /></span><div><small>Admin aktif</small><strong>{{ users.filter((entry) => entry.is_active && entry.role === 'admin').length }}</strong></div></article>
+            <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserPlus :size="17" /></span><div><small>Menunggu review</small><strong>{{ users.filter((entry) => entry.approval_status === 'pending').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserX :size="17" /></span><div><small>Nonaktif</small><strong>{{ users.filter((entry) => !entry.is_active).length }}</strong></div></article>
           </section>
           <section class="panel table-panel">
@@ -1180,19 +1267,19 @@ onMounted(async () => {
             <div v-else class="table-scroll"><table class="data-table user-table stack-table"><thead><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Catatan stok</th><th>Bergabung</th><th>Aksi</th></tr></thead><tbody>
               <tr v-for="entry in users" :key="entry.id" :class="{ 'is-inactive': !entry.is_active }">
                 <td class="cell-primary"><div class="user-cell"><div class="avatar">{{ entry.name?.slice(0, 1).toUpperCase() }}</div><div><strong>{{ entry.name }} <span v-if="entry.id === user.id" class="you-tag">Anda</span></strong><small>@{{ entry.username ?? '—' }} · {{ entry.email }}</small></div></div></td>
-                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option></select></td>
-                <td data-label="Status"><span class="stock-badge" :class="entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Dosen</option></select></td>
+                <td data-label="Status"><span class="stock-badge" :class="entry.approval_status === 'pending' ? 'low' : entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.approval_status === 'pending' ? 'Menunggu review' : entry.approval_status === 'rejected' ? 'Ditolak' : entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                 <td data-label="Catatan stok">{{ formatNumber(entry.movement_count) }} catatan</td>
                 <td data-label="Bergabung">{{ formatDate(entry.createdAt ?? entry.created_at) }}</td>
-                <td class="cell-actions"><button v-if="entry.id !== user.id" class="button secondary small-action" :class="{ 'danger-outline': entry.is_active }" type="button" :disabled="busy" @click="toggleUserActive(entry)"><component :is="entry.is_active ? UserX : UserCheck" :size="15" />{{ entry.is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button></td>
+                <td class="cell-actions"><div class="row-actions"><template v-if="entry.approval_status === 'pending'"><button class="button primary small-action" type="button" :disabled="busy" @click="reviewAccount(entry, 'approve')">Setujui</button><button class="button secondary small-action danger-outline" type="button" :disabled="busy" @click="reviewAccount(entry, 'reject')">Tolak</button></template><button v-else-if="entry.id !== user.id" class="button secondary small-action" :class="{ 'danger-outline': entry.is_active }" type="button" :disabled="busy" @click="toggleUserActive(entry)"><component :is="entry.is_active ? UserX : UserCheck" :size="15" />{{ entry.is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button></div></td>
               </tr>
             </tbody></table></div>
-            <div class="table-footer"><span>Akun dari halaman <strong>Daftar akun</strong> otomatis berperan staff.</span><span class="table-footer-note"><ShieldCheck :size="14" /> Admin tidak bisa menonaktifkan akunnya sendiri.</span></div>
+            <div class="table-footer"><span>Akun baru menunggu persetujuan admin dan akan aktif sebagai staff.</span><span class="table-footer-note"><ShieldCheck :size="14" /> Admin tidak bisa menonaktifkan akunnya sendiri.</span></div>
           </section>
           <section class="panel access-panel">
             <div class="panel-heading"><div><div class="panel-kicker">ROLE-BASED ACCESS</div><h2>Rincian hak akses</h2><p>Aturan ini diterapkan di server lewat middleware <code>requireRole</code>, bukan hanya disembunyikan di tampilan.</p></div></div>
-            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th></tr></thead><tbody>
-              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td></tr>
+            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Dosen</th></tr></thead><tbody>
+              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.lecturer ? 'yes' : 'no'">{{ rule.lecturer ? 'Boleh' : 'Tidak' }}</span></td></tr>
             </tbody></table></div>
           </section>
         </template>
@@ -1200,7 +1287,7 @@ onMounted(async () => {
         <template v-else>
           <section class="page-heading">
             <div><h1>Pergerakan stok</h1><p>Riwayat stok masuk, stok keluar, dan penyesuaian.</p></div>
-            <div class="heading-actions"><button class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
+            <div class="heading-actions"><button v-if="user.role !== 'lecturer'" class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
           </section>
           <section class="panel movement-panel">
             <div class="panel-heading"><div><div class="panel-kicker">STOCK MOVEMENTS</div><h2>Riwayat inventaris</h2><p>{{ filteredMovements.length }} dari {{ movements.length }} catatan terbaru</p></div><div class="audit-tag"><History :size="15" /> Audit trail aktif</div></div>

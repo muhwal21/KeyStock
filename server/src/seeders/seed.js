@@ -128,7 +128,7 @@ function productDefaults(source, categoryId, supplierId, index) {
 // DOSEN (lecturer, admin role) and STAFF are created when their email and password are set.
 const accountSpecs = [
   { key: 'ADMIN', role: 'admin', name: 'KeyStock Admin', username: 'admin', required: true },
-  { key: 'DOSEN', role: 'admin', name: 'Dosen Penguji', username: 'dosen' },
+  { key: 'DOSEN', role: 'lecturer', name: 'Dosen Penguji', username: 'dosen' },
   { key: 'STAFF', role: 'staff', name: 'Staff Gudang', username: 'staff' },
 ];
 
@@ -141,8 +141,8 @@ function readAccount(spec) {
     if (email || password) console.warn(`Akun ${spec.key.toLowerCase()} dilewati: isi email dan password bersamaan.`);
     return null;
   }
-  if (password.length < 8 || password.toLowerCase().includes('replace-with')) {
-    throw new Error(`SEED_${spec.key}_PASSWORD minimal 8 karakter dan bukan nilai contoh.`);
+  if (password.length < 12 || password.length > 128 || password.toLowerCase().includes('replace-with')) {
+    throw new Error(`SEED_${spec.key}_PASSWORD harus 12–128 karakter dan bukan nilai contoh.`);
   }
   const username = (env[`SEED_${spec.key}_USERNAME`]?.trim() || spec.username).toLowerCase();
   if (!/^[a-z0-9._]{3,30}$/.test(username)) throw new Error(`SEED_${spec.key}_USERNAME tidak valid.`);
@@ -164,12 +164,14 @@ async function upsertAccount(account) {
       password_hash: await bcrypt.hash(account.password, 12),
       role: account.role,
       is_active: true,
+      approval_status: 'approved',
     });
   }
-  const updates = { name: account.name, role: account.role, is_active: true };
+  const updates = { name: account.name, role: account.role, is_active: true, approval_status: 'approved' };
   if (usernameFree) updates.username = account.username;
   if (!(await bcrypt.compare(account.password, user.password_hash))) {
     updates.password_hash = await bcrypt.hash(account.password, 12);
+    updates.token_version = user.token_version + 1;
   }
   await user.update(updates);
   return user;

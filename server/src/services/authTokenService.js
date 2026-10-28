@@ -11,7 +11,7 @@ const accessCookieOptions = {
 };
 
 export async function createAccessToken(user) {
-  return new SignJWT({ role: user.role })
+  return new SignJWT({ role: user.role, ver: user.token_version ?? 0 })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
     .setSubject(String(user.id))
     .setIssuer('keystock')

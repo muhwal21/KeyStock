@@ -7,7 +7,8 @@ KeyStock adalah aplikasi inventaris keyboard mekanis dan aksesori. Antarmuka mem
 - Ringkasan stok, aktivitas terbaru, peta rak, dan laporan laba rugi.
 - CRUD produk dan supplier dengan pencarian, filter, dan galeri foto.
 - Pergerakan stok masuk, keluar, dan penyesuaian dengan riwayat saldo.
-- Peran admin dan staff, autentikasi JWT, dan validasi API.
+- Peran admin, staff, dan dosen penguji dengan hak akses berbeda.
+- Login, pendaftaran akun yang menunggu persetujuan admin, pemulihan kata sandi lewat email, dan sesi JWT.
 - Tampilan terang/gelap dan responsif.
 
 ## Susunan folder
@@ -41,7 +42,9 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
 4. Buka `http://localhost:5173`.
 
-Akun admin demo dibuat dari `SEED_ADMIN_*` di `.env`. Akun dosen dan staff bersifat opsional; biarkan email dan password-nya kosong jika tidak diperlukan. `npm run db:fresh` menghapus lalu membuat ulang tabel demo—jangan jalankan pada database berisi data penting.
+Akun dibuat dari `SEED_ADMIN_*`, `SEED_DOSEN_*`, dan `SEED_STAFF_*` di `.env`. Dosen bersifat opsional dan hanya dapat melihat data; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel demo—jangan jalankan pada database berisi data penting.
+
+Untuk email pemulihan dan notifikasi review, isi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, serta `PUBLIC_APP_URL`. Tanpa SMTP, pendaftaran tetap tercatat dan dapat direview di halaman Pengguna, tetapi email tidak terkirim dan pemulihan kata sandi tidak aktif.
 
 ## Deploy ke VPS
 
@@ -66,7 +69,7 @@ Untuk menerapkan perubahan berikutnya, jalankan `git pull` lalu `docker compose 
 
 ## Keamanan
 
-JWT disimpan dalam cookie `HttpOnly`; request yang mengubah data juga memerlukan token CSRF. Di produksi cookie memakai `Secure` dan hanya dikirim melalui HTTPS. Atur `JWT_SECRET` dan password database yang berbeda untuk setiap lingkungan.
+JWT disimpan dalam cookie `HttpOnly`; request yang mengubah data juga memerlukan token CSRF. Di produksi cookie memakai `Secure` dan hanya dikirim melalui HTTPS. Password akun minimal 12 dan maksimal 128 karakter; frasa sandi boleh memakai spasi tanpa kewajiban campuran karakter. Password di-hash dengan bcrypt. Token reset hanya disimpan sebagai hash, berlaku 30 menit, sekali pakai, dan merotasi versi sesi. Pendaftaran publik tidak mendapat akses sampai disetujui admin. Atur `JWT_SECRET` dan password database yang berbeda untuk setiap lingkungan.
 
 ## Screenshot
 

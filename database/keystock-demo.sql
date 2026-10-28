@@ -333,8 +333,10 @@ CREATE TABLE `users` (
   `username` varchar(40) DEFAULT NULL,
   `email` varchar(190) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `role` enum('admin','staff') NOT NULL DEFAULT 'staff',
+  `role` enum('admin','staff','lecturer') NOT NULL DEFAULT 'staff',
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
+  `token_version` int(10) unsigned NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -343,6 +345,22 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+-- Password reset secrets are stored as SHA-256 hashes and expire after 30 minutes.
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `token_hash` varchar(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `used_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `password_resets_token_hash_unique` (`token_hash`),
+  KEY `password_resets_user_id` (`user_id`),
+  KEY `password_resets_expires_at` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Dumping data for table `users`
 --
@@ -350,8 +368,8 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,'Dosen Penguji','dosen','dosen@keystock.local','$2b$12$DHlFxMpkaIkEvAorm.NiEOmLs08XHHYUkhaL2m2o0wB0Jg/fflWae','admin',1,'2026-10-28 14:08:39','2026-10-28 14:08:39'),
-(2,'Staff Gudang','staff','staff@keystock.local','$2b$12$/lKP.0VM7fzj6AB3KK.LhOvv9a9yXujn/8HdmZ5Hk1x.89Xm0qrmi','staff',1,'2026-10-28 14:08:39','2026-10-28 14:08:39');
+(1,'Dosen Penguji','dosen','dosen@keystock.local','$2b$12$DHlFxMpkaIkEvAorm.NiEOmLs08XHHYUkhaL2m2o0wB0Jg/fflWae','lecturer',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39'),
+(2,'Staff Gudang','staff','staff@keystock.local','$2b$12$/lKP.0VM7fzj6AB3KK.LhOvv9a9yXujn/8HdmZ5Hk1x.89Xm0qrmi','staff',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
