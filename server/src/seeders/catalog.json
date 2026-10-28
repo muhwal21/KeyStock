@@ -1,0 +1,1292 @@
+{
+  "brand": "Noir Gear + Work Louder (Framer F1)",
+  "sumber": "noirgear.com, worklouder.cc",
+  "dikumpulkan": "2026-10-27",
+  "mata_uang": "IDR (kecuali harga_usd)",
+  "catatan": "Semua gambar dipilih yang background putih. harga_coret_idr = harga sebelum diskon (compare-at).",
+  "produk": [
+    {
+      "id": "noir-spade65-qmk",
+      "kategori": "keyboard",
+      "nama": "Noir Spade65 QMK/VIA",
+      "deskripsi": "Keyboard 65% aluminium bertema art deco, QMK/VIA, tri-mode, termasuk carrying case.",
+      "varian": [
+        "Warna: Obsidian Black / Pale Golden / Titanium Grey",
+        "Tipe: Fully Assembled / Barebone",
+        "Switch: Linear (KTT KU Orange) / Tactile (KTT KU Brown) / No Switch"
+      ],
+      "spek": {
+        "Form factor": "65%, 66 key",
+        "Material": "Aluminium 6063",
+        "Koneksi": "Wired Type-C, 2.4GHz, Bluetooth 5.0 (3 device)",
+        "Mount": "Gasket (silicone)",
+        "Plate": "PC (FR4 opsional)",
+        "Fitur": "QMK/VIA, multi layout ANSI/ISO + split spacebar, knob multimedia, hot-swap 3&5 pin, keycap PBT dye-sub"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_7.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard1_f6c176be-2062-4f15-abb3-d0f3142c1da0.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard1_7ffeb663-e834-4f18-a40b-ffb3f3b05a21.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_5.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-spade65-qmk",
+      "status": "Ready",
+      "harga_idr_min": 1299000,
+      "harga_idr_max": 1899000,
+      "harga_coret_idr": 2300000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-spade65-qmk/01.png",
+        "gambar/keyboard/noir-spade65-qmk/02.png",
+        "gambar/keyboard/noir-spade65-qmk/03.png",
+        "gambar/keyboard/noir-spade65-qmk/04.png",
+        "gambar/keyboard/noir-spade65-qmk/05.png",
+        "gambar/keyboard/noir-spade65-qmk/06.png",
+        "gambar/keyboard/noir-spade65-qmk/07.png",
+        "gambar/keyboard/noir-spade65-qmk/08.png",
+        "gambar/keyboard/noir-spade65-qmk/09.png",
+        "gambar/keyboard/noir-spade65-qmk/10.png",
+        "gambar/keyboard/noir-spade65-qmk/11.png",
+        "gambar/keyboard/noir-spade65-qmk/12.png",
+        "gambar/keyboard/noir-spade65-qmk/13.png",
+        "gambar/keyboard/noir-spade65-qmk/14.png",
+        "gambar/keyboard/noir-spade65-qmk/15.png",
+        "gambar/keyboard/noir-spade65-qmk/16.png",
+        "gambar/keyboard/noir-spade65-qmk/17.png",
+        "gambar/keyboard/noir-spade65-qmk/18.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-spade65-qmk/01.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/02.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/03.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/04.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/05.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/06.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/07.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/08.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/09.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/10.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/11.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/12.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/13.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/14.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/15.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/16.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/17.jpg",
+        "gambar_asli/keyboard/noir-spade65-qmk/18.jpg"
+      ]
+    },
+    {
+      "id": "noir-spade65-custom-build",
+      "kategori": "keyboard",
+      "nama": "Noir Spade65 Custom Build (QMK/VIA)",
+      "deskripsi": "Spade65 QMK/VIA yang bisa dipilih keycap & switch eksklusif Noir.",
+      "varian": [
+        "Warna: Obsidian Black / Pale Golden / Titanium Grey",
+        "Keycaps: Alpine Bloom / Decocaps / Mayan / Zen Garden / Dream Circuit",
+        "Switch: Noir Citron (linear) / Noir Zest (tactile) / KTT Silent"
+      ],
+      "spek": {
+        "Basis": "Spade65 QMK/VIA (aluminium 6063, 65%, tri-mode, gasket)"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_1_9e391f76-8ad2-49ff-a810-4be4efddaa3e.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/GoldArtboard_3_b569b0a5-114b-43c2-a6d1-f4993a34bb19.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/GoldArtboard_1_e30d4b29-b6db-4c91-a663-1ec37520f3da.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/GoldArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/GoldArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/GoldArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SilverArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SilverArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SilverArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SilverArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SilverArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Titan_GreyArtboard_6.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-spade65-custom-build",
+      "status": "Ready",
+      "harga_idr_min": 1699000,
+      "harga_idr_max": 1899000,
+      "harga_coret_idr": 2300000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-spade65-custom-build/01.png",
+        "gambar/keyboard/noir-spade65-custom-build/02.png",
+        "gambar/keyboard/noir-spade65-custom-build/03.png",
+        "gambar/keyboard/noir-spade65-custom-build/04.png",
+        "gambar/keyboard/noir-spade65-custom-build/05.png",
+        "gambar/keyboard/noir-spade65-custom-build/06.png",
+        "gambar/keyboard/noir-spade65-custom-build/07.png",
+        "gambar/keyboard/noir-spade65-custom-build/08.png",
+        "gambar/keyboard/noir-spade65-custom-build/09.png",
+        "gambar/keyboard/noir-spade65-custom-build/10.png",
+        "gambar/keyboard/noir-spade65-custom-build/11.png",
+        "gambar/keyboard/noir-spade65-custom-build/12.png",
+        "gambar/keyboard/noir-spade65-custom-build/13.png",
+        "gambar/keyboard/noir-spade65-custom-build/14.png",
+        "gambar/keyboard/noir-spade65-custom-build/15.png",
+        "gambar/keyboard/noir-spade65-custom-build/16.png",
+        "gambar/keyboard/noir-spade65-custom-build/17.png",
+        "gambar/keyboard/noir-spade65-custom-build/18.png",
+        "gambar/keyboard/noir-spade65-custom-build/19.png",
+        "gambar/keyboard/noir-spade65-custom-build/20.png",
+        "gambar/keyboard/noir-spade65-custom-build/21.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-spade65-custom-build/01.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/02.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/03.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/04.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/05.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/06.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/07.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/08.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/09.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/10.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/11.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/12.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/13.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/14.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/15.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/16.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/17.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/18.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/19.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/20.jpg",
+        "gambar_asli/keyboard/noir-spade65-custom-build/21.jpg"
+      ]
+    },
+    {
+      "id": "noir-spade65",
+      "kategori": "keyboard",
+      "nama": "Noir Spade65 (Non QMK/VIA)",
+      "deskripsi": "Spade65 versi non-QMK, aluminium 6063, tri-mode.",
+      "varian": [
+        "Warna: Obsidian Black / Pale Golden",
+        "Tipe: Fully Assembled / Barebone",
+        "Switch: KTT KU Orange / KTT KU Brown / No Switch"
+      ],
+      "spek": {
+        "Form factor": "65%, 66 key",
+        "Berat": "1355 ±10 g",
+        "Material": "Aluminium 6063",
+        "Koneksi": "Wired, 2.4GHz, Bluetooth 5.0",
+        "Kabel": "Coiled + straight"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_7.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard1_f6c176be-2062-4f15-abb3-d0f3142c1da0.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard1_7ffeb663-e834-4f18-a40b-ffb3f3b05a21.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/PaleGoldenArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ObsidianBlackArtboard5.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-spade65",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 1099000,
+      "harga_idr_max": 1899000,
+      "harga_coret_idr": 2100000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-spade65/01.png",
+        "gambar/keyboard/noir-spade65/02.png",
+        "gambar/keyboard/noir-spade65/03.png",
+        "gambar/keyboard/noir-spade65/04.png",
+        "gambar/keyboard/noir-spade65/05.png",
+        "gambar/keyboard/noir-spade65/06.png",
+        "gambar/keyboard/noir-spade65/07.png",
+        "gambar/keyboard/noir-spade65/08.png",
+        "gambar/keyboard/noir-spade65/09.png",
+        "gambar/keyboard/noir-spade65/10.png",
+        "gambar/keyboard/noir-spade65/11.png",
+        "gambar/keyboard/noir-spade65/12.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-spade65/01.jpg",
+        "gambar_asli/keyboard/noir-spade65/02.jpg",
+        "gambar_asli/keyboard/noir-spade65/03.jpg",
+        "gambar_asli/keyboard/noir-spade65/04.jpg",
+        "gambar_asli/keyboard/noir-spade65/05.jpg",
+        "gambar_asli/keyboard/noir-spade65/06.jpg",
+        "gambar_asli/keyboard/noir-spade65/07.jpg",
+        "gambar_asli/keyboard/noir-spade65/08.jpg",
+        "gambar_asli/keyboard/noir-spade65/09.jpg",
+        "gambar_asli/keyboard/noir-spade65/10.jpg",
+        "gambar_asli/keyboard/noir-spade65/11.jpg",
+        "gambar_asli/keyboard/noir-spade65/12.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless65",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless65",
+      "deskripsi": "Keyboard 65% wireless dengan layar TFT & knob, ringkas untuk desk bersih.",
+      "varian": [
+        "Warna: Black / Beige",
+        "Switch: Linear (Huano Grape Orange) / Tactile (Outemu GTMX Purple) / Silent (KTT Silent)"
+      ],
+      "spek": {
+        "Form factor": "65%",
+        "Koneksi": "Type-C, 2.4GHz dongle, Bluetooth (3 device)",
+        "Fitur": "Multi layout PCB (ANSI/ISO, 7u), gasket mount, flex-cut PCB & PC plate, 3 layer foam, VIA, layar TFT LCD, knob programmable, stabilizer pre-lubed, south-facing, hot-swap 3&5 pin",
+        "Keycap": "PBT doubleshot"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_1_33848f29-0c29-4985-8fe0-27136200108e.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BlackArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BlackArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BlackArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BlackArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BeigeArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Timeless65_BlackArtboard_5.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless65",
+      "status": "Ready",
+      "harga_idr_min": 999000,
+      "harga_idr_max": 999000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless65/01.png",
+        "gambar/keyboard/noir-timeless65/02.png",
+        "gambar/keyboard/noir-timeless65/03.png",
+        "gambar/keyboard/noir-timeless65/04.png",
+        "gambar/keyboard/noir-timeless65/05.png",
+        "gambar/keyboard/noir-timeless65/06.png",
+        "gambar/keyboard/noir-timeless65/07.png",
+        "gambar/keyboard/noir-timeless65/08.png",
+        "gambar/keyboard/noir-timeless65/09.png",
+        "gambar/keyboard/noir-timeless65/10.png",
+        "gambar/keyboard/noir-timeless65/11.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless65/01.jpg",
+        "gambar_asli/keyboard/noir-timeless65/02.jpg",
+        "gambar_asli/keyboard/noir-timeless65/03.jpg",
+        "gambar_asli/keyboard/noir-timeless65/04.jpg",
+        "gambar_asli/keyboard/noir-timeless65/05.jpg",
+        "gambar_asli/keyboard/noir-timeless65/06.jpg",
+        "gambar_asli/keyboard/noir-timeless65/07.jpg",
+        "gambar_asli/keyboard/noir-timeless65/08.jpg",
+        "gambar_asli/keyboard/noir-timeless65/09.jpg",
+        "gambar_asli/keyboard/noir-timeless65/10.jpg",
+        "gambar_asli/keyboard/noir-timeless65/11.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless82-v2",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless82 V2",
+      "deskripsi": "Keyboard 75% exploded (81 key) wireless, baterai 6000mAh, layar TFT, knob.",
+      "varian": [
+        "Warna: Beige / Black",
+        "Switch: Tactile (Outemu GTMX Purple) / Linear (Huano Grape Orange) / Silent (KTT Silent)"
+      ],
+      "spek": {
+        "Form factor": "75% exploded, 81 key",
+        "Koneksi": "Type-C, 2.4GHz, Bluetooth (3 device)",
+        "Baterai": "6000mAh",
+        "Mount": "Gasket (silicone)",
+        "Foam": "IXPE, Poron, silicone case foam",
+        "Fitur": "Multi layout PCB, TFT LCD, knob, hot-swap 3&5 pin"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BeigeArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard_1_07cf6420-8fc3-4af0-83af-262d4f5210e5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BeigeArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BeigeArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BeigeArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BeigeArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard5.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless82-v2",
+      "status": "Ready",
+      "harga_idr_min": 1199000,
+      "harga_idr_max": 1199000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless82-v2/01.png",
+        "gambar/keyboard/noir-timeless82-v2/02.png",
+        "gambar/keyboard/noir-timeless82-v2/03.png",
+        "gambar/keyboard/noir-timeless82-v2/04.png",
+        "gambar/keyboard/noir-timeless82-v2/05.png",
+        "gambar/keyboard/noir-timeless82-v2/06.png",
+        "gambar/keyboard/noir-timeless82-v2/07.png",
+        "gambar/keyboard/noir-timeless82-v2/08.png",
+        "gambar/keyboard/noir-timeless82-v2/09.png",
+        "gambar/keyboard/noir-timeless82-v2/10.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless82-v2/01.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/02.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/03.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/04.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/05.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/06.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/07.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/08.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/09.jpg",
+        "gambar_asli/keyboard/noir-timeless82-v2/10.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless82v2-classic",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless82 v2 Classic Edition",
+      "deskripsi": "Versi entry-level Timeless82 v2 (wired) dengan fitur lengkap.",
+      "varian": [
+        "Warna: Black / Beige",
+        "Switch: Huano Grape Orange / Outemu GTMX Purple / KTT Silent"
+      ],
+      "spek": {
+        "Form factor": "75%",
+        "Koneksi": "Wired",
+        "Fitur": "Multi layout PCB (ANSI/ISO, 7u), gasket mount, flex-cut PCB & PC plate, 3 layer foam, VIA, layar TFT LCD, knob programmable, stabilizer pre-lubed, south-facing, hot-swap 3&5 pin",
+        "Keycap": "PBT doubleshot + accent keycaps"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard_1_2a8f469a-fe3d-4322-848e-26a68e84899e.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard4_38778ed5-a88a-476d-b206-d23715662add.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard3_d29c8869-bbbb-4f13-bb89-88b744c3d7f6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard6_ae672359-29b8-4555-a380-4faf08938c60.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard5_e2d75be8-0909-41a5-b300-0b976f135be8.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard8_699c4bb5-2d1e-4ac5-95e2-8e3eeb7c413e.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard7_444a00e0-c04e-4a5c-952f-b89b1c3a36d3.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless82v2-classic",
+      "status": "Ready",
+      "harga_idr_min": 999000,
+      "harga_idr_max": 999000,
+      "harga_coret_idr": 1049000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless82v2-classic/01.png",
+        "gambar/keyboard/noir-timeless82v2-classic/02.png",
+        "gambar/keyboard/noir-timeless82v2-classic/03.png",
+        "gambar/keyboard/noir-timeless82v2-classic/04.png",
+        "gambar/keyboard/noir-timeless82v2-classic/05.png",
+        "gambar/keyboard/noir-timeless82v2-classic/06.png",
+        "gambar/keyboard/noir-timeless82v2-classic/07.png",
+        "gambar/keyboard/noir-timeless82v2-classic/08.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless82v2-classic/01.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/02.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/03.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/04.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/05.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/06.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/07.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-classic/08.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless82v2-special-edition",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless82 v2 Special Edition",
+      "deskripsi": "Edisi tema mitologi Nordik, QMK/VIA, plate PC + FR4.",
+      "varian": [
+        "Warna: Genesis / Ragnarok",
+        "Switch: KTT KU Orange / KTT KU Brown / KTT Silent"
+      ],
+      "spek": {
+        "Form factor": "75%, 81 key",
+        "Material": "ABS",
+        "Koneksi": "Wired, 2.4GHz, Bluetooth",
+        "Plate": "PC & FR4",
+        "Fitur": "QMK/VIA, TFT LCD, knob, hot-swap, tempest mod"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard10.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard7.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard9.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/VariantArtboard8.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless82v2-special-edition",
+      "status": "Ready",
+      "harga_idr_min": 1199000,
+      "harga_idr_max": 1199000,
+      "harga_coret_idr": 1559000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless82v2-special-edition/01.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/02.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/03.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/04.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/05.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/06.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/07.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/08.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/09.png",
+        "gambar/keyboard/noir-timeless82v2-special-edition/10.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/01.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/02.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/03.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/04.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/05.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/06.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/07.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/08.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/09.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-special-edition/10.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless82v2-dandadan",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless82 v2 Dan Da Dan Edition",
+      "deskripsi": "Edisi kolaborasi Dan Da Dan dengan novelty keycaps resmi.",
+      "varian": [
+        "Warna: Alien / Spirit",
+        "Switch: Huano Grape Orange / Outemu GTMX Purple"
+      ],
+      "spek": {
+        "Form factor": "75%",
+        "Koneksi": "Type-C, 2.4GHz, Bluetooth (3 device)",
+        "Fitur": "Gasket Poron, TFT LCD, knob, hot-swap, keycap PBT dye-sub"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_9.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_8.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_10.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Variant_Keyboard_DanDaDanArtboard_7.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless82v2-dandadan",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 1199000,
+      "harga_idr_max": 1199000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless82v2-dandadan/01.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/02.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/03.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/04.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/05.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/06.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/07.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/08.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/09.png",
+        "gambar/keyboard/noir-timeless82v2-dandadan/10.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/01.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/02.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/03.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/04.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/05.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/06.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/07.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/08.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/09.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-dandadan/10.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless82v2-ntl",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless82 v2 x Nevertoolavish \"Type Out Loud\"",
+      "deskripsi": "Edisi kolaborasi Nevertoolavish.",
+      "varian": [
+        "NTL Edition",
+        "Switch: Huano Grape Orange / Outemu GTMX Purple"
+      ],
+      "spek": {
+        "Form factor": "75%",
+        "Material": "ABS",
+        "Koneksi": "Type-C, 2.4GHz, Bluetooth (3 device)",
+        "Fitur": "Gasket Poron, TFT LCD, knob, hot-swap"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/KeyboardVariantArtboard1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/KeyboardVariantArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/KeyboardVariantArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/KeyboardVariantArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/KeyboardVariantArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Keyboard_VariantArtboard_1.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless82v2-ntl",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 1499000,
+      "harga_idr_max": 1499000,
+      "harga_coret_idr": 1699000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless82v2-ntl/01.png",
+        "gambar/keyboard/noir-timeless82v2-ntl/02.png",
+        "gambar/keyboard/noir-timeless82v2-ntl/03.png",
+        "gambar/keyboard/noir-timeless82v2-ntl/04.png",
+        "gambar/keyboard/noir-timeless82v2-ntl/05.png",
+        "gambar/keyboard/noir-timeless82v2-ntl/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/01.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/02.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/03.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/04.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/05.jpg",
+        "gambar_asli/keyboard/noir-timeless82v2-ntl/06.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless-1800",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless1800",
+      "deskripsi": "Keyboard 96% (98 key) wireless dengan numpad, layar TFT & knob.",
+      "varian": [
+        "Warna: Black / Beige",
+        "Switch: KTT KU Orange / KTT KU Brown / KTT Silent"
+      ],
+      "spek": {
+        "Form factor": "96%, 98 key",
+        "Koneksi": "Wired, 2.4GHz, Bluetooth",
+        "Fitur": "Multi layout PCB (ANSI/ISO, 7u), gasket mount, flex-cut PCB & PC plate, 3 layer foam, VIA, layar TFT LCD, knob programmable, stabilizer pre-lubed, south-facing, hot-swap 3&5 pin"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless_1800Artboard_1_cd6030ba-6d33-4cf3-98a6-3022e865d00a.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless_1800Artboard_2_5923a441-04f7-4cb6-9209-50fb5991dcb3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless_1800Artboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless1800Artboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless_1800Artboard_5_a41c7d15-67e5-4ce6-8993-2faafd67d868.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/timeless_1800Artboard_6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard_7.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Artboard_8.png"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless-1800",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 1199000,
+      "harga_idr_max": 1199000,
+      "harga_coret_idr": 1299000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless-1800/01.png",
+        "gambar/keyboard/noir-timeless-1800/02.png",
+        "gambar/keyboard/noir-timeless-1800/03.png",
+        "gambar/keyboard/noir-timeless-1800/04.png",
+        "gambar/keyboard/noir-timeless-1800/05.png",
+        "gambar/keyboard/noir-timeless-1800/06.png",
+        "gambar/keyboard/noir-timeless-1800/07.png",
+        "gambar/keyboard/noir-timeless-1800/08.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless-1800/01.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/02.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/03.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/04.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/05.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/06.jpg",
+        "gambar_asli/keyboard/noir-timeless-1800/07.png",
+        "gambar_asli/keyboard/noir-timeless-1800/08.png"
+      ]
+    },
+    {
+      "id": "noir-n1x",
+      "kategori": "keyboard",
+      "nama": "Noir N1/X",
+      "deskripsi": "Keyboard 65% wireless bertema Neo-Urban, VIA/QMK, side glow RGB.",
+      "varian": [
+        "Warna: Zest / Citron",
+        "Switch: KTT KU Orange / KTT KU Brown"
+      ],
+      "spek": {
+        "Form factor": "65%, 66 key",
+        "Berat": "700 g",
+        "Koneksi": "Type-C, 2.4GHz, Bluetooth (3 device)",
+        "Plate": "POM",
+        "Baterai": "3000mAh",
+        "Fitur": "VIA/QMK, gasket, side glow RGB, knob, screw-in stabilizer, hot-swap, keycap PBT dye-sub"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_9_478d8e07-f77b-4f03-9b20-04a0c20268b5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard11.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard8.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_8_e2209bd9-d118-44de-b80a-f60b5805d48a.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard10.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard7.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/variantcolorrArtboard9.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-n1x",
+      "status": "Ready",
+      "harga_idr_min": 999000,
+      "harga_idr_max": 999000,
+      "harga_coret_idr": 1409000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-n1x/01.png",
+        "gambar/keyboard/noir-n1x/02.png",
+        "gambar/keyboard/noir-n1x/03.png",
+        "gambar/keyboard/noir-n1x/04.png",
+        "gambar/keyboard/noir-n1x/05.png",
+        "gambar/keyboard/noir-n1x/06.png",
+        "gambar/keyboard/noir-n1x/07.png",
+        "gambar/keyboard/noir-n1x/08.png",
+        "gambar/keyboard/noir-n1x/09.png",
+        "gambar/keyboard/noir-n1x/10.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-n1x/01.jpg",
+        "gambar_asli/keyboard/noir-n1x/02.jpg",
+        "gambar_asli/keyboard/noir-n1x/03.jpg",
+        "gambar_asli/keyboard/noir-n1x/04.jpg",
+        "gambar_asli/keyboard/noir-n1x/05.jpg",
+        "gambar_asli/keyboard/noir-n1x/06.jpg",
+        "gambar_asli/keyboard/noir-n1x/07.jpg",
+        "gambar_asli/keyboard/noir-n1x/08.jpg",
+        "gambar_asli/keyboard/noir-n1x/09.jpg",
+        "gambar_asli/keyboard/noir-n1x/10.jpg"
+      ]
+    },
+    {
+      "id": "noir-timeless-he",
+      "kategori": "keyboard",
+      "nama": "Noir Timeless HE (Hall Effect)",
+      "deskripsi": "Keyboard 75% magnetic/Hall Effect: rapid trigger, actuation adjustable, polling 8K.",
+      "varian": [
+        "Warna: Black Wheeler / White Trooper / Blue Plasma"
+      ],
+      "spek": {
+        "Form factor": "75%, 82 key",
+        "Switch": "Outemu Pink Magnetic",
+        "Koneksi": "Wired Type-C",
+        "Plate": "Steel",
+        "Dimensi": "330 x 145 x 28 mm",
+        "Berat": "1000 g",
+        "Fitur": "Rapid trigger, adjustable actuation, DKS, mod-tap, 8K polling, knob"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/mecha_keyboard_variant_web_updateArtboard_4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard3_c7fe53da-28e2-4590-a521-784cea3721dc.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/whiteArtboard3_228197fe-675b-4f8c-a63b-efea9080ac56.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlueArtboard_3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard2_94860d09-4593-4935-9b5f-fcce8b807a3c.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/whiteArtboard2_8043779d-b16c-45a4-b328-9a2e24b91c14.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlueArtboard_2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlackArtboard4_b506cf60-fd75-43f2-8e5a-880b3c2aa28f.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/whiteArtboard4_03adae0f-4022-42de-a79c-c0333559ef84.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/BlueArtboard_5.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-timeless-he",
+      "status": "Ready",
+      "harga_idr_min": 699000,
+      "harga_idr_max": 699000,
+      "harga_coret_idr": 1399000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/keyboard/noir-timeless-he/01.png",
+        "gambar/keyboard/noir-timeless-he/02.png",
+        "gambar/keyboard/noir-timeless-he/03.png",
+        "gambar/keyboard/noir-timeless-he/04.png",
+        "gambar/keyboard/noir-timeless-he/05.png",
+        "gambar/keyboard/noir-timeless-he/06.png",
+        "gambar/keyboard/noir-timeless-he/07.png",
+        "gambar/keyboard/noir-timeless-he/08.png",
+        "gambar/keyboard/noir-timeless-he/09.png",
+        "gambar/keyboard/noir-timeless-he/10.png",
+        "gambar/keyboard/noir-timeless-he/11.png",
+        "gambar/keyboard/noir-timeless-he/12.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/noir-timeless-he/01.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/02.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/03.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/04.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/05.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/06.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/07.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/08.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/09.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/10.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/11.jpg",
+        "gambar_asli/keyboard/noir-timeless-he/12.jpg"
+      ]
+    },
+    {
+      "id": "wl-framer-f1",
+      "kategori": "keyboard",
+      "brand": "Work Louder",
+      "nama": "Framer F1",
+      "url": "https://worklouder.cc/framer-f1",
+      "status": "Ready (ships 1-3 hari kerja)",
+      "harga_idr_min": null,
+      "harga_idr_max": null,
+      "harga_coret_idr": null,
+      "harga_usd": 439,
+      "isi_box": [
+        "Framer F1",
+        "Kabel USB-C",
+        "Spare keycaps alt colorway",
+        "Quick start guide"
+      ],
+      "deskripsi": "Keyboard mekanikal low-profile 75% kolaborasi Framer x Work Louder. Body CNC aluminium anodized, 2 rotary encoder, LCD full-color 100×310 px, icon keycaps & shortcut Framer, bisa tampilkan statistik situs Framer. Plug-and-play USB-C / Bluetooth, tanpa driver.",
+      "varian": [],
+      "spek": {
+        "Switch": "Linear 55g, two-stage spring",
+        "Layout": "75% / 84 key",
+        "Enclosure": "CNC aluminium, anodized black",
+        "Tilt riser": "Magnetik, silicone",
+        "Keycap": "Dye-sub PBT",
+        "Knob": "2x CNC aluminium anodized black",
+        "Layar": "LCD full-color 100×310 px, kaca CNC",
+        "Koneksi": "USB-C / Bluetooth",
+        "Dimensi": "1.935 x 12.435 x 31.485 cm",
+        "Garansi": "2 tahun, worldwide shipping, retur 14 hari"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0540/6339/9083/files/FramerF1-1.webp?v=1792775307",
+        "https://framerusercontent.com/images/Rwq58xkHcwHXo4WAfYd7yjzb6is.png?width=3840&height=3840",
+        "https://framerusercontent.com/images/mIxPaqUw474ok4jAo8uIX8ZkM.png?width=3840&height=3840",
+        "https://framerusercontent.com/images/TYhyrbxMXWxNwQXkOMjSFXKUBS8.png?width=3840&height=3840",
+        "https://framerusercontent.com/images/jlY9SdLzxGh4OndWoP6X6SU3lJc.png?width=2160&height=2160",
+        "https://framerusercontent.com/images/NP26Vell0nV351CchOSpbQs6Jfg.png?width=3840&height=3840",
+        "https://framerusercontent.com/images/yugiixuurMrZe4X5V3LoyPl07g0.png?width=3840&height=3840"
+      ],
+      "gambar_lokal": [
+        "gambar/keyboard/wl-framer-f1/01.png",
+        "gambar/keyboard/wl-framer-f1/02.png",
+        "gambar/keyboard/wl-framer-f1/03.png",
+        "gambar/keyboard/wl-framer-f1/04.png",
+        "gambar/keyboard/wl-framer-f1/05.png",
+        "gambar/keyboard/wl-framer-f1/06.png",
+        "gambar/keyboard/wl-framer-f1/07.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keyboard/wl-framer-f1/01.webp",
+        "gambar_asli/keyboard/wl-framer-f1/02.png",
+        "gambar_asli/keyboard/wl-framer-f1/03.png",
+        "gambar_asli/keyboard/wl-framer-f1/04.png",
+        "gambar_asli/keyboard/wl-framer-f1/05.png",
+        "gambar_asli/keyboard/wl-framer-f1/06.png",
+        "gambar_asli/keyboard/wl-framer-f1/07.png"
+      ]
+    },
+    {
+      "id": "noir-citron-linear-switch",
+      "kategori": "switch",
+      "nama": "Noir Citron Linear Switch",
+      "deskripsi": "Switch linear 5-pin factory lubed, long pole.",
+      "varian": [
+        "10 pcs – Rp39.000",
+        "50 pcs – Rp189.000"
+      ],
+      "spek": {
+        "Tipe": "Linear",
+        "Actuation": "50g (bottom out 58g)",
+        "Travel": "1.9mm / total 3.5mm",
+        "Housing": "Top POM, bottom Nylon, stem POM",
+        "Pin": "5 pin"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Banner_New_SwitchArtboard_1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/CitronArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/CitronArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/CitronArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/CitronArtboard3.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-citron-linear-switch",
+      "status": "Ready",
+      "harga_idr_min": 39000,
+      "harga_idr_max": 189000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/switch/noir-citron-linear-switch/01.png",
+        "gambar/switch/noir-citron-linear-switch/02.png",
+        "gambar/switch/noir-citron-linear-switch/03.png",
+        "gambar/switch/noir-citron-linear-switch/04.png",
+        "gambar/switch/noir-citron-linear-switch/05.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/switch/noir-citron-linear-switch/01.jpg",
+        "gambar_asli/switch/noir-citron-linear-switch/02.jpg",
+        "gambar_asli/switch/noir-citron-linear-switch/03.jpg",
+        "gambar_asli/switch/noir-citron-linear-switch/04.jpg",
+        "gambar_asli/switch/noir-citron-linear-switch/05.jpg"
+      ]
+    },
+    {
+      "id": "noir-zest-tactile-switch",
+      "kategori": "switch",
+      "nama": "Noir Zest Tactile Switch",
+      "deskripsi": "Switch tactile 5-pin factory lubed, long pole.",
+      "varian": [
+        "10 pcs – Rp39.000",
+        "50 pcs – Rp189.000"
+      ],
+      "spek": {
+        "Tipe": "Tactile",
+        "Actuation": "40g (bottom out 60g)",
+        "Travel": "2.0mm / total 3.5mm",
+        "Housing": "Top POM, bottom Nylon, stem POM",
+        "Pin": "5 pin"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/Banner_New_SwitchArtboard_1_copy.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ZestArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ZestArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ZestArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/ZestArtboard4.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-zest-tactile-switch",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 39000,
+      "harga_idr_max": 189000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/switch/noir-zest-tactile-switch/01.png",
+        "gambar/switch/noir-zest-tactile-switch/02.png",
+        "gambar/switch/noir-zest-tactile-switch/03.png",
+        "gambar/switch/noir-zest-tactile-switch/04.png",
+        "gambar/switch/noir-zest-tactile-switch/05.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/switch/noir-zest-tactile-switch/01.jpg",
+        "gambar_asli/switch/noir-zest-tactile-switch/02.jpg",
+        "gambar_asli/switch/noir-zest-tactile-switch/03.jpg",
+        "gambar_asli/switch/noir-zest-tactile-switch/04.jpg",
+        "gambar_asli/switch/noir-zest-tactile-switch/05.jpg"
+      ]
+    },
+    {
+      "id": "noir-spade65-fr4-extra-plate",
+      "kategori": "aksesoris",
+      "nama": "Noir Spade65 FR4 Extra Plate",
+      "deskripsi": "Plate FR4 tambahan untuk Spade65.",
+      "varian": [
+        "Split spacebar + ANSI",
+        "Split spacebar + ISO",
+        "Regular spacebar + ANSI",
+        "Regular spacebar + ISO"
+      ],
+      "spek": {
+        "Kompatibel": "Noir Spade65"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard5.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard6.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard7.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard8.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/SpadeplateArtboard9.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-spade65-fr4-extra-plate",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 9000,
+      "harga_idr_max": 9000,
+      "harga_coret_idr": 79000,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/01.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/02.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/03.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/04.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/05.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/06.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/07.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/08.png",
+        "gambar/aksesoris/noir-spade65-fr4-extra-plate/09.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/01.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/02.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/03.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/04.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/05.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/06.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/07.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/08.jpg",
+        "gambar_asli/aksesoris/noir-spade65-fr4-extra-plate/09.jpg"
+      ]
+    },
+    {
+      "id": "noir-type-c-straight-cable-yc8-aviator",
+      "kategori": "aksesoris",
+      "nama": "Noir Type-C Straight Cable YC8 Aviator",
+      "deskripsi": "Kabel braided double-sleeved dengan konektor aviator YC8.",
+      "varian": [
+        "Midnight Black",
+        "Ultimate Grey",
+        "Olive Green"
+      ],
+      "spek": {
+        "Panjang": "165 cm (15 cm C–YC8 + 150 cm A–YC8)",
+        "Konektor": "YC8 4-pin aviator, USB-C & USB-A gold plated",
+        "Kompatibel": "Semua keyboard Noir"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/posterstraight.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/page1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/page2.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/OliveAviator-4.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/AviatorGrey-1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/BlackAviator.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-type-c-straight-cable-yc8-aviator",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 119000,
+      "harga_idr_max": 119000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/01.png",
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/02.png",
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/03.png",
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/04.png",
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/05.png",
+        "gambar/aksesoris/noir-type-c-straight-cable-yc8-aviator/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/01.jpg",
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/02.jpg",
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/03.jpg",
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/04.jpg",
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/05.jpg",
+        "gambar_asli/aksesoris/noir-type-c-straight-cable-yc8-aviator/06.jpg"
+      ]
+    },
+    {
+      "id": "noir-type-c-coiled-cable-yc8-aviator",
+      "kategori": "aksesoris",
+      "nama": "Noir Type-C Coiled Cable YC8 Aviator",
+      "deskripsi": "Kabel coiled braided dengan konektor aviator YC8.",
+      "varian": [
+        "Ultimate Grey",
+        "Olive Green",
+        "Midnight Black"
+      ],
+      "spek": {
+        "Panjang": "175 cm (coil 15 cm, Ø20 mm)",
+        "Konektor": "YC8 4-pin aviator, USB-C & USB-A gold plated",
+        "Kompatibel": "Semua keyboard Noir"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/postercoil.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/page2coiled.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/page1coiledcable.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/CoiledOlive-3.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/CoiledGrey-1.jpg",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/products/coiledgreen.jpg"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-type-c-coiled-cable-yc8-aviator",
+      "status": "Sold out (saat dicek)",
+      "harga_idr_min": 129000,
+      "harga_idr_max": 129000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/01.png",
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/02.png",
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/03.png",
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/04.png",
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/05.png",
+        "gambar/aksesoris/noir-type-c-coiled-cable-yc8-aviator/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/01.jpg",
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/02.jpg",
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/03.jpg",
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/04.jpg",
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/05.jpg",
+        "gambar_asli/aksesoris/noir-type-c-coiled-cable-yc8-aviator/06.jpg"
+      ]
+    },
+    {
+      "id": "noir-zen-garden-white-light-deskmat",
+      "kategori": "deskmat",
+      "nama": "Noir Zen Garden White/Light Deskmat",
+      "deskripsi": "Deskmat full-size untuk keyboard + mouse.",
+      "varian": [],
+      "spek": {
+        "Ukuran": "900 x 400 x 4 mm",
+        "Bahan atas": "Microfiber halus, tahan air",
+        "Bahan bawah": "Karet anti slip"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/tumbnailZEN_WHITE.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/1_cbc24dea-40ce-4faa-be32-67ad911abc15.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/2_43624b76-b836-4626-ad2e-f0a3a7f0c855.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/3_b77968e4-9b06-45e9-997c-e66b9ed3bd2a.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/4_a5ec56bd-d389-4409-adbd-2a010da5c0a2.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/5_25601b19-16ad-4db7-a3ce-12fd2a363530.png"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-zen-garden-white-light-deskmat",
+      "status": "Ready",
+      "harga_idr_min": 229000,
+      "harga_idr_max": 229000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/01.png",
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/02.png",
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/03.png",
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/04.png",
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/05.png",
+        "gambar/deskmat/noir-zen-garden-white-light-deskmat/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/01.png",
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/02.png",
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/03.png",
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/04.png",
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/05.png",
+        "gambar_asli/deskmat/noir-zen-garden-white-light-deskmat/06.png"
+      ]
+    },
+    {
+      "id": "noir-zen-garden-black-dark-deskmat",
+      "kategori": "deskmat",
+      "nama": "Noir Zen Garden Black/Dark Deskmat",
+      "deskripsi": "Deskmat full-size untuk keyboard + mouse.",
+      "varian": [],
+      "spek": {
+        "Ukuran": "900 x 400 x 4 mm",
+        "Bahan atas": "Microfiber halus, tahan air",
+        "Bahan bawah": "Karet anti slip"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/tumbnailzen_black.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/1_27d73269-d8d0-4321-ae89-98980e50266e.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/2_4397399e-da24-48ca-a63b-131a221c0d8b.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/3_d8543381-8edf-44f5-8da3-64de278ff23f.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/4_32813974-e9dc-4fc0-8ad7-f7eef66c9209.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/5_71c3092f-e147-453c-8d3d-7b1433e60dab.png"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-zen-garden-black-dark-deskmat",
+      "status": "Ready",
+      "harga_idr_min": 229000,
+      "harga_idr_max": 229000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/01.png",
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/02.png",
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/03.png",
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/04.png",
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/05.png",
+        "gambar/deskmat/noir-zen-garden-black-dark-deskmat/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/01.png",
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/02.png",
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/03.png",
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/04.png",
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/05.png",
+        "gambar_asli/deskmat/noir-zen-garden-black-dark-deskmat/06.png"
+      ]
+    },
+    {
+      "id": "noir-solace-deskmat",
+      "kategori": "deskmat",
+      "nama": "Noir Solace Deskmat",
+      "deskripsi": "Deskmat full-size untuk keyboard + mouse.",
+      "varian": [],
+      "spek": {
+        "Ukuran": "900 x 400 x 4 mm",
+        "Bahan atas": "Microfiber halus, tahan air",
+        "Bahan bawah": "Karet anti slip"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/tumbnailSOLACE.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/1_29ed9f41-4f2b-4cf2-b0f3-445ef1970908.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/2_21667787-7d90-4c47-9eb4-a10e85ea8642.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/3_e912444a-cfa1-4e33-88a0-f68e374ade19.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/4_c04f2679-05a5-48ac-85ba-3299f692f1db.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/5_8cf19453-e029-4d3a-9083-d50376094eb3.png"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-solace-deskmat",
+      "status": "Ready",
+      "harga_idr_min": 229000,
+      "harga_idr_max": 229000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/deskmat/noir-solace-deskmat/01.png",
+        "gambar/deskmat/noir-solace-deskmat/02.png",
+        "gambar/deskmat/noir-solace-deskmat/03.png",
+        "gambar/deskmat/noir-solace-deskmat/04.png",
+        "gambar/deskmat/noir-solace-deskmat/05.png",
+        "gambar/deskmat/noir-solace-deskmat/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/deskmat/noir-solace-deskmat/01.png",
+        "gambar_asli/deskmat/noir-solace-deskmat/02.png",
+        "gambar_asli/deskmat/noir-solace-deskmat/03.png",
+        "gambar_asli/deskmat/noir-solace-deskmat/04.png",
+        "gambar_asli/deskmat/noir-solace-deskmat/05.png",
+        "gambar_asli/deskmat/noir-solace-deskmat/06.png"
+      ]
+    },
+    {
+      "id": "noir-aztec-deskmat-copy",
+      "kategori": "deskmat",
+      "nama": "Noir Nordic Bloom Deskmat",
+      "deskripsi": "Deskmat full-size untuk keyboard + mouse.",
+      "varian": [],
+      "spek": {
+        "Ukuran": "900 x 400 x 4 mm",
+        "Bahan atas": "Microfiber halus, tahan air",
+        "Bahan bawah": "Karet anti slip"
+      },
+      "gambar": [
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/tumbnailnordic.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/1_68acd943-f83d-4019-bd82-ad554738f556.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/2_315e20d7-6504-4a82-becf-2b44e14f4058.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/3_56988626-b561-48d5-8eb2-362fa2062080.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/4_7f214e84-d019-43d6-887f-6b6ff89aa536.png",
+        "https://cdn.shopify.com/s/files/1/0506/2741/2156/files/5_7ed7c45a-71ed-4125-be73-1f73fb6652f6.png"
+      ],
+      "brand": "Noir Gear",
+      "url": "https://www.noirgear.com/products/noir-aztec-deskmat-copy",
+      "status": "Ready",
+      "harga_idr_min": 229000,
+      "harga_idr_max": 229000,
+      "harga_coret_idr": null,
+      "isi_box": [],
+      "gambar_lokal": [
+        "gambar/deskmat/noir-aztec-deskmat-copy/01.png",
+        "gambar/deskmat/noir-aztec-deskmat-copy/02.png",
+        "gambar/deskmat/noir-aztec-deskmat-copy/03.png",
+        "gambar/deskmat/noir-aztec-deskmat-copy/04.png",
+        "gambar/deskmat/noir-aztec-deskmat-copy/05.png",
+        "gambar/deskmat/noir-aztec-deskmat-copy/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/01.png",
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/02.png",
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/03.png",
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/04.png",
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/05.png",
+        "gambar_asli/deskmat/noir-aztec-deskmat-copy/06.png"
+      ]
+    },
+    {
+      "id": "wl-knob-sans",
+      "kategori": "keycaps",
+      "brand": "Work Louder",
+      "nama": "k•no•b Sans Keyset",
+      "url": "https://worklouder.cc/knob-sans",
+      "status": "Ready (ships 1-3 hari kerja)",
+      "harga_idr_min": null,
+      "harga_idr_max": null,
+      "harga_coret_idr": null,
+      "harga_usd": 74.98,
+      "harga_coret_usd": 84.98,
+      "isi_box": [
+        "114 keycaps"
+      ],
+      "deskripsi": "Keyset low-profile untuk switch MX, spray coating dengan legend laser-etched.",
+      "varian": [],
+      "spek": {
+        "Material": "ABS+PC",
+        "Profil": "Low profile (stem MX)",
+        "Spacing": "MX 19.05 x 19.05 mm",
+        "Jumlah": "114 keycap",
+        "Kompatibel": "Nomad [E] (ANSI & ISO), Knob1 (ANSI & ISO), Nuphy Air 75/96 (ANSI), mayoritas keyboard MX low-profile ANSI dengan stabilizer MX inline"
+      },
+      "gambar": [
+        "https://framerusercontent.com/images/IiMubwF0xms2xu0s6caeQ0zsYo.png?width=3840&height=3840",
+        "https://framerusercontent.com/images/nWaVzQMlUVjI2VFcyUWrMrzsQCs.png?width=2068&height=1410",
+        "https://framerusercontent.com/images/4X5SlnbVT264tvTZ4uLnRqt35Og.png?width=2068&height=1410",
+        "https://framerusercontent.com/images/oADG0TuyTIgqQAgZoVDwYQbdXCQ.png?width=1024&height=1024",
+        "https://framerusercontent.com/images/nEwrHACCVpWr5LYeLevDUTBKY.webp?width=2048&height=2048",
+        "https://framerusercontent.com/images/bylMRWaCFHUqJwSWLC24Vry7DM.png?width=3840&height=3840"
+      ],
+      "gambar_lokal": [
+        "gambar/keycaps/wl-knob-sans/01.png",
+        "gambar/keycaps/wl-knob-sans/02.png",
+        "gambar/keycaps/wl-knob-sans/03.png",
+        "gambar/keycaps/wl-knob-sans/04.png",
+        "gambar/keycaps/wl-knob-sans/05.png",
+        "gambar/keycaps/wl-knob-sans/06.png"
+      ],
+      "gambar_asli": [
+        "gambar_asli/keycaps/wl-knob-sans/01.png",
+        "gambar_asli/keycaps/wl-knob-sans/02.png",
+        "gambar_asli/keycaps/wl-knob-sans/03.png",
+        "gambar_asli/keycaps/wl-knob-sans/04.png",
+        "gambar_asli/keycaps/wl-knob-sans/05.webp",
+        "gambar_asli/keycaps/wl-knob-sans/06.png"
+      ]
+    }
+  ]
+}
