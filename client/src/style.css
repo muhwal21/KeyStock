@@ -25,7 +25,7 @@
   --muted: #86868e;
   --faint: #ababb3;
   --header-bg: rgba(241, 241, 243, .86);
-  --dashboard-dot: rgba(70, 70, 80, .23);
+  --dashboard-dot: rgba(70, 70, 80, .30);
 
   --primary: #111113;
   --primary-hover: #2c2c30;
@@ -87,7 +87,7 @@ html[data-theme="dark"] {
   --muted: #8b8b94;
   --faint: #66666e;
   --header-bg: rgba(9, 9, 10, .82);
-  --dashboard-dot: rgba(205, 205, 215, .19);
+  --dashboard-dot: rgba(205, 205, 215, .26);
 
   --primary: #f5f5f6;
   --primary-hover: #ffffff;
@@ -183,7 +183,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .user-meta span { margin-top: 1px; color: var(--muted); font-size: 11px; }
 
 .main-area { position: relative; min-height: calc(100vh - 76px); isolation: isolate; }
-.main-area::before { position: absolute; z-index: 0; inset: 0; background-image: radial-gradient(circle at 1px 1px, var(--dashboard-dot) 1px, transparent 1.15px); background-size: 24px 24px; content: ''; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 112% 110% at 50% 35%, transparent 34%, rgba(0, 0, 0, .025) 50%, rgba(0, 0, 0, .08) 69%, rgba(0, 0, 0, .23) 86%, #000 100%); mask-image: radial-gradient(ellipse 112% 110% at 50% 35%, transparent 34%, rgba(0, 0, 0, .025) 50%, rgba(0, 0, 0, .08) 69%, rgba(0, 0, 0, .23) 86%, #000 100%); }
+.main-area::before { position: absolute; z-index: 0; inset: 0; background-image: radial-gradient(circle at 1px 1px, var(--dashboard-dot) 1.2px, transparent 1.35px); background-size: 24px 24px; content: ''; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 110% 108% at 50% 35%, transparent 34%, rgba(0, 0, 0, .06) 52%, rgba(0, 0, 0, .20) 70%, rgba(0, 0, 0, .52) 87%, #000 100%); mask-image: radial-gradient(ellipse 110% 108% at 50% 35%, transparent 34%, rgba(0, 0, 0, .06) 52%, rgba(0, 0, 0, .20) 70%, rgba(0, 0, 0, .52) 87%, #000 100%); }
 .content-wrap { position: relative; z-index: 1; width: min(100%, 1440px); margin: 0 auto; padding: 18px 28px 28px; }
 
 /* ------------------------------------------------------------------ Page headings and KPI chips */
