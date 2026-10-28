@@ -7,7 +7,7 @@ KeyStock adalah aplikasi inventaris keyboard mekanis dan aksesori. Antarmuka mem
 - Ringkasan stok, aktivitas terbaru, peta rak, dan laporan laba rugi.
 - CRUD produk dan supplier dengan pencarian, filter, dan galeri foto.
 - Pergerakan stok masuk, keluar, dan penyesuaian dengan riwayat saldo.
-- Peran admin, staff, dan penguji dengan hak akses berbeda.
+- Peran admin, staff, dan viewer dengan hak akses berbeda.
 - Login, pendaftaran akun yang menunggu persetujuan admin, pemulihan kata sandi lewat email, dan sesi JWT.
 - Tampilan terang/gelap dan responsif.
 
@@ -42,9 +42,9 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
 4. Buka `http://localhost:5173`.
 
-Akun dibuat dari `SEED_ADMIN_*`, `SEED_PENGUJI_*`, dan `SEED_STAFF_*` di `.env`. Akun penguji hanya dapat melihat data; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel dan data awal—jangan jalankan pada database berisi data penting.
+Akun dibuat dari `SEED_ADMIN_*`, `SEED_DOSEN_*`, dan `SEED_STAFF_*` di `.env`. Akun `dosen` memiliki akses baca; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel dan data awal—jangan jalankan pada database berisi data penting.
 
-Untuk menyinkronkan akun admin, penguji, dan staff saja tanpa mengubah katalog atau pergerakan stok, jalankan `npm run db:accounts`. Variabel `SEED_PENGUJI_PREVIOUS_EMAIL` dan `SEED_STAFF_PREVIOUS_EMAIL` dapat dipakai saat mengganti email akun lama.
+Untuk menyinkronkan akun admin, dosen, dan staff saja tanpa mengubah katalog atau pergerakan stok, jalankan `npm run db:accounts`. Variabel `SEED_DOSEN_PREVIOUS_EMAIL` dan `SEED_STAFF_PREVIOUS_EMAIL` dapat dipakai saat mengganti email akun lama.
 
 Untuk email pemulihan dan notifikasi review, isi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, serta `PUBLIC_APP_URL`. Tanpa SMTP, pendaftaran tetap tercatat dan dapat direview di halaman Pengguna, tetapi email tidak terkirim dan pemulihan kata sandi tidak aktif.
 
@@ -73,4 +73,4 @@ Perintah deploy mengambil perubahan terbaru, membangun image aplikasi, menjalank
 
 ## Keamanan
 
-JWT disimpan dalam cookie `HttpOnly`; request yang mengubah data juga memerlukan token CSRF. Di produksi cookie memakai `Secure` dan hanya dikirim melalui HTTPS. Pilihan “Ingat saya” memperpanjang sesi hingga 30 hari; tanpa pilihan tersebut, masa sesi mengikuti `JWT_EXPIRES_SECONDS`. Kata sandi saat pendaftaran dan pemulihan harus 10–64 karakter, mengandung huruf besar, huruf kecil, angka, dan simbol, serta tanpa spasi. Kata sandi di-hash dengan bcrypt. Token reset hanya disimpan sebagai hash, berlaku 30 menit, sekali pakai, dan merotasi versi sesi. Pendaftaran publik tidak mendapat akses sampai disetujui admin. Atur `JWT_SECRET` dan password database yang berbeda untuk setiap lingkungan.
+JWT disimpan dalam cookie `HttpOnly`; request yang mengubah data juga memerlukan token CSRF. Di produksi cookie memakai `Secure` dan hanya dikirim melalui HTTPS. Pilihan “Ingat saya” memperpanjang sesi hingga 30 hari; tanpa pilihan tersebut, masa sesi mengikuti `JWT_EXPIRES_SECONDS`. Kata sandi akun saat pendaftaran dan pemulihan harus 9–64 karakter, mengandung huruf besar, huruf kecil, angka, dan simbol, serta tanpa spasi. Kata sandi di-hash dengan bcrypt. Token reset hanya disimpan sebagai hash, berlaku 30 menit, sekali pakai, dan merotasi versi sesi. Pendaftaran publik tidak mendapat akses sampai disetujui admin. Atur `JWT_SECRET` dan password database yang berbeda untuk setiap lingkungan.

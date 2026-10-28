@@ -222,7 +222,7 @@ const filteredMovements = computed(() => {
 const passwordChecks = computed(() => {
   const value = registerForm.password;
   return [
-    { label: '10–64 karakter', ok: value.length >= 10 && value.length <= 64 },
+    { label: '9–64 karakter', ok: value.length >= 9 && value.length <= 64 },
     { label: 'Huruf besar', ok: /[A-Z]/.test(value) },
     { label: 'Huruf kecil', ok: /[a-z]/.test(value) },
     { label: 'Angka', ok: /[0-9]/.test(value) },
@@ -975,7 +975,7 @@ onMounted(async () => {
           </div>
           <div class="auth-field">
             <label for="register-password">Kata sandi</label>
-            <div class="input-wrap" :class="{ invalid: fieldErrors.password }"><Lock :size="17" /><input id="register-password" v-model="registerForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="10" maxlength="64" placeholder="10–64 karakter" title="Gunakan 10–64 karakter dengan huruf besar, huruf kecil, angka, dan simbol. Tanpa spasi." required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
+            <div class="input-wrap" :class="{ invalid: fieldErrors.password }"><Lock :size="17" /><input id="register-password" v-model="registerForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="9" maxlength="64" placeholder="9–64 karakter" title="Gunakan 9–64 karakter dengan huruf besar, huruf kecil, angka, dan simbol. Tanpa spasi." required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
             <small class="field-hint">Gunakan huruf besar, huruf kecil, angka, dan simbol. Kata sandi tidak boleh memakai spasi.</small>
             <ul class="password-checks" aria-label="Syarat kata sandi">
               <li v-for="rule in passwordChecks" :key="rule.label" :class="{ ok: rule.ok }"><Check :size="13" />{{ rule.label }}</li>
@@ -1001,7 +1001,7 @@ onMounted(async () => {
         </form>
 
         <form v-else class="auth-form" @submit.prevent="submitPasswordReset">
-          <div class="auth-field"><label for="reset-password">Kata sandi baru</label><div class="input-wrap"><Lock :size="17" /><input id="reset-password" v-model="resetForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="10" maxlength="64" placeholder="10–64 karakter" title="Gunakan 10–64 karakter dengan huruf besar, huruf kecil, angka, dan simbol. Tanpa spasi." required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div><small class="field-hint">Gunakan huruf besar, huruf kecil, angka, dan simbol. Kata sandi tidak boleh memakai spasi.</small></div>
+          <div class="auth-field"><label for="reset-password">Kata sandi baru</label><div class="input-wrap"><Lock :size="17" /><input id="reset-password" v-model="resetForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" minlength="9" maxlength="64" placeholder="9–64 karakter" title="Gunakan 9–64 karakter dengan huruf besar, huruf kecil, angka, dan simbol. Tanpa spasi." required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div><small class="field-hint">Gunakan huruf besar, huruf kecil, angka, dan simbol. Kata sandi tidak boleh memakai spasi.</small></div>
           <div class="auth-field"><label for="reset-confirmation">Ulangi kata sandi</label><div class="input-wrap"><Lock :size="17" /><input id="reset-confirmation" v-model="resetForm.password_confirmation" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="64" placeholder="Ketik ulang kata sandi" required /></div></div>
           <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Menyimpan...' : 'Simpan kata sandi' }}<ArrowRight v-if="!busy" :size="17" /></button>
         </form>

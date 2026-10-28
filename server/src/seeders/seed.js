@@ -125,19 +125,17 @@ function productDefaults(source, categoryId, supplierId, index) {
 }
 
 // Seed accounts come from environment variables, never from the code. ADMIN is required;
-// the examiner (lecturer role) and STAFF are optional.
+// DOSEN (read-only role) and STAFF are optional.
 const accountSpecs = [
   { key: 'ADMIN', role: 'admin', name: 'Admin', username: 'admin', required: true },
-  { key: 'PENGUJI', legacyKey: 'DOSEN', role: 'lecturer', name: 'Penguji', username: 'penguji' },
+  { key: 'DOSEN', role: 'lecturer', name: 'Dosen', username: 'dosen' },
   { key: 'STAFF', role: 'staff', name: 'Staff', username: 'staff' },
 ];
 
 function readAccount(spec) {
   const env = process.env;
   const envValue = (suffix) => {
-    const current = env[`SEED_${spec.key}_${suffix}`];
-    if (current !== undefined && current !== '') return current;
-    return spec.legacyKey ? env[`SEED_${spec.legacyKey}_${suffix}`] : current;
+    return env[`SEED_${spec.key}_${suffix}`];
   };
   const envKey = spec.key;
   const email = envValue('EMAIL')?.trim().toLowerCase();
@@ -147,8 +145,15 @@ function readAccount(spec) {
     if (email || password) console.warn(`Akun ${spec.key.toLowerCase()} dilewati: isi email dan password bersamaan.`);
     return null;
   }
-  if (password.length < 12 || password.length > 128 || password.toLowerCase().includes('replace-with')) {
-    throw new Error(`SEED_${envKey}_PASSWORD harus 12–128 karakter dan bukan nilai contoh.`);
+  const passwordMeetsPolicy = password.length >= 9 && password.length <= 64
+    && /[A-Z]/.test(password)
+    && /[a-z]/.test(password)
+    && /[0-9]/.test(password)
+    && /[^A-Za-z0-9\s]/.test(password)
+    && /^\S+$/.test(password)
+    && !password.toLowerCase().includes('replace-with');
+  if (!passwordMeetsPolicy) {
+    throw new Error(`SEED_${envKey}_PASSWORD harus 9–64 karakter, berisi huruf besar, huruf kecil, angka, dan simbol tanpa spasi.`);
   }
   const username = (envValue('USERNAME')?.trim() || spec.username).toLowerCase();
   if (!/^[a-z0-9._]{3,30}$/.test(username)) throw new Error(`SEED_${envKey}_USERNAME tidak valid.`);

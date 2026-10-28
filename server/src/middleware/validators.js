@@ -46,7 +46,7 @@ export const loginSchema = z.object({
 });
 
 const strongPassword = z.string()
-  .min(10, 'Kata sandi minimal 10 karakter.')
+  .min(9, 'Kata sandi minimal 9 karakter.')
   .max(64, 'Kata sandi maksimal 64 karakter.')
   .regex(/[A-Z]/, 'Tambahkan minimal satu huruf besar.')
   .regex(/[a-z]/, 'Tambahkan minimal satu huruf kecil.')
