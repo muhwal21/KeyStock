@@ -7,6 +7,7 @@ KeyStock adalah aplikasi inventaris keyboard mekanis dan aksesori. Antarmuka mem
 - Ringkasan stok, aktivitas terbaru, peta rak, dan laporan laba rugi.
 - CRUD produk dan supplier dengan pencarian, filter, dan galeri foto.
 - Pergerakan stok masuk, keluar, dan penyesuaian dengan riwayat saldo.
+- Sinkronisasi data otomatis saat halaman aktif dan pembaruan aplikasi setelah deploy.
 - Peran admin, staff, dan viewer dengan hak akses berbeda.
 - Login, pendaftaran akun yang menunggu persetujuan admin, pemulihan kata sandi lewat email, dan sesi JWT.
 - Tampilan terang/gelap dan responsif.

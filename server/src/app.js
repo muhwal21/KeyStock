@@ -63,6 +63,12 @@ app.use('/api', csrfProtection, apiRoutes);
 if (isProduction) {
   const currentFile = fileURLToPath(import.meta.url);
   const clientDist = path.resolve(path.dirname(currentFile), '../../client/dist');
+  app.get('/version.json', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    res.sendFile(path.join(clientDist, 'version.json'), (error) => {
+      if (error) next(error);
+    });
+  });
   app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
   app.get(/.*/, (req, res, next) => {
     if (req.path.startsWith('/api/')) return next();

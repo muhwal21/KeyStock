@@ -1,10 +1,10 @@
 <script setup>
-import { computed, nextTick, onMounted, reactive, ref, watchEffect } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch, watchEffect } from 'vue';
 import {
   AlertTriangle, ArrowDownToLine, ArrowDownUp, ArrowRight, ArrowUpFromLine, ArrowUpRight, AtSign,
   Boxes, Building2, Check, ChevronDown, ChevronLeft, ChevronRight, Download, ExternalLink, Eye,
   EyeOff, History, Keyboard, LayoutDashboard, Lock, LogIn, LogOut, Mail, MapPin, MessageCircle,
-  Moon, Package, PackageX, Phone, Plus, RefreshCw, Search, Settings, ShieldCheck, Sun,
+  Moon, Package, PackageX, Phone, Plus, Search, Settings, ShieldCheck, Sun,
   TrendingDown, TrendingUp, Truck, User, UserCheck, UserPlus, UserX, Users, Wallet, X,
 } from '@lucide/vue';
 import { get, patch, post, put, remove, setCsrfToken } from './api.js';
@@ -49,6 +49,8 @@ const apiUnavailable = ref(false);
 const activePage = ref('overview');
 const loading = ref(false);
 const busy = ref(false);
+const syncStatus = ref('online');
+const updateAvailable = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
 const csrfToken = ref('');
@@ -92,6 +94,15 @@ const loginForm = reactive({ identifier: '', password: '', rememberMe: false });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
 const forgotForm = reactive({ email: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
+const hasUnsavedChanges = computed(() => {
+  if (busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
+    || pendingConfirmation.value || detailProductId.value) return true;
+  if (user.value) return false;
+  if (authMode.value === 'register') return Object.values(registerForm).some(Boolean);
+  if (authMode.value === 'forgot') return Boolean(forgotForm.email);
+  if (authMode.value === 'reset') return Boolean(resetForm.password || resetForm.password_confirmation);
+  return Boolean(loginForm.identifier || loginForm.password);
+});
 const productForm = reactive({
   sku: '', name: '', brand: '', category_id: '', supplier_id: '', description: '',
   price_min: '', price_max: '', purchase_price: '', selling_price: '', currency: 'IDR',
@@ -102,6 +113,10 @@ const supplierForm = reactive({
   name: '', contact_person: '', phone: '', email: '', city: '', website: '', notes: '', is_active: true,
 });
 const movementForm = reactive({ product_id: '', movement_type: 'IN', reason: 'PURCHASE', quantity: '', note: '' });
+let dataSyncTimer = null;
+let versionCheckTimer = null;
+let versionReloadTimer = null;
+let autoSyncInProgress = false;
 
 const pageTitle = computed(() => ({
   overview: 'Ringkasan stok',
@@ -299,11 +314,6 @@ function focusProductSearch() {
   navigate('products').then(() => nextTick(() => document.querySelector('.table-toolbar input[type="search"]')?.focus()));
 }
 
-async function refreshDashboard() {
-  await loadAll();
-  if (!errorMessage.value) showSuccess('Data stok diperbarui.');
-}
-
 function movementCode(item) {
   return `#MV-${String(item.id).padStart(4, '0')}`;
 }
@@ -381,8 +391,8 @@ async function refreshCsrf() {
   setCsrfToken(response.csrfToken);
 }
 
-async function loadAll({ clear = true } = {}) {
-  loading.value = true;
+async function loadAll({ clear = true, background = false } = {}) {
+  if (!background) loading.value = true;
   if (clear) clearNotices();
   try {
     const supplierPath = user.value?.role === 'admin' ? '/suppliers?includeArchived=true' : '/suppliers';
@@ -397,13 +407,92 @@ async function loadAll({ clear = true } = {}) {
     movements.value = movementData.movements;
     ensureOverviewProduct();
     if (activityPage.value > activityPageCount.value) activityPage.value = 1;
+    syncStatus.value = 'online';
+    return true;
   } catch (error) {
-    if (error.message.includes('API belum tersambung')) apiUnavailable.value = true;
-    handleError(error);
+    if (background) {
+      handleBackgroundSyncError(error);
+    } else {
+      if (error.message.includes('API belum tersambung')) apiUnavailable.value = true;
+      handleError(error);
+    }
+    return false;
   } finally {
-    loading.value = false;
+    if (!background) loading.value = false;
   }
 }
+
+function hasOpenWork() {
+  return busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
+    || Boolean(pendingConfirmation.value) || Boolean(detailProductId.value);
+}
+
+function canSyncAutomatically() {
+  return Boolean(user.value) && document.visibilityState === 'visible' && !hasOpenWork();
+}
+
+function handleBackgroundSyncError(error) {
+  syncStatus.value = 'offline';
+  if (error.status === 401) {
+    user.value = null;
+    csrfToken.value = '';
+    setCsrfToken('');
+  }
+}
+
+async function syncAutomatically() {
+  if (!canSyncAutomatically() || autoSyncInProgress) return;
+  autoSyncInProgress = true;
+  try {
+    const synced = await loadAll({ clear: false, background: true });
+    if (!synced) return;
+    if (activePage.value === 'users') {
+      try {
+        const data = await get('/users');
+        users.value = data.users;
+      } catch (error) {
+        handleBackgroundSyncError(error);
+      }
+    }
+  } finally {
+    autoSyncInProgress = false;
+  }
+}
+
+async function checkForNewVersion() {
+  if (!import.meta.env.PROD || document.visibilityState !== 'visible' || updateAvailable.value) return;
+  try {
+    const response = await fetch(`/version.json?check=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return;
+    const latest = await response.json();
+    if (latest.version && latest.version !== __APP_BUILD_VERSION__) updateAvailable.value = true;
+  } catch {
+    // Keep the current page usable when the version check cannot reach the server.
+  }
+}
+
+function reloadForNewVersion() {
+  window.location.reload();
+}
+
+function maybeReloadForNewVersion() {
+  if (!updateAvailable.value || hasUnsavedChanges.value || document.visibilityState !== 'visible') return;
+  window.clearTimeout(versionReloadTimer);
+  versionReloadTimer = window.setTimeout(() => {
+    if (updateAvailable.value && !hasUnsavedChanges.value && document.visibilityState === 'visible') {
+      window.location.reload();
+    }
+  }, 700);
+}
+
+function handlePageVisibility() {
+  if (document.visibilityState !== 'visible') return;
+  maybeReloadForNewVersion();
+  void checkForNewVersion();
+  void syncAutomatically();
+}
+
+watch([updateAvailable, hasUnsavedChanges], maybeReloadForNewVersion, { flush: 'post' });
 
 function hasProductFilters() {
   return Boolean(searchQuery.value.trim() || selectedCategory.value || stockFilter.value !== 'all');
@@ -883,6 +972,8 @@ function productsForSupplier(supplierId) {
 }
 
 onMounted(async () => {
+  document.addEventListener('visibilitychange', handlePageVisibility);
+  window.addEventListener('online', handlePageVisibility);
   try {
     await refreshCsrf();
     const session = await get('/auth/me');
@@ -894,6 +985,19 @@ onMounted(async () => {
   } finally {
     checkingSession.value = false;
   }
+  dataSyncTimer = window.setInterval(syncAutomatically, 20_000);
+  if (import.meta.env.PROD) {
+    versionCheckTimer = window.setInterval(checkForNewVersion, 30_000);
+    void checkForNewVersion();
+  }
+});
+
+onBeforeUnmount(() => {
+  window.clearInterval(dataSyncTimer);
+  window.clearInterval(versionCheckTimer);
+  window.clearTimeout(versionReloadTimer);
+  document.removeEventListener('visibilitychange', handlePageVisibility);
+  window.removeEventListener('online', handlePageVisibility);
 });
 </script>
 
@@ -912,6 +1016,10 @@ onMounted(async () => {
   </div>
 
   <div v-else-if="!user || resetToken" class="auth-page">
+    <div v-if="updateAvailable && hasUnsavedChanges" class="update-notice" role="status">
+      <span>Pembaruan tersedia. Halaman akan diperbarui setelah formulir selesai.</span>
+      <button type="button" @click="reloadForNewVersion">Perbarui sekarang</button>
+    </div>
     <header class="auth-topbar">
       <span class="brand"><span class="brand-mark"><Keyboard :size="18" /></span><strong>KeyStock</strong></span>
       <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
@@ -1019,6 +1127,10 @@ onMounted(async () => {
   </div>
 
   <div v-else class="app-shell">
+    <div v-if="updateAvailable && hasUnsavedChanges" class="update-notice" role="status">
+      <span>Pembaruan tersedia. Halaman akan diperbarui setelah pekerjaan selesai.</span>
+      <button type="button" @click="reloadForNewVersion">Perbarui sekarang</button>
+    </div>
     <header class="app-header">
       <a class="brand" href="#" aria-label="KeyStock — ringkasan" @click.prevent="navigate('overview')">
         <span class="brand-mark"><Keyboard :size="18" /></span>
@@ -1075,7 +1187,7 @@ onMounted(async () => {
             <span v-else class="restock-alert is-ok"><Check :size="15" /> Semua stok di atas batas minimum</span>
             <div class="toolbar-actions">
               <button class="round-button" type="button" title="Unduh stok (CSV)" aria-label="Unduh stok (CSV)" @click="exportInventoryCsv"><Download :size="17" /></button>
-              <button class="button secondary pill" type="button" :disabled="loading" @click="refreshDashboard"><RefreshCw :size="15" :class="{ spinning: loading }" /> Muat ulang</button>
+              <span class="sync-status" :class="{ offline: syncStatus === 'offline' }" :title="syncStatus === 'offline' ? 'Akan mencoba kembali secara otomatis' : 'Data disinkronkan otomatis setiap 20 detik saat halaman aktif'"><span class="sync-status-dot"></span>{{ syncStatus === 'offline' ? 'Mencoba menyambungkan' : 'Sinkron otomatis' }}</span>
               <button v-if="user.role !== 'lecturer'" class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
             </div>
           </section>
