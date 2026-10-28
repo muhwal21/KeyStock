@@ -74,6 +74,11 @@ export async function migrateInventoryFields() {
   await migrateUsernames(queryInterface);
   await migrateAuthFields(queryInterface);
   await migrateMovementFinance(queryInterface);
+  await sequelize.query(`
+    UPDATE stock_movements
+    SET note = 'Stok awal setelah penghitungan inventaris.'
+    WHERE note = 'Stok awal simulasi untuk demo UAS.'
+  `);
   const columns = await queryInterface.describeTable('products');
 
   if (!columns.purchase_price) {

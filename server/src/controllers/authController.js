@@ -94,7 +94,7 @@ const tokenDigest = (token) => createHash('sha256').update(token).digest('hex');
 
 export async function requestPasswordReset(req, res, next) {
   if (!isEmailConfigured) {
-    return res.status(503).json({ message: 'Pemulihan kata sandi belum aktif karena email server belum dikonfigurasi.' });
+    return res.status(503).json({ message: 'Pemulihan kata sandi belum tersedia. Silakan hubungi admin.' });
   }
   try {
     const user = await User.findOne({ where: { email: req.body.email.toLowerCase(), is_active: true, approval_status: 'approved' } });

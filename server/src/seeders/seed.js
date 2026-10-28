@@ -124,42 +124,66 @@ function productDefaults(source, categoryId, supplierId, index) {
   };
 }
 
-// Demo accounts come from environment variables, never from the code. ADMIN is required;
-// DOSEN (lecturer, admin role) and STAFF are created when their email and password are set.
+// Seed accounts come from environment variables, never from the code. ADMIN is required;
+// the examiner (lecturer role) and STAFF are optional.
 const accountSpecs = [
-  { key: 'ADMIN', role: 'admin', name: 'KeyStock Admin', username: 'admin', required: true },
-  { key: 'DOSEN', role: 'lecturer', name: 'Dosen Penguji', username: 'dosen' },
-  { key: 'STAFF', role: 'staff', name: 'Staff Gudang', username: 'staff' },
+  { key: 'ADMIN', role: 'admin', name: 'Admin', username: 'admin', required: true },
+  { key: 'PENGUJI', legacyKey: 'DOSEN', role: 'lecturer', name: 'Penguji', username: 'penguji' },
+  { key: 'STAFF', role: 'staff', name: 'Staff', username: 'staff' },
 ];
 
 function readAccount(spec) {
   const env = process.env;
-  const email = env[`SEED_${spec.key}_EMAIL`]?.trim().toLowerCase();
-  const password = env[`SEED_${spec.key}_PASSWORD`];
+  const envValue = (suffix) => {
+    const current = env[`SEED_${spec.key}_${suffix}`];
+    if (current !== undefined && current !== '') return current;
+    return spec.legacyKey ? env[`SEED_${spec.legacyKey}_${suffix}`] : current;
+  };
+  const envKey = spec.key;
+  const email = envValue('EMAIL')?.trim().toLowerCase();
+  const password = envValue('PASSWORD');
   if (!email || !password) {
-    if (spec.required) throw new Error(`Set SEED_${spec.key}_EMAIL dan SEED_${spec.key}_PASSWORD di .env.`);
+    if (spec.required) throw new Error(`Set SEED_${envKey}_EMAIL dan SEED_${envKey}_PASSWORD di .env.`);
     if (email || password) console.warn(`Akun ${spec.key.toLowerCase()} dilewati: isi email dan password bersamaan.`);
     return null;
   }
   if (password.length < 12 || password.length > 128 || password.toLowerCase().includes('replace-with')) {
-    throw new Error(`SEED_${spec.key}_PASSWORD harus 12–128 karakter dan bukan nilai contoh.`);
+    throw new Error(`SEED_${envKey}_PASSWORD harus 12–128 karakter dan bukan nilai contoh.`);
   }
-  const username = (env[`SEED_${spec.key}_USERNAME`]?.trim() || spec.username).toLowerCase();
-  if (!/^[a-z0-9._]{3,30}$/.test(username)) throw new Error(`SEED_${spec.key}_USERNAME tidak valid.`);
-  return { email, password, username, role: spec.role, name: env[`SEED_${spec.key}_NAME`]?.trim() || spec.name };
+  const username = (envValue('USERNAME')?.trim() || spec.username).toLowerCase();
+  if (!/^[a-z0-9._]{3,30}$/.test(username)) throw new Error(`SEED_${envKey}_USERNAME tidak valid.`);
+  return {
+    email,
+    previousEmail: envValue('PREVIOUS_EMAIL')?.trim().toLowerCase() || '',
+    password,
+    username,
+    role: spec.role,
+    name: envValue('NAME')?.trim() || spec.name,
+  };
 }
 
 // Creates the account or brings it back to the configured name, role, username, and password.
 async function upsertAccount(account) {
-  let user = await User.unscoped().findOne({ where: { email: account.email } });
+  const emailUser = await User.unscoped().findOne({ where: { email: account.email } });
+  const previousEmailUser = account.previousEmail && account.previousEmail !== account.email
+    ? await User.unscoped().findOne({ where: { email: account.previousEmail } })
+    : null;
+  if (emailUser && previousEmailUser && emailUser.id !== previousEmailUser.id) {
+    throw new Error(`Email baru ${account.email} sudah digunakan akun lain.`);
+  }
+  const user = emailUser ?? previousEmailUser;
   const usernameOwner = await User.unscoped().findOne({ where: { username: account.username } });
-  const usernameFree = !usernameOwner || (user && usernameOwner.id === user.id);
-  if (!usernameFree) console.warn(`Username "${account.username}" sudah dipakai akun lain; username tidak diubah.`);
+  if (usernameOwner && (!user || usernameOwner.id !== user.id)) {
+    throw new Error(`Username "${account.username}" sudah dipakai akun lain.`);
+  }
+  if (user && user.role !== account.role) {
+    throw new Error(`Email ${account.email} sudah terhubung ke peran lain; akun tidak diubah.`);
+  }
 
   if (!user) {
     return User.unscoped().create({
       name: account.name,
-      username: usernameFree ? account.username : null,
+      username: account.username,
       email: account.email,
       password_hash: await bcrypt.hash(account.password, 12),
       role: account.role,
@@ -167,17 +191,31 @@ async function upsertAccount(account) {
       approval_status: 'approved',
     });
   }
-  const updates = { name: account.name, role: account.role, is_active: true, approval_status: 'approved' };
-  if (usernameFree) updates.username = account.username;
-  if (!(await bcrypt.compare(account.password, user.password_hash))) {
+  const passwordMatches = await bcrypt.compare(account.password, user.password_hash);
+  const accessChanged = user.username !== account.username
+    || user.email !== account.email
+    || user.role !== account.role
+    || !user.is_active
+    || user.approval_status !== 'approved'
+    || !passwordMatches;
+  const updates = {
+    name: account.name,
+    username: account.username,
+    email: account.email,
+    role: account.role,
+    is_active: true,
+    approval_status: 'approved',
+  };
+  if (!passwordMatches) {
     updates.password_hash = await bcrypt.hash(account.password, 12);
-    updates.token_version = user.token_version + 1;
   }
+  if (accessChanged) updates.token_version = user.token_version + 1;
   await user.update(updates);
   return user;
 }
 
-async function seed({ fresh = false } = {}) {
+async function seed({ fresh = false, accountsOnly = false } = {}) {
+  if (fresh && accountsOnly) throw new Error('--fresh tidak dapat digabung dengan --accounts-only.');
   const accounts = accountSpecs.map((spec) => ({ spec, account: readAccount(spec) }));
 
   await sequelize.authenticate();
@@ -195,6 +233,10 @@ async function seed({ fresh = false } = {}) {
     if (!account) continue;
     seededUsers[spec.key] = await upsertAccount(account);
     console.log(`Akun ${spec.key.toLowerCase()}: ${account.username} / ${account.email} (${account.role})`);
+  }
+  if (accountsOnly) {
+    console.log('Sinkronisasi akun selesai; katalog dan pergerakan stok tidak diubah.');
+    return;
   }
   const admin = seededUsers.ADMIN;
   const staffUser = seededUsers.STAFF ?? null;
@@ -246,7 +288,7 @@ async function seed({ fresh = false } = {}) {
           reason: 'STOCK_COUNT',
           unit_cost: product.purchase_price,
           currency: product.currency,
-          note: 'Stok awal simulasi untuk demo UAS.',
+          note: 'Stok awal setelah penghitungan inventaris.',
           createdAt: history.openedAt,
         }, { transaction });
 
@@ -304,7 +346,10 @@ async function seed({ fresh = false } = {}) {
 }
 
 try {
-  await seed({ fresh: process.argv.includes('--fresh') });
+  await seed({
+    fresh: process.argv.includes('--fresh'),
+    accountsOnly: process.argv.includes('--accounts-only'),
+  });
 } catch (error) {
   console.error('Seed gagal:', error.message);
   process.exitCode = 1;

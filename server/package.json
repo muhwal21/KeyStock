@@ -7,7 +7,7 @@
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "db:sync": "node src/db/sync.js",
-    "db:staff": "node src/seeders/createStaffDemo.js",
+    "db:accounts": "node src/seeders/seed.js --accounts-only",
     "db:seed": "node src/seeders/seed.js",
     "db:fresh": "node src/seeders/seed.js --fresh"
   },

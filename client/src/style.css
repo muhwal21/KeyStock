@@ -550,7 +550,6 @@ button.rack-box:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba
 .app-footer > span { display: flex; align-items: center; gap: 6px; }
 .app-footer > span:first-child { font-weight: 600; letter-spacing: .06em; }
 .app-footer i { font-style: normal; }
-.footer-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green-mark); }
 .loading-screen, .unavailable-screen { display: grid; min-height: 100vh; place-content: center; justify-items: center; gap: 12px; color: var(--text); background: var(--canvas); font-size: 13px; }
 .loading-mark { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 14px; color: var(--primary-ink); background: var(--primary); }
 .unavailable-card { display: grid; max-width: 420px; justify-items: center; padding: 32px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--shadow); text-align: center; }
@@ -661,7 +660,6 @@ html[data-theme="dark"] .auth-card { box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
 .auth-submit { min-height: 48px; margin-top: 6px; font-size: 14px; }
 .small-spinner { width: 15px; height: 15px; border-color: rgba(255, 255, 255, .35); border-top-color: currentColor; }
 html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); border-top-color: currentColor; }
-.auth-footnote { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 18px 0 0; padding-top: 16px; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 12px; text-align: center; }
 .auth-points { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .auth-points li { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); background: var(--surface); font-size: 12px; }
 .auth-points svg { color: var(--ink-2); }

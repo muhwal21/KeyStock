@@ -87,9 +87,6 @@ const fieldErrors = ref({});
 const resetToken = ref(new URLSearchParams(window.location.search).get('resetToken') ?? '');
 const authMode = ref(resetToken.value ? 'reset' : 'login');
 const registrationSubmitted = ref(false);
-const registrationEmail = ref('');
-const registrationEmailSent = ref(false);
-const registrationEmailConfigured = ref(false);
 const showPassword = ref(false);
 const loginForm = reactive({ identifier: '', password: '' });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
@@ -499,14 +496,10 @@ async function submitRegister() {
   clearFormErrors();
   try {
     if (!csrfToken.value) await refreshCsrf();
-    const result = await post('/auth/register', registerForm);
-    registrationEmail.value = registerForm.email;
-    registrationEmailSent.value = result.emailNotificationSent;
-    registrationEmailConfigured.value = result.emailConfigured;
+    await post('/auth/register', registerForm);
     Object.assign(registerForm, { name: '', username: '', email: '', password: '', password_confirmation: '' });
     registrationSubmitted.value = true;
     authMode.value = 'login';
-    successMessage.value = result.message;
     apiUnavailable.value = false;
   } catch (error) {
     errorMessage.value = error.message || 'Pendaftaran gagal. Coba lagi.';
@@ -757,7 +750,7 @@ function toggleUserActive(target) {
   clearNotices();
   pendingConfirmation.value = {
     title: 'Nonaktifkan pengguna ini?',
-    message: `${target.name} tidak bisa login lagi dan sesinya langsung berakhir. Riwayat stok yang dicatatnya tetap tersimpan.`,
+    message: `${target.name} tidak dapat masuk lagi. Riwayat stok yang dicatatnya tetap tersimpan.`,
     confirmLabel: 'Nonaktifkan',
     busyLabel: 'Menonaktifkan...',
     action: () => saveUserAccess(target, { is_active: false }),
@@ -780,7 +773,7 @@ function reviewAccount(target, action) {
         Object.assign(target, result.user);
         showSuccess(result.emailSent
           ? `Pendaftaran ${target.name} diperbarui dan email hasil review dikirim.`
-          : `Pendaftaran ${target.name} diperbarui. ${result.emailConfigured ? 'Email belum terkirim; periksa konfigurasi SMTP.' : 'Email belum terkirim karena SMTP belum disetel.'}`);
+          : `Pendaftaran ${target.name} diperbarui. Silakan beri tahu pengguna secara langsung.`);
       } catch (error) {
         handleError(error);
       } finally {
@@ -910,9 +903,8 @@ onMounted(async () => {
   <div v-else-if="apiUnavailable && !user" class="unavailable-screen">
     <div class="unavailable-card">
       <div class="loading-mark"><Keyboard :size="24" /></div>
-      <h1>Server inventaris belum tersambung</h1>
-      <p>Pastikan MySQL dan API Node.js berjalan, lalu muat ulang halaman.</p>
-      <code>npm run dev</code>
+      <h1>Layanan inventaris belum tersedia</h1>
+      <p>Koneksi sedang bermasalah. Silakan muat ulang halaman beberapa saat lagi.</p>
     </div>
   </div>
 
@@ -940,14 +932,14 @@ onMounted(async () => {
         <div v-if="successMessage" class="notice success-notice" role="status"><Check :size="17" />{{ successMessage }}</div>
 
         <section v-if="registrationSubmitted" class="auth-form">
-          <div class="empty-state"><div class="empty-icon"><ShieldCheck :size="22" /></div><strong>Pendaftaran menunggu review admin</strong><span>Permintaan akun staff Anda sudah tersimpan. <template v-if="registrationEmailSent">Admin telah mendapat notifikasi email dan hasil review akan dikirim ke {{ registrationEmail }}.</template><template v-else-if="registrationEmailConfigured">Admin dapat meninjau pendaftaran di halaman Pengguna; notifikasi email belum berhasil terkirim.</template><template v-else>Email hasil review belum aktif. Admin dapat meninjau pendaftaran dari halaman Pengguna.</template></span></div>
+          <div class="empty-state"><div class="empty-icon"><ShieldCheck :size="22" /></div><strong>Pendaftaran diterima</strong><span>Admin akan meninjau permintaan akun Anda. Silakan masuk setelah akun disetujui.</span></div>
           <button class="button primary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
         </section>
 
         <form v-else-if="authMode === 'login'" class="auth-form" @submit.prevent="submitLogin">
           <div class="auth-field">
             <label for="identifier">Username atau email</label>
-            <div class="input-wrap"><AtSign :size="17" /><input id="identifier" v-model="loginForm.identifier" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="mis. dosen atau nama@email.com" required /></div>
+            <div class="input-wrap"><AtSign :size="17" /><input id="identifier" v-model="loginForm.identifier" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="mis. penguji atau nama@email.com" required /></div>
           </div>
           <div class="auth-field">
             <label for="password">Kata sandi</label>
@@ -1009,17 +1001,16 @@ onMounted(async () => {
           <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Menyimpan...' : 'Simpan kata sandi' }}<ArrowRight v-if="!busy" :size="17" /></button>
         </form>
 
-        <p v-if="authMode === 'login' && !registrationSubmitted" class="auth-footnote"><ShieldCheck :size="15" /> Sesi tersimpan di server dan dilindungi token CSRF.</p>
       </section>
 
       <ul class="auth-points">
         <li><Boxes :size="16" /> Stok real-time</li>
         <li><History :size="16" /> Riwayat tercatat</li>
-        <li><Users :size="16" /> Akses admin, staff &amp; dosen</li>
+        <li><Users :size="16" /> Akses admin, staff &amp; penguji</li>
       </ul>
     </main>
 
-    <footer class="auth-footer">© 2026 KeyStock · Demo inventaris akademik</footer>
+    <footer class="auth-footer">© 2026 KeyStock · Manajemen inventaris keyboard</footer>
   </div>
 
   <div v-else class="app-shell">
@@ -1040,7 +1031,7 @@ onMounted(async () => {
         <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
         <div class="user-chip">
           <div class="avatar">{{ user.name?.slice(0, 1).toUpperCase() }}</div>
-          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Dosen' : 'Staff' }}</span></div>
+          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Penguji' : 'Staff' }}</span></div>
         </div>
         <button class="round-button" type="button" title="Keluar" aria-label="Keluar" :disabled="busy" @click="logout"><LogOut :size="17" /></button>
       </div>
@@ -1254,7 +1245,7 @@ onMounted(async () => {
 
         <template v-else-if="activePage === 'users'">
           <section class="page-heading">
-            <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran admin/staff/dosen, dan kelola akses akun.</p></div>
+            <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran admin/staff/penguji, dan kelola akses akun.</p></div>
           </section>
           <section class="supplier-summary-grid">
             <article class="supplier-summary-card"><span class="supplier-summary-icon"><UserCheck :size="17" /></span><div><small>Pengguna aktif</small><strong>{{ users.filter((entry) => entry.is_active).length }}</strong></div></article>
@@ -1267,7 +1258,7 @@ onMounted(async () => {
             <div v-else class="table-scroll"><table class="data-table user-table stack-table"><thead><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Catatan stok</th><th>Bergabung</th><th>Aksi</th></tr></thead><tbody>
               <tr v-for="entry in users" :key="entry.id" :class="{ 'is-inactive': !entry.is_active }">
                 <td class="cell-primary"><div class="user-cell"><div class="avatar">{{ entry.name?.slice(0, 1).toUpperCase() }}</div><div><strong>{{ entry.name }} <span v-if="entry.id === user.id" class="you-tag">Anda</span></strong><small>@{{ entry.username ?? '—' }} · {{ entry.email }}</small></div></div></td>
-                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Dosen</option></select></td>
+                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Penguji</option></select></td>
                 <td data-label="Status"><span class="stock-badge" :class="entry.approval_status === 'pending' ? 'low' : entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.approval_status === 'pending' ? 'Menunggu review' : entry.approval_status === 'rejected' ? 'Ditolak' : entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                 <td data-label="Catatan stok">{{ formatNumber(entry.movement_count) }} catatan</td>
                 <td data-label="Bergabung">{{ formatDate(entry.createdAt ?? entry.created_at) }}</td>
@@ -1277,8 +1268,8 @@ onMounted(async () => {
             <div class="table-footer"><span>Akun baru menunggu persetujuan admin dan akan aktif sebagai staff.</span><span class="table-footer-note"><ShieldCheck :size="14" /> Admin tidak bisa menonaktifkan akunnya sendiri.</span></div>
           </section>
           <section class="panel access-panel">
-            <div class="panel-heading"><div><div class="panel-kicker">ROLE-BASED ACCESS</div><h2>Rincian hak akses</h2><p>Aturan ini diterapkan di server lewat middleware <code>requireRole</code>, bukan hanya disembunyikan di tampilan.</p></div></div>
-            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Dosen</th></tr></thead><tbody>
+            <div class="panel-heading"><div><div class="panel-kicker">AKSES PENGGUNA</div><h2>Rincian hak akses</h2><p>Setiap peran memiliki akses sesuai tanggung jawabnya.</p></div></div>
+            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Penguji</th></tr></thead><tbody>
               <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.lecturer ? 'yes' : 'no'">{{ rule.lecturer ? 'Boleh' : 'Tidak' }}</span></td></tr>
             </tbody></table></div>
           </section>
@@ -1290,7 +1281,7 @@ onMounted(async () => {
             <div class="heading-actions"><button v-if="user.role !== 'lecturer'" class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
           </section>
           <section class="panel movement-panel">
-            <div class="panel-heading"><div><div class="panel-kicker">STOCK MOVEMENTS</div><h2>Riwayat inventaris</h2><p>{{ filteredMovements.length }} dari {{ movements.length }} catatan terbaru</p></div><div class="audit-tag"><History :size="15" /> Audit trail aktif</div></div>
+            <div class="panel-heading"><div><div class="panel-kicker">STOCK MOVEMENTS</div><h2>Riwayat inventaris</h2><p>{{ filteredMovements.length }} dari {{ movements.length }} catatan terbaru</p></div><div class="audit-tag"><History :size="15" /> Riwayat tercatat</div></div>
             <div class="table-toolbar"><div class="search-field"><Search :size="17" /><input v-model="movementSearch" type="search" placeholder="Cari produk, SKU, pengguna, atau catatan..." aria-label="Cari riwayat stok" /><button v-if="movementSearch" class="clear-search" type="button" aria-label="Hapus pencarian" @click="movementSearch = ''"><X :size="14" /></button></div><select v-model="movementTypeFilter" class="filter-select" aria-label="Filter jenis pergerakan"><option value="">Semua aktivitas</option><option value="IN">Stok masuk</option><option value="OUT">Stok keluar</option><option value="ADJUSTMENT">Penyesuaian</option></select></div>
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat riwayat...</div>
             <div v-else-if="filteredMovements.length" class="table-scroll"><table class="data-table movement-table stack-table"><thead><tr><th>Aktivitas</th><th>Produk</th><th>Stok sebelum / sesudah</th><th>Jumlah</th><th>Nilai</th><th>Dicatat oleh</th><th>Waktu</th><th>Catatan</th></tr></thead><tbody>
@@ -1300,7 +1291,7 @@ onMounted(async () => {
           </section>
         </template>
 
-        <footer class="app-footer"><span>KEYSTOCK <i>·</i> MECHANICAL KEYBOARD INVENTORY</span><span><span class="footer-live"></span> Data stok demo · Sinkronisasi marketplace belum aktif</span></footer>
+        <footer class="app-footer"><span>KEYSTOCK <i>·</i> MECHANICAL KEYBOARD INVENTORY</span><span>© 2026 KeyStock</span></footer>
       </div>
     </main>
 

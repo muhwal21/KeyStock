@@ -7,7 +7,7 @@ KeyStock adalah aplikasi inventaris keyboard mekanis dan aksesori. Antarmuka mem
 - Ringkasan stok, aktivitas terbaru, peta rak, dan laporan laba rugi.
 - CRUD produk dan supplier dengan pencarian, filter, dan galeri foto.
 - Pergerakan stok masuk, keluar, dan penyesuaian dengan riwayat saldo.
-- Peran admin, staff, dan dosen penguji dengan hak akses berbeda.
+- Peran admin, staff, dan penguji dengan hak akses berbeda.
 - Login, pendaftaran akun yang menunggu persetujuan admin, pemulihan kata sandi lewat email, dan sesi JWT.
 - Tampilan terang/gelap dan responsif.
 
@@ -42,9 +42,9 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
 4. Buka `http://localhost:5173`.
 
-Akun dibuat dari `SEED_ADMIN_*`, `SEED_DOSEN_*`, dan `SEED_STAFF_*` di `.env`. Dosen bersifat opsional dan hanya dapat melihat data; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel demo—jangan jalankan pada database berisi data penting.
+Akun dibuat dari `SEED_ADMIN_*`, `SEED_PENGUJI_*`, dan `SEED_STAFF_*` di `.env`. Akun penguji hanya dapat melihat data; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel dan data awal—jangan jalankan pada database berisi data penting.
 
-Untuk membuat atau mengaktifkan satu akun staff demo saja tanpa menyentuh akun admin/dosen, isi `SEED_STAFF_EMAIL`, `SEED_STAFF_USERNAME`, dan `SEED_STAFF_PASSWORD`, lalu jalankan `npm run db:staff`. Akun tersebut ditandai aktif dan disetujui untuk kebutuhan demo.
+Untuk menyinkronkan akun admin, penguji, dan staff saja tanpa mengubah katalog atau pergerakan stok, jalankan `npm run db:accounts`. Variabel `SEED_PENGUJI_PREVIOUS_EMAIL` dan `SEED_STAFF_PREVIOUS_EMAIL` dapat dipakai saat mengganti email akun lama.
 
 Untuk email pemulihan dan notifikasi review, isi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, serta `PUBLIC_APP_URL`. Tanpa SMTP, pendaftaran tetap tercatat dan dapat direview di halaman Pengguna, tetapi email tidak terkirim dan pemulihan kata sandi tidak aktif.
 
