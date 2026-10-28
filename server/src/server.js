@@ -1,4 +1,4 @@
-import { app, ensurePersistence, sessionStore } from './app.js';
+import { app, ensurePersistence } from './app.js';
 import { config } from './config.js';
 import { sequelize } from './models/index.js';
 
@@ -10,7 +10,6 @@ try {
 
   const shutdown = async () => {
     server.close(async () => {
-      await sessionStore.close();
       await sequelize.close();
       process.exit(0);
     });

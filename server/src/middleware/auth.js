@@ -1,14 +1,30 @@
 import { User } from '../models/index.js';
+import { config } from '../config.js';
+import { clearAccessCookie, verifyAccessToken } from '../services/authTokenService.js';
+
+export async function resolveAuthenticatedUser(req) {
+  const token = req.cookies?.[config.accessCookieName];
+  if (!token) return null;
+
+  let payload;
+  try {
+    payload = await verifyAccessToken(token);
+  } catch {
+    return null;
+  }
+
+  const userId = Number(payload.sub);
+  if (!Number.isSafeInteger(userId) || userId < 1) return null;
+
+  const user = await User.findByPk(userId);
+  return user?.is_active ? user : null;
+}
 
 export async function requireAuth(req, res, next) {
   try {
-    if (!req.session.userId) {
-      return res.status(401).json({ message: 'Silakan login terlebih dahulu.' });
-    }
-
-    const user = await User.findByPk(req.session.userId);
-    if (!user || !user.is_active) {
-      req.session.destroy(() => {});
+    const user = await resolveAuthenticatedUser(req);
+    if (!user) {
+      clearAccessCookie(res);
       return res.status(401).json({ message: 'Sesi tidak berlaku. Silakan login kembali.' });
     }
 

@@ -36,7 +36,7 @@ router.get('/auth/csrf', getCsrfToken);
 router.get('/auth/me', getCurrentUser);
 router.post('/auth/register', registerLimiter, validateBody(registerSchema), register);
 router.post('/auth/login', loginLimiter, validateBody(loginSchema), login);
-router.post('/auth/logout', requireAuth, logout);
+router.post('/auth/logout', logout);
 
 router.use(requireAuth);
 router.get('/dashboard', getDashboard);

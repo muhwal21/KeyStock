@@ -1,28 +1,22 @@
 import bcrypt from 'bcryptjs';
 import { User } from '../models/index.js';
-import { createCsrfToken } from '../middleware/csrf.js';
+import { getCsrfToken as obtainCsrfToken, issueCsrfToken } from '../middleware/csrf.js';
+import { resolveAuthenticatedUser } from '../middleware/auth.js';
+import { clearAccessCookie, createAccessToken, issueAccessCookie } from '../services/authTokenService.js';
 
 function publicUser(user) {
   return { id: user.id, name: user.name, username: user.username, email: user.email, role: user.role };
 }
 
-function sessionOperation(req, method) {
-  return new Promise((resolve, reject) => {
-    req.session[method]((error) => error ? reject(error) : resolve());
-  });
-}
-
 export function getCsrfToken(req, res) {
-  if (!req.session.csrfToken) req.session.csrfToken = createCsrfToken();
-  return res.json({ csrfToken: req.session.csrfToken });
+  return res.json({ csrfToken: obtainCsrfToken(req, res) });
 }
 
 export async function getCurrentUser(req, res, next) {
   try {
-    if (!req.session.userId) return res.json({ user: null });
-    const user = await User.findByPk(req.session.userId);
-    if (!user || !user.is_active) return res.json({ user: null });
-    return res.json({ user: publicUser(user) });
+    const user = await resolveAuthenticatedUser(req);
+    if (!user) clearAccessCookie(res);
+    return res.json({ user: user ? publicUser(user) : null });
   } catch (error) {
     return next(error);
   }
@@ -39,11 +33,10 @@ export async function login(req, res, next) {
       return res.status(401).json({ message: 'Username/email atau kata sandi tidak sesuai.' });
     }
 
-    await sessionOperation(req, 'regenerate');
-    req.session.userId = user.id;
-    req.session.csrfToken = createCsrfToken();
-    await sessionOperation(req, 'save');
-    return res.json({ user: publicUser(user), csrfToken: req.session.csrfToken });
+    const token = await createAccessToken(user);
+    issueAccessCookie(res, token);
+    const csrfToken = issueCsrfToken(res);
+    return res.json({ user: publicUser(user), csrfToken });
   } catch (error) {
     return next(error);
   }
@@ -73,27 +66,16 @@ export async function register(req, res, next) {
       is_active: true,
     });
 
-    // Same as login: a fresh session id prevents session fixation.
-    await sessionOperation(req, 'regenerate');
-    req.session.userId = user.id;
-    req.session.csrfToken = createCsrfToken();
-    await sessionOperation(req, 'save');
-    return res.status(201).json({ user: publicUser(user), csrfToken: req.session.csrfToken });
+    const token = await createAccessToken(user);
+    issueAccessCookie(res, token);
+    const csrfToken = issueCsrfToken(res);
+    return res.status(201).json({ user: publicUser(user), csrfToken });
   } catch (error) {
     return next(error);
   }
 }
 
-export async function logout(req, res, next) {
-  try {
-    await sessionOperation(req, 'destroy');
-    res.clearCookie(process.env.SESSION_COOKIE_NAME ?? 'keystock.sid', {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    });
-    return res.status(204).end();
-  } catch (error) {
-    return next(error);
-  }
+export function logout(req, res) {
+  clearAccessCookie(res);
+  return res.status(204).end();
 }

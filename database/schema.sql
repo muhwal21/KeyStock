@@ -101,5 +101,3 @@ CREATE TABLE IF NOT EXISTS product_images (
   CONSTRAINT fk_product_images_product FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
   INDEX idx_product_images_order (product_id, sort_order)
 ) ENGINE=InnoDB;
-
--- express-mysql-session creates its own sessions table when the API starts.

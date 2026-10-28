@@ -1,6 +1,5 @@
 -- KeyStock — Mechanical Keyboard Inventory
--- Dump struktur + data demo (MySQL 8 / MariaDB 10.6+). Tabel `sessions` tidak disertakan;
--- express-mysql-session membuatnya otomatis saat API berjalan.
+-- Dump struktur + data demo (MySQL 8 / MariaDB 10.6+).
 --
 -- Import:
 --   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS keystock_inventory CHARACTER SET utf8mb4"

@@ -1,9 +1,8 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import session from 'express-session';
 import helmet from 'helmet';
 import { config, isProduction } from './config.js';
 import { sequelize } from './models/index.js';
@@ -11,30 +10,12 @@ import apiRoutes from './routes/apiRoutes.js';
 import { csrfProtection } from './middleware/csrf.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 
-const require = createRequire(import.meta.url);
-const MySQLStore = require('express-mysql-session')(session);
-const sessionStore = new MySQLStore({
-  ...config.database,
-  database: config.database.name,
-  createDatabaseTable: true,
-  clearExpired: true,
-  expiration: 8 * 60 * 60 * 1000,
-  checkExpirationInterval: 15 * 60 * 1000,
-  schema: {
-    tableName: 'sessions',
-    columnNames: { session_id: 'session_id', expires: 'expires', data: 'data' },
-  },
-});
-
 const app = express();
 let persistenceReady;
 
 function ensurePersistence() {
   if (!persistenceReady) {
-    persistenceReady = Promise.all([
-      sequelize.authenticate(),
-      sessionStore.onReady(),
-    ]).catch((error) => {
+    persistenceReady = sequelize.authenticate().catch((error) => {
       persistenceReady = undefined;
       throw error;
     });
@@ -75,20 +56,7 @@ app.use(helmet({
 }));
 app.use(cors({ origin: config.clientOrigin, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
-app.use(session({
-  name: config.sessionCookieName,
-  secret: config.sessionSecret,
-  store: sessionStore,
-  resave: false,
-  saveUninitialized: false,
-  rolling: true,
-  cookie: {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: 'lax',
-    maxAge: 8 * 60 * 60 * 1000,
-  },
-}));
+app.use(cookieParser());
 
 app.use('/api', csrfProtection, apiRoutes);
 
@@ -105,4 +73,4 @@ if (isProduction) {
 app.use(notFound);
 app.use(errorHandler);
 
-export { app, sessionStore, ensurePersistence };
+export { app, ensurePersistence };
