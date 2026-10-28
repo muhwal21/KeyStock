@@ -652,10 +652,11 @@ html[data-theme="dark"] .auth-card { box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
 .input-wrap input::placeholder { color: var(--faint); }
 .reveal-button { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; padding: 0; border: 0; border-radius: 10px; color: var(--muted); background: transparent; }
 .reveal-button:hover { color: var(--ink); background: var(--surface-3); }
-.password-checks { display: flex; flex-wrap: wrap; gap: 6px; margin: 9px 0 0; padding: 0; list-style: none; }
-.password-checks li { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11.5px; transition: .15s ease; }
-.password-checks li svg { opacity: .35; }
-.password-checks li.ok { color: var(--green); border-color: var(--green-border); background: var(--green-soft); }
+.field-hint { display: block; margin-top: 7px; color: var(--muted); font-size: 11.5px; line-height: 1.45; }
+.password-checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px; margin: 10px 0 0; padding: 0; list-style: none; }
+.password-checks li { display: inline-flex; min-width: 0; align-items: center; gap: 6px; color: var(--muted); font-size: 11.5px; transition: color .15s ease; }
+.password-checks li svg { flex: 0 0 auto; opacity: .35; }
+.password-checks li.ok { color: var(--green); }
 .password-checks li.ok svg { opacity: 1; }
 .auth-submit { min-height: 48px; margin-top: 6px; font-size: 14px; }
 .small-spinner { width: 15px; height: 15px; border-color: rgba(255, 255, 255, .35); border-top-color: currentColor; }

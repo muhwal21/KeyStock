@@ -44,13 +44,21 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Kata sandi wajib diisi.').max(128),
 });
 
+const strongPassword = z.string()
+  .min(10, 'Kata sandi minimal 10 karakter.')
+  .max(64, 'Kata sandi maksimal 64 karakter.')
+  .regex(/[A-Z]/, 'Tambahkan minimal satu huruf besar.')
+  .regex(/[a-z]/, 'Tambahkan minimal satu huruf kecil.')
+  .regex(/[0-9]/, 'Tambahkan minimal satu angka.')
+  .regex(/[^A-Za-z0-9\s]/, 'Tambahkan minimal satu simbol.')
+  .regex(/^\S+$/, 'Kata sandi tidak boleh mengandung spasi.');
+
 export const registerSchema = z.object({
   name: plainText({ min: 2, max: 120, label: 'Nama' }),
   username,
   email,
-  password: z.string().min(12, 'Gunakan kata sandi minimal 12 karakter. Frasa sandi boleh memakai spasi.')
-    .max(128, 'Kata sandi maksimal 128 karakter.'),
-  password_confirmation: z.string().max(128),
+  password: strongPassword,
+  password_confirmation: z.string().max(64),
 }).refine((data) => data.password === data.password_confirmation, {
   path: ['password_confirmation'], message: 'Konfirmasi kata sandi tidak sama.',
 });
@@ -58,9 +66,8 @@ export const registerSchema = z.object({
 export const emailSchema = z.object({ email });
 export const resetPasswordSchema = z.object({
   token: z.string().min(32).max(200),
-  password: z.string().min(12, 'Gunakan kata sandi minimal 12 karakter. Frasa sandi boleh memakai spasi.')
-    .max(128, 'Kata sandi maksimal 128 karakter.'),
-  password_confirmation: z.string().max(128),
+  password: strongPassword,
+  password_confirmation: z.string().max(64),
 }).refine((data) => data.password === data.password_confirmation, {
   path: ['password_confirmation'], message: 'Konfirmasi kata sandi tidak sama.',
 });
