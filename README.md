@@ -44,6 +44,8 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
 Akun dibuat dari `SEED_ADMIN_*`, `SEED_DOSEN_*`, dan `SEED_STAFF_*` di `.env`. Dosen bersifat opsional dan hanya dapat melihat data; pendaftaran publik membuat akun staff berstatus menunggu sampai disetujui admin. `npm run db:fresh` menghapus lalu membuat ulang tabel demo—jangan jalankan pada database berisi data penting.
 
+Untuk membuat atau mengaktifkan satu akun staff demo saja tanpa menyentuh akun admin/dosen, isi `SEED_STAFF_EMAIL`, `SEED_STAFF_USERNAME`, dan `SEED_STAFF_PASSWORD`, lalu jalankan `npm run db:staff`. Akun tersebut ditandai aktif dan disetujui untuk kebutuhan demo.
+
 Untuk email pemulihan dan notifikasi review, isi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, serta `PUBLIC_APP_URL`. Tanpa SMTP, pendaftaran tetap tercatat dan dapat direview di halaman Pengguna, tetapi email tidak terkirim dan pemulihan kata sandi tidak aktif.
 
 ## Deploy ke VPS

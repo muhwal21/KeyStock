@@ -16,6 +16,7 @@
     "dev:web": "npm --workspace client run dev",
     "db:sync": "npm --workspace server run db:sync",
     "db:seed": "npm --workspace server run db:seed",
+    "db:staff": "npm --workspace server run db:staff",
     "db:fresh": "npm --workspace server run db:fresh",
     "build": "npm --workspace client run build",
     "start": "npm --workspace server run start"
