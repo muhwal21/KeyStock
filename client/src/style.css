@@ -53,6 +53,8 @@
   --heat-4: #111113;
 
   --art-surface: #111113;
+  --gallery-surface: #f5f5f7;
+  --gallery-surface-end: #ebebef;
   --backdrop: rgba(17, 17, 19, .34);
 
   --radius-card: 20px;
@@ -112,6 +114,8 @@ html[data-theme="dark"] {
   --heat-4: #f5f5f6;
 
   --art-surface: #141416;
+  --gallery-surface: #1a1a1e;
+  --gallery-surface-end: #222226;
   --backdrop: rgba(0, 0, 0, .64);
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
   --shadow-pop: 0 24px 64px rgba(0, 0, 0, .6);
@@ -830,9 +834,9 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 .detail-loading { min-height: 320px; }
 .detail-error { display: grid; gap: 14px; justify-items: start; padding: 24px; }
 .detail-layout { display: grid; min-height: 0; grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr); overflow-y: auto; }
-.detail-gallery { position: relative; padding: 20px; border-right: 1px solid var(--line); }
+.detail-gallery { position: relative; display: flex; min-height: 0; flex-direction: column; gap: 10px; padding: 20px; border-right: 1px solid var(--line); background: linear-gradient(155deg, var(--gallery-surface), var(--gallery-surface-end)); }
 .detail-close-mobile { display: none; }
-.gallery-main { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2); }
+.gallery-main { position: relative; flex: 1 0 360px; min-height: 320px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2); }
 .gallery-main img { width: 100%; height: 100%; object-fit: contain; }
 .gallery-badge, .gallery-count { position: absolute; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
 .gallery-badge { top: 12px; left: 12px; color: #111113; background: rgba(255, 255, 255, .92); }
@@ -840,7 +844,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 .gallery-nav { position: absolute; top: 50%; display: grid; width: 38px; height: 38px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #111113; background: rgba(255, 255, 255, .92); box-shadow: 0 4px 14px rgba(0, 0, 0, .16); transform: translateY(-50%); }
 .gallery-nav.prev { left: 12px; }
 .gallery-nav.next { right: 12px; }
-.gallery-thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.gallery-thumbs { display: grid; flex: 0 0 auto; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .thumb { position: relative; min-width: 0; }
 .thumb-image { display: block; width: 100%; aspect-ratio: 1; overflow: hidden; padding: 0; border: 1.5px solid var(--line); border-radius: 11px; background: var(--surface-2); }
 .thumb-image img { width: 100%; height: 100%; object-fit: cover; }
@@ -853,7 +857,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 .thumb-add:hover:not(:disabled) { color: var(--ink); border-color: var(--ink); }
 .gallery-notice { margin: 10px 0 0; color: var(--red); font-size: 12px; }
 .gallery-hint { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
-.detail-info { display: flex; min-width: 0; flex-direction: column; padding: 20px 22px; }
+.detail-info { display: flex; min-width: 0; flex-direction: column; padding: 20px 22px; background: var(--surface); }
 .detail-head { display: flex; align-items: flex-start; gap: 12px; }
 .detail-head > div { min-width: 0; flex: 1; }
 .detail-kicker { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
@@ -886,6 +890,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 @media (max-width: 860px) {
   .detail-layout { grid-template-columns: 1fr; }
   .detail-gallery { border-right: 0; border-bottom: 1px solid var(--line); }
+  .gallery-main { flex: 0 0 auto; min-height: 0; aspect-ratio: 4 / 3; }
   .detail-close-mobile { position: absolute; z-index: 2; top: 28px; right: 28px; display: inline-grid; background: var(--surface); }
   .detail-head .icon-button { display: none; }
 }
