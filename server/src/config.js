@@ -16,13 +16,18 @@ if (env.JWT_SECRET.length < 32 || env.JWT_SECRET.toLowerCase().includes('replace
   throw new Error('JWT_SECRET must be a generated secret with at least 32 characters.');
 }
 
+const nodeEnv = env.NODE_ENV ?? 'development';
+if (nodeEnv === 'production' && (env.DB_PASSWORD.length < 16 || /change-me|replace-with|local-/i.test(env.DB_PASSWORD))) {
+  throw new Error('Use a unique production DB_PASSWORD with at least 16 characters.');
+}
+
 const jwtExpiresSeconds = Number(env.JWT_EXPIRES_SECONDS ?? 28800);
 if (!Number.isInteger(jwtExpiresSeconds) || jwtExpiresSeconds < 300 || jwtExpiresSeconds > 86400) {
   throw new Error('JWT_EXPIRES_SECONDS must be an integer between 300 and 86400.');
 }
 
 export const config = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   port: Number(process.env.PORT ?? 3000),
   clientOrigin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173',
   jwtSecret: env.JWT_SECRET,

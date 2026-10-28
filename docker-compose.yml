@@ -1,22 +1,80 @@
 services:
   mysql:
     image: mysql:8.4
-    container_name: keystock-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-local-root-password}
-      MYSQL_DATABASE: ${DB_NAME:-keystock_inventory}
-      MYSQL_USER: ${DB_USER:-keystock_app}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-local-app-password}
-    ports:
-      - "${DB_PORT:-3306}:3306"
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: ${DB_NAME:?Set DB_NAME in .env}
+      MYSQL_USER: ${DB_USER:?Set DB_USER in .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
     volumes:
-      - keystock_mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD:-local-root-password}"]
-      interval: 5s
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 12
+      start_period: 30s
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      CLIENT_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:?Set DB_NAME in .env}
+      DB_USER: ${DB_USER:?Set DB_USER in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      JWT_EXPIRES_SECONDS: ${JWT_EXPIRES_SECONDS:-28800}
+      ACCESS_COOKIE_NAME: ${ACCESS_COOKIE_NAME:-keystock.access}
+      CSRF_COOKIE_NAME: ${CSRF_COOKIE_NAME:-keystock.csrf}
+      SEED_ADMIN_NAME: ${SEED_ADMIN_NAME:-KeyStock Admin}
+      SEED_ADMIN_USERNAME: ${SEED_ADMIN_USERNAME:-admin}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:?Set SEED_ADMIN_EMAIL in .env}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?Set SEED_ADMIN_PASSWORD in .env}
+      SEED_DOSEN_NAME: ${SEED_DOSEN_NAME:-Dosen Penguji}
+      SEED_DOSEN_USERNAME: ${SEED_DOSEN_USERNAME:-dosen}
+      SEED_DOSEN_EMAIL: ${SEED_DOSEN_EMAIL:-}
+      SEED_DOSEN_PASSWORD: ${SEED_DOSEN_PASSWORD:-}
+      SEED_STAFF_NAME: ${SEED_STAFF_NAME:-Staff Gudang}
+      SEED_STAFF_USERNAME: ${SEED_STAFF_USERNAME:-staff}
+      SEED_STAFF_EMAIL: ${SEED_STAFF_EMAIL:-}
+      SEED_STAFF_PASSWORD: ${SEED_STAFF_PASSWORD:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
 
 volumes:
-  keystock_mysql_data:
+  mysql_data:
+  caddy_data:
+  caddy_config:
