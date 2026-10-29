@@ -33,9 +33,23 @@ compose.dev.yml          MySQL lokal untuk pengembangan
 
 Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
-1. Salin `.env.example` menjadi `.env`. Nilai password contoh di file tersebut **hanya untuk database lokal**. Jangan pakai ulang di VPS.
-2. Ganti `JWT_SECRET` dengan nilai acak, misalnya keluaran `openssl rand -hex 32`. Jangan commit atau bagikan `.env`.
-3. Jalankan:
+1. Clone repository dan masuk ke folder project:
+
+   ```bash
+   git clone https://github.com/muhwal21/KeyStock.git
+   cd KeyStock
+   ```
+
+2. Salin `.env.example` menjadi `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Nilai contoh di file tersebut, termasuk password akun evaluasi, **hanya untuk lingkungan lokal**. Jangan pakai ulang di VPS.
+
+3. Ganti `JWT_SECRET` dengan nilai acak, misalnya keluaran `openssl rand -hex 32`. Jangan commit atau bagikan `.env`.
+4. Pasang dependency, jalankan MySQL lokal, buat skema dan data awal, lalu jalankan aplikasi:
 
    ```bash
    npm ci
@@ -45,11 +59,11 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
    npm run dev
    ```
 
-4. Buka `http://localhost:5173`.
+5. Buka `http://localhost:5173`.
 
 ### Akun evaluasi lokal
 
-Akun ini dibuat untuk database lokal saja. Password di bawah tidak boleh digunakan pada deployment publik.
+Akun berikut dibuat oleh `npm run db:seed` untuk database lokal. Password di bawah tidak boleh digunakan pada deployment publik.
 
 | Username | Peran | Password lokal |
 | --- | --- | --- |
