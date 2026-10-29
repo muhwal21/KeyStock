@@ -12,8 +12,19 @@ KeyStock adalah aplikasi web inventaris gudang untuk keyboard mekanis dan akseso
 - Pencatatan stok masuk, keluar, penyesuaian, dan saldo sebelum/sesudah.
 - Sinkronisasi otomatis saat aplikasi terbuka dan pemuatan versi baru setelah deploy.
 - Hak akses Admin, Dosen, dan Staff; Dosen memiliki hak administratif setara Admin.
-- Login, pendaftaran Staff dengan persetujuan Admin, reset kata sandi melalui SMTP, dan cookie sesi JWT.
+- Login, pendaftaran Staff dengan persetujuan Admin atau Dosen, reset kata sandi melalui SMTP, dan cookie sesi JWT.
 - Tema terang/gelap dan tata letak responsif.
+
+## Hak akses
+
+| Aksi | Admin | Dosen | Staff |
+| --- | :---: | :---: | :---: |
+| Melihat ringkasan, produk, supplier, dan riwayat stok | ✅ | ✅ | ✅ |
+| Mencatat pergerakan stok | ✅ | ✅ | ✅ |
+| Mengelola produk, foto, dan supplier | ✅ | ✅ | ❌ |
+| Mengelola pengguna | ✅ | ✅ | ❌ |
+
+Akun utama `admin` dilindungi: peran dan statusnya tidak dapat diubah dari menu pengguna.
 
 ## Struktur repository
 
@@ -21,7 +32,7 @@ KeyStock adalah aplikasi web inventaris gudang untuk keyboard mekanis dan akseso
 client/                  Vue 3, komponen, utilitas, CSS, dan gambar produk
 server/                  Express API, Sequelize models, controller, service, middleware
 database/                skema MySQL dan data lokal untuk evaluasi
-docs/uas/                ERD, alur request, arsitektur, dan panduan bukti UAS
+docs/uas/                ERD, alur request, dan arsitektur aplikasi
 ops/                     backup terenkripsi dan unit timer untuk VPS
 .github/workflows/       pipeline deploy VPS
 Dockerfile               image aplikasi
@@ -61,6 +72,19 @@ Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
 
 5. Buka `http://localhost:5173`.
 
+### Menjalankan tanpa Docker
+
+Pasang dan jalankan MySQL secara lokal, lalu sesuaikan `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, dan `DB_PASSWORD` di `.env`. Buat database lokal kosong yang boleh ditimpa, lalu impor dump evaluasi:
+
+```bash
+mysql -u root -p -e "CREATE DATABASE keystock_inventory CHARACTER SET utf8mb4"
+mysql -u root -p keystock_inventory < database/keystock-demo.sql
+npm ci
+npm run dev
+```
+
+Dump tersebut menjalankan `DROP TABLE`; gunakan hanya pada database lokal kosong atau sekali pakai. Jangan impor ke VPS.
+
 ### Akun evaluasi lokal
 
 Akun berikut dibuat oleh `npm run db:seed` untuk database lokal. Password di bawah tidak boleh digunakan pada deployment publik.
@@ -74,6 +98,16 @@ Akun berikut dibuat oleh `npm run db:seed` untuk database lokal. Password di baw
 Untuk akun live, bagikan kredensial kepada penilai lewat kanal submission yang aksesnya dibatasi; jangan masukkan password produksi ke repository atau file dump publik. Pendaftaran baru menunggu persetujuan Admin atau Dosen. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
 
 `npm run db:fresh` menghapus dan membuat ulang tabel serta data lokal. Jangan jalankan pada database berisi data penting. `npm run db:accounts` menyelaraskan akun dari `.env`; perintah ini dapat memperbarui nama, email, password, status aktif, dan versi sesi akun. Periksa konfigurasi terlebih dahulu sebelum menjalankannya, khususnya di production.
+
+## Perintah umum
+
+| Perintah | Fungsi |
+| --- | --- |
+| `npm run dev` | Menjalankan API dan frontend untuk pengembangan lokal |
+| `npm run db:sync` | Membuat atau memperbarui tabel melalui migrasi aplikasi |
+| `npm run db:seed` | Mengisi akun dan data awal untuk evaluasi lokal |
+| `npm run db:fresh` | Menghapus lalu mengisi ulang data; khusus database lokal yang boleh dihapus |
+| `npm run build` | Membuat build frontend untuk production |
 
 ## Skema dan relasi
 
@@ -103,4 +137,4 @@ Deploy rutin berjalan setelah perubahan di-push ke branch `main`, jika GitHub Ac
 
 ## Catatan kesesuaian UAS
 
-Brief UAS meminta ERD, alur MVC, skema MySQL, validasi, CRUD, keamanan sesi, langkah deployment, README, URL live, dan bukti demo. Repository ini mendokumentasikan implementasi aktual: Vue 3 + Express + Sequelize + MySQL. Sequelize adalah ORM yang digunakan aplikasi; repository ini tidak mengklaim menggunakan Laravel/Eloquent. Lihat [pemetaan requirement UAS](docs/uas/pemetaan-requirement.md) dan [catatan jawaban esai](docs/uas/catatan-esai.md) untuk menyusun PDF/video sesuai kondisi kode.
+Diagram ERD, alur request, dan arsitektur tersedia di [`docs/uas/`](docs/uas/). Repository ini mendokumentasikan implementasi aktual: Vue 3 + Express + Sequelize + MySQL. Sequelize adalah ORM yang digunakan aplikasi; repository ini tidak mengklaim menggunakan Laravel/Eloquent.
