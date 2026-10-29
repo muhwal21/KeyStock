@@ -1,80 +1,161 @@
 # KeyStock
 
-KeyStock adalah aplikasi web inventaris gudang untuk keyboard mekanis dan aksesori. Aplikasi memakai Vue 3 untuk antarmuka, Node.js/Express untuk API, Sequelize untuk akses model relasional, dan MySQL untuk penyimpanan data.
+![Vue](https://img.shields.io/badge/Vue.js-3-4FC08D?logo=vuedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
+![Sequelize](https://img.shields.io/badge/Sequelize-6-52B0E7?logo=sequelize&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Auth-000000?logo=jsonwebtokens&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Caddy](https://img.shields.io/badge/Caddy-HTTPS-1F88C0?logo=caddy&logoColor=white)
 
-**Aplikasi live:** [https://keystock.tech](https://keystock.tech)<br>
-**Repository:** [github.com/muhwal21/KeyStock](https://github.com/muhwal21/KeyStock)
+**KeyStock** adalah aplikasi web manajemen inventaris gudang untuk keyboard mekanis dan aksesorinya. Aplikasi ini membantu admin gudang memantau stok, mengelola produk dan supplier, serta mencatat setiap pergerakan barang secara terstruktur.
 
-## Fitur
+🔗 **Aplikasi live:** [keystock.tech](https://keystock.tech)
 
-- Ringkasan stok, aktivitas, peta rak, dan laporan laba/rugi.
-- CRUD produk dan supplier, pencarian, filter, serta galeri foto.
-- Pencatatan stok masuk, keluar, penyesuaian, dan saldo sebelum/sesudah.
-- Sinkronisasi otomatis saat aplikasi terbuka dan pemuatan versi baru setelah deploy.
-- Hak akses Admin, Dosen, dan Staff; Dosen memiliki hak administratif setara Admin.
-- Login, pendaftaran Staff dengan persetujuan Admin atau Dosen, reset kata sandi melalui SMTP, dan cookie sesi JWT.
-- Tema terang/gelap dan tata letak responsif.
+---
 
-## Hak akses
+## Daftar Isi
+
+- [Fitur Utama](#fitur-utama)
+- [Teknologi](#teknologi)
+- [Hak Akses](#hak-akses)
+- [Struktur Project (MVC)](#struktur-project-mvc)
+- [Instalasi Lokal](#instalasi-lokal)
+- [Akun Login](#akun-login)
+- [Perintah](#perintah)
+- [Database](#database)
+- [Deployment](#deployment)
+
+---
+
+## Fitur Utama
+
+- **Dashboard** — ringkasan stok, heatmap aktivitas, peta rak gudang, dan laporan laba/rugi 30 hari.
+- **Produk** — CRUD lengkap dengan pencarian, filter, galeri foto, harga beli/jual, dan lokasi rak.
+- **Supplier** — CRUD supplier beserta kontak WhatsApp, telepon, dan email.
+- **Pergerakan stok** — stok masuk, keluar, dan penyesuaian dengan riwayat saldo sebelum/sesudah.
+- **Pengguna** — persetujuan pendaftaran, pengaturan peran, dan aktivasi akun.
+- **Autentikasi** — registrasi, login dengan username atau email, logout, opsi "Ingat saya", serta pemulihan password melalui email jika SMTP dikonfigurasi.
+- **Antarmuka** — tema terang/gelap, tampilan responsif, dan sinkronisasi data otomatis.
+
+## Teknologi
+
+### Frontend
+
+| Teknologi | Fungsi |
+| --- | --- |
+| **Vue 3** | Framework JavaScript untuk membangun antarmuka (View) |
+| **Vite** | Build tool dan dev server untuk frontend |
+| **Lucide Icons** | Ikon antarmuka |
+
+### Backend
+
+| Teknologi | Fungsi |
+| --- | --- |
+| **Node.js 24** | Runtime JavaScript di sisi server |
+| **Express 5** | Framework web untuk routing API, middleware, dan controller |
+| **Sequelize 6** | ORM untuk mendefinisikan model, relasi tabel, dan query dengan parameter binding |
+| **mysql2** | Driver koneksi Node.js ke MySQL |
+| **Zod** | Validasi input di sisi server |
+
+### Database
+
+| Teknologi | Fungsi |
+| --- | --- |
+| **MySQL 8.4** | Database relasional untuk menyimpan pengguna, produk, supplier, foto, dan pergerakan stok |
+
+### Keamanan & Autentikasi
+
+| Teknologi | Fungsi |
+| --- | --- |
+| **JWT (jose)** | Token sesi login di cookie `HttpOnly` dan `SameSite=Lax`; flag `Secure` aktif di production |
+| **bcrypt (bcryptjs)** | Hash password sebelum disimpan ke database |
+| **CSRF token** | Melindungi request yang mengubah data (POST, PUT, PATCH, DELETE) |
+| **Helmet** | Header keamanan HTTP dan Content Security Policy untuk membatasi script yang tidak tepercaya |
+| **express-rate-limit** | Membatasi percobaan login, registrasi, dan reset password (pencegahan brute force) |
+
+### Deployment & Infrastruktur
+
+| Teknologi | Fungsi |
+| --- | --- |
+| **Docker Compose** | Menjalankan aplikasi, MySQL, dan Caddy dalam container |
+| **Caddy** | Reverse proxy dan sertifikat HTTPS otomatis |
+| **VPS Hostinger** | Server tempat aplikasi live berjalan |
+| **GitHub Actions** | Deploy otomatis setiap push ke branch `main` |
+
+## Hak Akses
 
 | Aksi | Admin | Dosen | Staff |
 | --- | :---: | :---: | :---: |
-| Melihat ringkasan, produk, supplier, dan riwayat stok | ✅ | ✅ | ✅ |
+| Melihat dashboard, produk, supplier, dan riwayat stok | ✅ | ✅ | ✅ |
 | Mencatat pergerakan stok | ✅ | ✅ | ✅ |
 | Mengelola produk, foto, dan supplier | ✅ | ✅ | ❌ |
 | Mengelola pengguna | ✅ | ✅ | ❌ |
 
-Akun utama `admin` dilindungi: peran dan statusnya tidak dapat diubah dari menu pengguna.
+> Peran **Dosen** memiliki hak administratif setara Admin. Akun Admin utama dilindungi sehingga peran dan statusnya tidak dapat diubah oleh akun lain. Hak akses diterapkan di server melalui middleware `requireAuth` dan `requireRole`.
 
-## Struktur repository
+## Struktur Project (MVC)
+
+Pemisahan tugas mengikuti pola MVC: Vue menjadi View, Controller Express menangani request dan logika endpoint, lalu Model Sequelize berinteraksi dengan MySQL. Routes dan middleware menghubungkan lapisan tersebut.
 
 ```text
-client/                  Vue 3, komponen, utilitas, CSS, dan gambar produk
-server/                  Express API, Sequelize models, controller, service, middleware
-database/                skema MySQL dan data lokal untuk evaluasi
-docs/uas/                ERD, alur request, dan arsitektur aplikasi
-ops/                     backup terenkripsi dan unit timer untuk VPS
-.github/workflows/       pipeline deploy VPS
-Dockerfile               image aplikasi
-docker-compose.yml       aplikasi, MySQL privat, Caddy/HTTPS
-compose.dev.yml          MySQL lokal untuk pengembangan
+client/                 View — antarmuka Vue 3 (halaman, komponen, aset)
+server/src/
+├── models/             Model — definisi tabel dan relasi Sequelize
+├── controllers/        Controller — logika setiap fitur
+├── routes/             Routing endpoint API
+├── middleware/         Autentikasi, hak akses, CSRF, dan validasi
+├── services/           Logika bisnis (stok, laba/rugi, token)
+└── seeders/            Data awal
+database/               Skema MySQL dan data demo (.sql)
+docs/uas/               ERD, alur request, dan arsitektur
+ops/                    Script backup database untuk VPS
+.env.example            Contoh konfigurasi environment
+docker-compose.yml      Konfigurasi container production
+compose.dev.yml         MySQL untuk pengembangan lokal
 ```
 
-## Menjalankan secara lokal
+## Instalasi Lokal
 
-Persyaratan: Node.js 24, npm, Docker, dan Docker Compose.
+**Persyaratan:** Node.js 24, npm, Docker, dan Docker Compose.
 
-1. Clone repository dan masuk ke folder project:
+1. **Clone repository**
 
    ```bash
    git clone https://github.com/muhwal21/KeyStock.git
    cd KeyStock
    ```
 
-2. Salin `.env.example` menjadi `.env`:
+2. **Siapkan konfigurasi**
 
    ```bash
    cp .env.example .env
    ```
 
-   Nilai contoh di file tersebut, termasuk password akun evaluasi, **hanya untuk lingkungan lokal**. Jangan pakai ulang di VPS.
+   Ganti `JWT_SECRET` dengan nilai acak, misalnya hasil `openssl rand -hex 32`. Akun dan password seed dalam `.env.example` hanya untuk database lokal; ganti semua kredensial sebelum deployment. Jangan commit file `.env`.
 
-3. Ganti `JWT_SECRET` dengan nilai acak, misalnya keluaran `openssl rand -hex 32`. Jangan commit atau bagikan `.env`.
-4. Pasang dependency, jalankan MySQL lokal, buat skema dan data awal, lalu jalankan aplikasi:
+3. **Install dependency dan siapkan database**
 
    ```bash
    npm ci
    docker compose -f compose.dev.yml up -d mysql
    npm run db:sync
    npm run db:seed
+   ```
+
+4. **Jalankan aplikasi**
+
+   ```bash
    npm run dev
    ```
 
-5. Buka `http://localhost:5173`.
+   Buka [http://localhost:5173](http://localhost:5173).
 
-### Menjalankan tanpa Docker
+### Alternatif tanpa Docker
 
-Pasang dan jalankan MySQL secara lokal, lalu sesuaikan `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, dan `DB_PASSWORD` di `.env`. Buat database lokal kosong yang boleh ditimpa, lalu impor dump evaluasi:
+Gunakan MySQL yang terpasang di komputer, sesuaikan nilai `DB_*` di `.env`, lalu impor data demo:
 
 ```bash
 mysql -u root -p -e "CREATE DATABASE keystock_inventory CHARACTER SET utf8mb4"
@@ -83,68 +164,61 @@ npm ci
 npm run dev
 ```
 
-Dump tersebut menjalankan `DROP TABLE`; gunakan hanya pada database lokal kosong atau sekali pakai. Jangan impor ke VPS.
+> File `keystock-demo.sql` menghapus dan membuat ulang tabel. Gunakan hanya pada database lokal yang kosong.
 
-### Akun evaluasi lokal
+## Akun Login
 
-Akun berikut dibuat oleh `npm run db:seed` untuk database lokal. Password di bawah tidak boleh digunakan pada deployment publik.
+### Lokal
 
-| Username | Peran | Password lokal |
+| Username | Peran | Password |
 | --- | --- | --- |
 | `admin` | Admin | `LocalAdmin!2026` |
 | `dosen` | Dosen | `LocalDosen!2026` |
 | `staff` | Staff | `LocalStaff!2026` |
 
-### Pengujian aplikasi live
+Akun di atas hanya berlaku untuk database lokal. Login dapat menggunakan username atau email.
 
-Buka [keystock.tech](https://keystock.tech), lalu masuk menggunakan akun live yang tercantum di dokumen submission terbatas.
+### Aplikasi live
 
-| Username | Peran | Yang dapat diuji |
-| --- | --- | --- |
-| `admin` | Admin | Kelola inventaris dan pengguna; akun Admin utama dilindungi dari perubahan peran/status oleh akun lain. |
-| `dosen` | Dosen | Akses administratif setara Admin, kecuali tidak dapat mengubah akun Admin utama. |
-| `staff` | Staff | Lihat data inventaris dan catat pergerakan stok. |
+> **Akses pengujian live:** [Buka aplikasi KeyStock](https://keystock.tech). Informasi akun uji dibagikan terpisah.
 
-Password live dibagikan melalui dokumen submission yang aksesnya dibatasi, bukan README atau file publik. Pendaftaran baru menunggu persetujuan Admin atau Dosen. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
+SMTP belum dikonfigurasi di live sehingga pemulihan password belum aktif.
 
-`npm run db:fresh` menghapus dan membuat ulang tabel serta data lokal. Jangan jalankan pada database berisi data penting. `npm run db:accounts` menyelaraskan akun dari `.env`; perintah ini dapat memperbarui nama, email, password, status aktif, dan versi sesi akun. Periksa konfigurasi terlebih dahulu sebelum menjalankannya, khususnya di production.
-
-## Perintah umum
+## Perintah
 
 | Perintah | Fungsi |
 | --- | --- |
-| `npm run dev` | Menjalankan API dan frontend untuk pengembangan lokal |
-| `npm run db:sync` | Membuat atau memperbarui tabel melalui migrasi aplikasi |
-| `npm run db:seed` | Mengisi akun dan data awal untuk evaluasi lokal |
-| `npm run db:fresh` | Menghapus lalu mengisi ulang data; khusus database lokal yang boleh dihapus |
+| `npm run dev` | Menjalankan API dan frontend |
+| `npm run db:sync` | Membuat atau memperbarui struktur tabel |
+| `npm run db:seed` | Mengisi akun dan data awal |
+| `npm run db:accounts` | Menyelaraskan akun dari `.env`; dapat mengubah kredensial dan status akun |
+| `npm run db:fresh` | Mengosongkan dan mengisi ulang data (khusus lokal) |
 | `npm run build` | Membuat build frontend untuk production |
 
-## Skema dan relasi
+Jalankan `db:accounts` hanya setelah memeriksa nilai akun di `.env`, terutama saat terhubung ke database production.
 
-Database memiliki tujuh tabel: `users`, `categories`, `suppliers`, `products`, `product_images`, `stock_movements`, dan `password_resets`. Diagram ERD dan hubungan foreign key ada di [docs/uas/erd.md](docs/uas/erd.md). `database/schema.sql` adalah skema referensi untuk database kosong; untuk database berjalan gunakan `npm run db:sync` yang menjalankan migrasi aplikasi.
+## Database
 
-## Deployment VPS
+Database MySQL terdiri dari tujuh tabel:
 
-Stack Docker menjalankan aplikasi, MySQL yang tidak membuka port publik, serta Caddy untuk HTTPS otomatis. Aplikasi live tersedia di [keystock.tech](https://keystock.tech).
+| Tabel | Isi |
+| --- | --- |
+| `users` | Akun pengguna, peran, dan status |
+| `categories` | Kategori produk |
+| `suppliers` | Data supplier dan kontak |
+| `products` | Data produk, harga, stok, dan lokasi rak |
+| `product_images` | Foto produk |
+| `stock_movements` | Riwayat stok masuk, keluar, dan penyesuaian |
+| `password_resets` | Token pemulihan kata sandi |
 
-1. Arahkan DNS record `A` domain ke IPv4 VPS. Izinkan TCP `22`, `80`, dan `443`; jangan buka MySQL `3306` ke internet.
-2. Siapkan Docker Engine/Compose, checkout repository, dan buat `.env` server secara manual dari `.env.example`.
-3. Gunakan nilai unik untuk domain, DB password, JWT secret, email, dan password semua akun. Jangan salin password lokal di atas ke server.
-4. Jalankan pertama kali `docker compose up -d --build`, lalu `docker compose exec app npm run db:sync` dan `docker compose exec app npm run db:seed`. Jangan jalankan `db:fresh` pada data production.
-5. Setelah DNS aktif dan port HTTPS dapat dijangkau, Caddy meminta sertifikat secara otomatis.
+Diagram ERD tersedia di [`docs/uas/erd.md`](docs/uas/erd.md). Dokumen [alur request](docs/uas/alur-request.md) dan [arsitektur](docs/uas/arsitektur.md) menjelaskan proses aplikasi; skema database ada di [`database/schema.sql`](database/schema.sql).
 
-Deploy rutin berjalan setelah perubahan di-push ke branch `main`, jika GitHub Actions telah dikonfigurasi. Workflow memakai host key pinning dan forced-command deploy key. Detail diagram alur deploy dan konfigurasi backup ada di [docs/uas/arsitektur.md](docs/uas/arsitektur.md) dan [ops/README.md](ops/README.md).
+## Deployment
 
-## Keamanan dan data
+Aplikasi berjalan di VPS menggunakan Docker Compose dengan tiga layanan:
 
-- Password disimpan sebagai bcrypt hash; JWT berada di cookie `HttpOnly`, dan operasi yang mengubah data memerlukan token CSRF.
-- Validasi dilakukan di server; Sequelize memakai parameter binding untuk query terstruktur. Vue menampilkan nilai sebagai teks dan API menggunakan Helmet/CSP.
-- Admin dan Dosen dapat mengelola pengguna, produk, dan supplier; Staff dapat melihat data dan mencatat pergerakan stok.
-- `.env` dikecualikan dari Git. Gunakan secret berbeda untuk lokal dan production.
-- Dump [database/keystock-demo.sql](database/keystock-demo.sql) berisi `DROP TABLE` dan hanya untuk database lokal kosong yang boleh ditimpa. Jangan impor dump itu ke VPS.
-- Backup production harus dienkripsi dan disalin ke penyimpanan di luar VPS. Volume Docker bukan backup.
-- Gambar katalog diubah ke WebP dan cache file gambar diatur tujuh hari; migrasi `db:sync` memperbarui URL gambar katalog yang lama.
+- **app** — server Node.js yang menyajikan API dan frontend.
+- **mysql** — database MySQL tanpa port publik.
+- **caddy** — reverse proxy dengan sertifikat HTTPS otomatis.
 
-## Catatan kesesuaian UAS
-
-Diagram ERD, alur request, dan arsitektur tersedia di [`docs/uas/`](docs/uas/). Repository ini mendokumentasikan implementasi aktual: Vue 3 + Express + Sequelize + MySQL. Sequelize adalah ORM yang digunakan aplikasi; repository ini tidak mengklaim menggunakan Laravel/Eloquent.
+Push ke branch `main` memicu workflow GitHub Actions; deployment berjalan saat variable repository `DEPLOY_ENABLED` diaktifkan. Konfigurasi rahasia (password database, JWT secret, dan akun) disimpan di file `.env` pada server dan tidak disertakan dalam repository. Script dan timer backup tersedia di `ops/`, tetapi jadwal backup off-site perlu dikonfigurasi dan diverifikasi terpisah di VPS.
