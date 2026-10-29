@@ -95,7 +95,17 @@ Akun berikut dibuat oleh `npm run db:seed` untuk database lokal. Password di baw
 | `dosen` | Dosen | `LocalDosen!2026` |
 | `staff` | Staff | `LocalStaff!2026` |
 
-Untuk akun live, bagikan kredensial kepada penilai lewat kanal submission yang aksesnya dibatasi; jangan masukkan password produksi ke repository atau file dump publik. Pendaftaran baru menunggu persetujuan Admin atau Dosen. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
+### Pengujian aplikasi live
+
+Buka [keystock.tech](https://keystock.tech), lalu masuk menggunakan akun live yang tercantum di dokumen submission terbatas.
+
+| Username | Peran | Yang dapat diuji |
+| --- | --- | --- |
+| `admin` | Admin | Kelola inventaris dan pengguna; akun Admin utama dilindungi dari perubahan peran/status oleh akun lain. |
+| `dosen` | Dosen | Akses administratif setara Admin, kecuali tidak dapat mengubah akun Admin utama. |
+| `staff` | Staff | Lihat data inventaris dan catat pergerakan stok. |
+
+Password live dibagikan melalui dokumen submission yang aksesnya dibatasi, bukan README atau file publik. Pendaftaran baru menunggu persetujuan Admin atau Dosen. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
 
 `npm run db:fresh` menghapus dan membuat ulang tabel serta data lokal. Jangan jalankan pada database berisi data penting. `npm run db:accounts` menyelaraskan akun dari `.env`; perintah ini dapat memperbarui nama, email, password, status aktif, dan versi sesi akun. Periksa konfigurasi terlebih dahulu sebelum menjalankannya, khususnya di production.
 
