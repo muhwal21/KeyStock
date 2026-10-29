@@ -115,5 +115,7 @@ Product.hasMany(ProductImage, { foreignKey: 'product_id', as: 'images', onDelete
 ProductImage.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
 User.hasMany(StockMovement, { foreignKey: 'user_id', as: 'movements', onDelete: 'RESTRICT' });
 StockMovement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.hasMany(PasswordReset, { foreignKey: 'user_id', as: 'passwordResets', onDelete: 'CASCADE' });
+PasswordReset.belongsTo(User, { foreignKey: 'user_id', as: 'user', onDelete: 'CASCADE' });
 
 export { DataTypes };

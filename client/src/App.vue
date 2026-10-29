@@ -46,6 +46,7 @@ function toggleTheme() {
 
 const checkingSession = ref(true);
 const apiUnavailable = ref(false);
+const passwordRecoveryAvailable = ref(false);
 const activePage = ref('overview');
 const loading = ref(false);
 const busy = ref(false);
@@ -139,12 +140,12 @@ const navItems = computed(() => (user.value?.role === 'admin'
   : baseNavItems));
 
 const roleRules = [
-  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, staff: true, lecturer: true },
-  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, staff: true, lecturer: false },
-  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, staff: false, lecturer: false },
-  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, staff: false, lecturer: false },
-  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, staff: false, lecturer: false },
-  { action: 'Mengubah peran, menyetujui, dan menonaktifkan pengguna', admin: true, staff: false, lecturer: false },
+  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, staff: true },
+  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, staff: true },
+  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, staff: false },
+  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, staff: false },
+  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, staff: false },
+  { action: 'Mengubah peran, menyetujui, dan menonaktifkan pengguna', admin: true, staff: false },
 ];
 
 watchEffect(() => {
@@ -986,8 +987,12 @@ onMounted(async () => {
   window.addEventListener('online', handlePageVisibility);
   try {
     await refreshCsrf();
-    const session = await get('/auth/me');
+    const [session, health] = await Promise.all([
+      get('/auth/me'),
+      get('/health').catch(() => ({ features: {} })),
+    ]);
     user.value = session.user;
+    passwordRecoveryAvailable.value = health.features?.passwordRecovery === true;
     if (user.value) await loadAll();
   } catch (error) {
     apiUnavailable.value = true;
@@ -995,9 +1000,9 @@ onMounted(async () => {
   } finally {
     checkingSession.value = false;
   }
-  dataSyncTimer = window.setInterval(syncAutomatically, 20_000);
+  dataSyncTimer = window.setInterval(syncAutomatically, 30_000);
   if (import.meta.env.PROD) {
-    versionCheckTimer = window.setInterval(checkForNewVersion, 10_000);
+    versionCheckTimer = window.setInterval(checkForNewVersion, 60_000);
     void checkForNewVersion();
   }
 });
@@ -1100,7 +1105,7 @@ onBeforeUnmount(() => {
             {{ busy ? 'Memeriksa...' : 'Masuk ke inventaris' }}
             <ArrowRight v-if="!busy" :size="17" />
           </button>
-          <button class="button secondary full" type="button" @click="switchAuthMode('forgot')">Lupa kata sandi?</button>
+          <button v-if="passwordRecoveryAvailable" class="button secondary full" type="button" @click="switchAuthMode('forgot')">Lupa kata sandi?</button>
         </form>
 
         <form v-else-if="authMode === 'register'" class="auth-form" novalidate @submit.prevent="submitRegister">
@@ -1186,7 +1191,7 @@ onBeforeUnmount(() => {
         <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
         <div class="user-chip">
           <div class="avatar">{{ user.name?.slice(0, 1).toUpperCase() }}</div>
-          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Viewer' : 'Staff' }}</span></div>
+          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Akses terbatas' : 'Staff' }}</span></div>
         </div>
         <button class="round-button" type="button" title="Keluar" aria-label="Keluar" :disabled="busy" @click="logout"><LogOut :size="17" /></button>
       </div>
@@ -1225,7 +1230,7 @@ onBeforeUnmount(() => {
             <span v-else class="restock-alert is-ok"><Check :size="15" /> Semua stok di atas batas minimum</span>
             <div class="toolbar-actions">
               <button class="round-button" type="button" title="Unduh stok (CSV)" aria-label="Unduh stok (CSV)" @click="exportInventoryCsv"><Download :size="17" /></button>
-              <span class="sync-status" :class="{ offline: syncStatus === 'offline' }" :title="syncStatus === 'offline' ? 'Akan mencoba kembali secara otomatis' : 'Data disinkronkan otomatis setiap 20 detik saat halaman aktif'"><span class="sync-status-dot"></span>{{ syncStatus === 'offline' ? 'Mencoba menyambungkan' : 'Sinkron otomatis' }}</span>
+              <span class="sync-status" :class="{ offline: syncStatus === 'offline' }" :title="syncStatus === 'offline' ? 'Akan mencoba kembali secara otomatis' : 'Data disinkronkan otomatis setiap 30 detik saat halaman aktif'"><span class="sync-status-dot"></span>{{ syncStatus === 'offline' ? 'Mencoba menyambungkan' : 'Sinkron otomatis' }}</span>
               <button v-if="user.role !== 'lecturer'" class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
             </div>
           </section>
@@ -1402,7 +1407,7 @@ onBeforeUnmount(() => {
           <section class="page-heading">
             <div><h1>Pengguna</h1><p>Tinjau pendaftaran, atur peran, dan kelola akses akun.</p></div>
           </section>
-          <section class="supplier-summary-grid">
+          <section class="supplier-summary-grid user-summary-grid">
             <article class="supplier-summary-card"><span class="supplier-summary-icon"><UserCheck :size="17" /></span><div><small>Pengguna aktif</small><strong>{{ users.filter((entry) => entry.is_active).length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><ShieldCheck :size="17" /></span><div><small>Admin aktif</small><strong>{{ users.filter((entry) => entry.is_active && entry.role === 'admin').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserPlus :size="17" /></span><div><small>Menunggu review</small><strong>{{ users.filter((entry) => entry.approval_status === 'pending').length }}</strong></div></article>
@@ -1413,7 +1418,7 @@ onBeforeUnmount(() => {
             <div v-else class="table-scroll"><table class="data-table user-table stack-table"><thead><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Catatan stok</th><th>Bergabung</th><th>Aksi</th></tr></thead><tbody>
               <tr v-for="entry in users" :key="entry.id" :class="{ 'is-inactive': !entry.is_active }">
                 <td class="cell-primary"><div class="user-cell"><div class="avatar">{{ entry.name?.slice(0, 1).toUpperCase() }}</div><div><strong>{{ entry.name }} <span v-if="entry.id === user.id" class="you-tag">Anda</span></strong><small>@{{ entry.username ?? '—' }} · {{ entry.email }}</small></div></div></td>
-                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option value="lecturer">Viewer</option></select></td>
+                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option v-if="entry.role === 'lecturer'" value="lecturer" disabled>Akses terbatas</option></select></td>
                 <td data-label="Status"><span class="stock-badge" :class="entry.approval_status === 'pending' ? 'low' : entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.approval_status === 'pending' ? 'Menunggu review' : entry.approval_status === 'rejected' ? 'Ditolak' : entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                 <td data-label="Catatan stok">{{ formatNumber(entry.movement_count) }} catatan</td>
                 <td data-label="Bergabung">{{ formatDate(entry.createdAt ?? entry.created_at) }}</td>
@@ -1424,8 +1429,8 @@ onBeforeUnmount(() => {
           </section>
           <section class="panel access-panel">
             <div class="panel-heading"><div><div class="panel-kicker">AKSES PENGGUNA</div><h2>Rincian hak akses</h2><p>Setiap peran memiliki akses sesuai tanggung jawabnya.</p></div></div>
-            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th><th>Viewer</th></tr></thead><tbody>
-              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.lecturer ? 'yes' : 'no'">{{ rule.lecturer ? 'Boleh' : 'Tidak' }}</span></td></tr>
+            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th></tr></thead><tbody>
+              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td></tr>
             </tbody></table></div>
           </section>
         </template>

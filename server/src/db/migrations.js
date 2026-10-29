@@ -1,4 +1,5 @@
 import { DataTypes, Op } from 'sequelize';
+import catalog from '../seeders/catalog.json' with { type: 'json' };
 import { sequelize, Product, ProductImage } from '../models/index.js';
 
 // Usernames were added after the first release: add the column, fill it for existing
@@ -47,6 +48,31 @@ async function migrateProductImages() {
   }
 }
 
+// Catalog image assets were normalized to WebP. Change only the known local catalog
+// paths; uploaded blobs and externally managed image URLs remain untouched.
+async function migrateCatalogImageUrls() {
+  const extensions = ['jpg', 'jpeg', 'png', 'webp'];
+  await sequelize.transaction(async (transaction) => {
+    const catalogSkus = new Set(catalog.produk.map((item) => item.id));
+    const products = await Product.findAll({ attributes: ['id', 'sku', 'image_url'], transaction });
+    for (const product of products) {
+      if (!catalogSkus.has(product.sku)) continue;
+      const oldPaths = extensions.map((extension) => `/images/${product.sku}.${extension}`);
+      const newPath = `/images/${product.sku}.webp`;
+      if (oldPaths.includes(product.image_url)) {
+        await sequelize.query('UPDATE products SET image_url = :newPath WHERE id = :id AND image_url IN (:oldPaths)', {
+          replacements: { newPath, id: product.id, oldPaths },
+          transaction,
+        });
+      }
+      await sequelize.query('UPDATE product_images SET url = :newPath WHERE product_id = :id AND url IN (:oldPaths)', {
+        replacements: { newPath, id: product.id, oldPaths },
+        transaction,
+      });
+    }
+  });
+}
+
 // Movement reasons and price snapshots were added for profit and loss. Older rows get the
 // default reason for their type and the product's current prices.
 async function migrateMovementFinance(queryInterface) {
@@ -69,8 +95,43 @@ async function migrateMovementFinance(queryInterface) {
   `);
 }
 
+// Password reset records belong to an account and are disposable once that account
+// is removed. Refuse to add the FK if any orphaned reset rows need manual review.
+async function migratePasswordResetForeignKey(queryInterface) {
+  const [foreignKeys] = await sequelize.query(`
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'password_resets'
+      AND COLUMN_NAME = 'user_id'
+      AND REFERENCED_TABLE_NAME = 'users'
+    LIMIT 1
+  `);
+  if (foreignKeys.length) return;
+
+  const [rows] = await sequelize.query(`
+    SELECT COUNT(*) AS orphan_count
+    FROM password_resets r
+    LEFT JOIN users u ON u.id = r.user_id
+    WHERE u.id IS NULL
+  `);
+  if (Number(rows[0]?.orphan_count ?? 0) > 0) {
+    throw new Error('password_resets memiliki user_id yatim; tinjau data tersebut sebelum menambahkan foreign key.');
+  }
+
+  await queryInterface.addConstraint('password_resets', {
+    fields: ['user_id'],
+    type: 'foreign key',
+    name: 'fk_password_resets_user',
+    references: { table: 'users', field: 'id' },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  });
+}
+
 export async function migrateInventoryFields() {
   const queryInterface = sequelize.getQueryInterface();
+  await migratePasswordResetForeignKey(queryInterface);
   await migrateUsernames(queryInterface);
   await migrateAuthFields(queryInterface);
   await migrateMovementFinance(queryInterface);
@@ -114,4 +175,5 @@ export async function migrateInventoryFields() {
     });
   }
   await migrateProductImages();
+  await migrateCatalogImageUrls();
 }

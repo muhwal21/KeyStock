@@ -69,6 +69,7 @@ if (isProduction) {
       if (error) next(error);
     });
   });
+  app.use('/images', express.static(path.join(clientDist, 'images'), { index: false, maxAge: '7d' }));
   app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
   app.get(/.*/, (req, res, next) => {
     if (req.path.startsWith('/api/')) return next();

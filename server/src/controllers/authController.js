@@ -115,7 +115,11 @@ export async function requestPasswordReset(req, res, next) {
 export async function resetPassword(req, res, next) {
   const transaction = await sequelize.transaction();
   try {
-    const reset = await PasswordReset.findOne({ where: { token_hash: tokenDigest(req.body.token), used_at: null }, transaction });
+    const reset = await PasswordReset.findOne({
+      where: { token_hash: tokenDigest(req.body.token), used_at: null },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
     if (!reset || reset.expires_at <= new Date()) {
       await transaction.rollback();
       return res.status(400).json({ message: 'Tautan pemulihan tidak berlaku atau sudah kedaluwarsa.' });
@@ -137,7 +141,14 @@ export async function resetPassword(req, res, next) {
   }
 }
 
-export function logout(req, res) {
-  clearAccessCookie(res);
-  return res.status(204).end();
+export async function logout(req, res, next) {
+  try {
+    const user = await resolveAuthenticatedUser(req);
+    if (user) await user.increment('token_version', { by: 1 });
+    clearAccessCookie(res);
+    return res.status(204).end();
+  } catch (error) {
+    clearAccessCookie(res);
+    return next(error);
+  }
 }

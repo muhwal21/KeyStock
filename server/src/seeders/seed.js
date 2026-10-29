@@ -94,10 +94,6 @@ function productDefaults(source, categoryId, supplierId, index) {
   const priceMax = source.harga_idr_max ?? source.harga_usd ?? null;
   const specs = source.spek && typeof source.spek === 'object' ? source.spek : {};
   const simulatedStock = demoStockLevels[index % demoStockLevels.length];
-  const imageExtension = source.gambar?.[0]
-    ? new URL(source.gambar[0]).pathname.split('.').pop().toLowerCase()
-    : null;
-  const localImageExtension = ['jpg', 'jpeg', 'png', 'webp'].includes(imageExtension) ? imageExtension : null;
   const prices = simulatedPrices(source, isUsd, priceMin);
 
   return {
@@ -117,18 +113,18 @@ function productDefaults(source, categoryId, supplierId, index) {
     storage_location: demoLocations.get(source.id) ?? null,
     supplier_id: supplierId,
     source_url: source.url ?? source.url_sumber ?? null,
-    image_url: localImageExtension ? `/images/${source.id}.${localImageExtension}` : null,
+    image_url: `/images/${source.id}.webp`,
     specifications: specs,
     variants: Array.isArray(source.varian) ? source.varian : [],
     is_active: true,
   };
 }
 
-// Seed accounts come from environment variables, never from the code. ADMIN is required;
-// DOSEN (read-only role) and STAFF are optional.
+// Seed accounts come from environment variables. DOSEN is a compatibility key for the
+// evaluation login username; it is an Admin account, while public registrations are Staff.
 const accountSpecs = [
   { key: 'ADMIN', role: 'admin', name: 'Admin', username: 'admin', required: true },
-  { key: 'DOSEN', role: 'lecturer', name: 'Viewer', username: 'dosen' },
+  { key: 'DOSEN', role: 'admin', name: 'Admin', username: 'dosen' },
   { key: 'STAFF', role: 'staff', name: 'Staff', username: 'staff' },
 ];
 
@@ -158,6 +154,7 @@ function readAccount(spec) {
   const username = (envValue('USERNAME')?.trim() || spec.username).toLowerCase();
   if (!/^[a-z0-9._]{3,30}$/.test(username)) throw new Error(`SEED_${envKey}_USERNAME tidak valid.`);
   return {
+    key: spec.key,
     email,
     previousEmail: envValue('PREVIOUS_EMAIL')?.trim().toLowerCase() || '',
     password,
@@ -180,7 +177,14 @@ async function upsertAccount(account) {
     throw new Error(`Email atau username akun ${account.username} menunjuk ke pengguna yang berbeda.`);
   }
   const user = emailUser ?? previousEmailUser ?? usernameOwner;
-  if (user && user.role !== account.role) {
+  // Only the pre-existing evaluation account may move from legacy read-only `lecturer`
+  // to the explicitly configured Admin role. Other role mismatches remain an error.
+  const legacyDosenRole = account.key === 'DOSEN'
+    && account.username === 'dosen'
+    && user?.username === 'dosen'
+    && user.role === 'lecturer'
+    && account.role === 'admin';
+  if (user && user.role !== account.role && !legacyDosenRole) {
     throw new Error(`Akun ${account.username} sudah terhubung ke peran lain; akun tidak diubah.`);
   }
 

@@ -8,6 +8,7 @@ import { archiveSupplier, createSupplier, listSuppliers, updateSupplier } from '
 import { createMovement, listMovements } from '../controllers/stockMovementController.js';
 import { listUsers, reviewUser, updateUser } from '../controllers/userController.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
+import { isEmailConfigured } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
 import {
   emailSchema, imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, resetPasswordSchema,
@@ -39,7 +40,10 @@ const resetLimiter = rateLimit({
   message: { message: 'Terlalu banyak permintaan pemulihan. Coba lagi beberapa menit.' },
 });
 
-router.get('/health', (req, res) => res.json({ status: 'ok' }));
+router.get('/health', (req, res) => res.json({
+  status: 'ok',
+  features: { passwordRecovery: isEmailConfigured },
+}));
 router.get('/auth/csrf', getCsrfToken);
 router.get('/auth/me', getCurrentUser);
 router.post('/auth/register', registerLimiter, validateBody(registerSchema), register);

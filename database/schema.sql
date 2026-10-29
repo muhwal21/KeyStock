@@ -6,13 +6,17 @@ USE keystock_inventory;
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
-  username VARCHAR(40) NULL UNIQUE,
+  username VARCHAR(40) NULL,
   email VARCHAR(190) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  role ENUM('admin', 'staff') NOT NULL DEFAULT 'staff',
+  -- `lecturer` is retained for existing read-only accounts; seeded evaluation login `dosen` is Admin.
+  role ENUM('admin', 'staff', 'lecturer') NOT NULL DEFAULT 'staff',
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  approval_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',
+  token_version INT UNSIGNED NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL
+  updated_at DATETIME NOT NULL,
+  UNIQUE KEY users_username_unique (username)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -100,4 +104,17 @@ CREATE TABLE IF NOT EXISTS product_images (
   created_at DATETIME NOT NULL,
   CONSTRAINT fk_product_images_product FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
   INDEX idx_product_images_order (product_id, sort_order)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS password_resets (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  token_hash VARCHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  used_at DATETIME NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX idx_password_resets_user (user_id),
+  INDEX idx_password_resets_expiry (expires_at)
 ) ENGINE=InnoDB;
