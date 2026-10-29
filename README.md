@@ -180,9 +180,9 @@ Akun di atas hanya berlaku untuk database lokal. Login dapat menggunakan usernam
 
 ### Aplikasi live
 
-> **Akses pengujian live:** [Buka aplikasi KeyStock](https://keystock.tech). Informasi akun uji dibagikan terpisah.
-
-SMTP belum dikonfigurasi di live sehingga pemulihan password belum aktif.
+> **Pengujian KeyStock:** [Buka aplikasi live](https://keystock.tech). Gunakan akun Dosen untuk mencoba fitur administratif dan akun Staff untuk melihat inventaris serta mencatat pergerakan stok. Username dan kata sandi tersedia di dokumen submission yang dibagikan terpisah kepada dosen. Akun Admin utama tidak dibagikan; akses Dosen setara Admin, tetapi akun utama tetap terlindungi.
+>
+> Pemulihan kata sandi belum aktif karena SMTP belum dikonfigurasi di live.
 
 ## Perintah
 
