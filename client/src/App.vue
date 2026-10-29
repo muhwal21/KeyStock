@@ -47,7 +47,27 @@ function toggleTheme() {
 const checkingSession = ref(true);
 const apiUnavailable = ref(false);
 const passwordRecoveryAvailable = ref(false);
-const activePage = ref('overview');
+const PAGE_STORAGE_KEY = 'keystock-active-page';
+const PAGE_IDS = new Set(['overview', 'products', 'suppliers', 'movements', 'users']);
+
+function readActivePage() {
+  try {
+    const page = window.sessionStorage.getItem(PAGE_STORAGE_KEY);
+    return PAGE_IDS.has(page) ? page : 'overview';
+  } catch {
+    return 'overview';
+  }
+}
+
+function saveActivePage(page) {
+  try {
+    window.sessionStorage.setItem(PAGE_STORAGE_KEY, page);
+  } catch {
+    // The current page still works if browser storage is unavailable.
+  }
+}
+
+const activePage = ref(readActivePage());
 const loading = ref(false);
 const busy = ref(false);
 const syncStatus = ref('online');
@@ -521,16 +541,19 @@ function productQuery() {
 }
 
 async function navigate(page) {
-  activePage.value = page;
+  const requestedPage = PAGE_IDS.has(page) ? page : 'overview';
+  const targetPage = requestedPage === 'users' && !isAdmin.value ? 'overview' : requestedPage;
+  activePage.value = targetPage;
+  saveActivePage(targetPage);
   clearNotices();
-  if (page === 'overview') {
+  if (targetPage === 'overview') {
     await loadAll();
     return;
   }
 
   loading.value = true;
   try {
-    if (page === 'products') {
+    if (targetPage === 'products') {
       const supplierPath = isAdmin.value ? '/suppliers?includeArchived=true' : '/suppliers';
       const [catalogData, categoryData, supplierData, filteredData] = await Promise.all([
         get('/products'), get('/categories'), get(supplierPath), hasProductFilters() ? get(productQuery()) : null,
@@ -539,12 +562,12 @@ async function navigate(page) {
       products.value = (filteredData ?? catalogData).products;
       categories.value = categoryData.categories;
       suppliers.value = supplierData.suppliers;
-    } else if (page === 'suppliers') {
+    } else if (targetPage === 'suppliers') {
       const supplierPath = isAdmin.value ? '/suppliers?includeArchived=true' : '/suppliers';
       const [supplierData, productData] = await Promise.all([get(supplierPath), get('/products')]);
       suppliers.value = supplierData.suppliers;
       catalog.value = productData.products;
-    } else if (page === 'users') {
+    } else if (targetPage === 'users') {
       const data = await get('/users');
       users.value = data.users;
     } else {
@@ -578,7 +601,7 @@ async function submitLogin() {
     csrfToken.value = result.csrfToken;
     setCsrfToken(result.csrfToken);
     apiUnavailable.value = false;
-    await loadAll();
+    await navigate(activePage.value);
   } catch (error) {
     handleError(error);
   } finally {
@@ -653,6 +676,7 @@ async function logout() {
     await post('/auth/logout', {});
     user.value = null;
     activePage.value = 'overview';
+    saveActivePage('overview');
     csrfToken.value = '';
     setCsrfToken('');
     await refreshCsrf();
@@ -994,7 +1018,7 @@ onMounted(async () => {
     ]);
     user.value = session.user;
     passwordRecoveryAvailable.value = health.features?.passwordRecovery === true;
-    if (user.value) await loadAll();
+    if (user.value) await navigate(activePage.value);
   } catch (error) {
     apiUnavailable.value = true;
     handleError(error);
