@@ -86,4 +86,4 @@ erDiagram
 - Satu pengguna mencatat banyak pergerakan stok. Catatan menyimpan saldo sebelum/sesudah dan snapshot harga untuk audit serta laporan historis.
 - Satu pengguna dapat memiliki beberapa catatan reset sandi. Token asli tidak disimpan, hanya hash; catatan reset ikut dibersihkan saat akun dihapus (`ON DELETE CASCADE`).
 
-Peran yang dibuat oleh seed adalah Admin untuk `admin` dan username evaluasi `dosen`, serta Staff untuk `staff`. Enum `lecturer` masih dipertahankan untuk kompatibilitas akun lama yang hanya-baca; akun evaluasi `dosen` bukan lagi role `lecturer`.
+Seed membuat peran Admin (`admin`), Dosen (`dosen`), dan Staff (`staff`). Dosen memiliki hak administratif yang sama dengan Admin; Staff dapat melihat inventaris dan mencatat pergerakan stok, tetapi tidak mengelola produk, supplier, atau akun.

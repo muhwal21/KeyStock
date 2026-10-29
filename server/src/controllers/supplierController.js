@@ -1,8 +1,9 @@
 import { Supplier } from '../models/index.js';
+import { hasAdminAccess } from '../constants.js';
 
 export async function listSuppliers(req, res, next) {
   try {
-    const where = req.user.role === 'admin' && req.query.includeArchived === 'true' ? {} : { is_active: true };
+    const where = hasAdminAccess(req.user.role) && req.query.includeArchived === 'true' ? {} : { is_active: true };
     const suppliers = await Supplier.findAll({ order: [['is_active', 'DESC'], ['name', 'ASC']], where });
     return res.json({ suppliers });
   } catch (error) {

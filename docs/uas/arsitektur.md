@@ -19,7 +19,7 @@ flowchart LR
 
 ## Request routing
 
-`client/src/api.js` mengirim request same-origin ke `/api`. `server/src/routes/apiRoutes.js` memasang route; `server/src/middleware/csrf.js` memeriksa request yang mengubah data. Route privat melewati `requireAuth`; route pengelolaan akun, produk, dan supplier memakai `requireRole('admin')`. Controller memvalidasi/menyusun response, service menampung logika lintas model, Sequelize memetakan model ke MySQL, lalu Vue memperbarui state dari JSON.
+`client/src/api.js` mengirim request same-origin ke `/api`. `server/src/routes/apiRoutes.js` memasang route; `server/src/middleware/csrf.js` memeriksa request yang mengubah data. Route privat melewati `requireAuth`; route pengelolaan akun, produk, dan supplier mengizinkan Admin serta Dosen. Controller memvalidasi/menyusun response, service menampung logika lintas model, Sequelize memetakan model ke MySQL, lalu Vue memperbarui state dari JSON. Staff dapat mencatat pergerakan stok, tetapi tidak mengelola akun atau master produk/supplier.
 
 ## Lingkungan dan deployment
 
@@ -35,6 +35,6 @@ flowchart LR
 | --- | --- | --- | --- | --- |
 | Produk | `/api/products` | `productController` | `Product`, `Category`, `Supplier`, `ProductImage` | Admin |
 | Supplier | `/api/suppliers` | `supplierController` | `Supplier` | Admin |
-| Pergerakan stok | `/api/stock-movements` | `stockMovementController` + `stockService` | `StockMovement`, `Product`, `User` | Admin, Staff |
+| Pergerakan stok | `/api/stock-movements` | `stockMovementController` + `stockService` | `StockMovement`, `Product`, `User` | Admin, Dosen, Staff |
 | Pengguna | `/api/users` | `userController` | `User`, `StockMovement` | Admin |
 | Autentikasi | `/api/auth/*` | `authController` | `User`, `PasswordReset` | Publik/akun sendiri |

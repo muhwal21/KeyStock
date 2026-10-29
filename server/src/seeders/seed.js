@@ -120,11 +120,11 @@ function productDefaults(source, categoryId, supplierId, index) {
   };
 }
 
-// Seed accounts come from environment variables. DOSEN is a compatibility key for the
-// evaluation login username; it is an Admin account, while public registrations are Staff.
+// Seed accounts come from environment variables. Dosen has the same full permissions
+// as Admin; public registrations receive the operational Staff role.
 const accountSpecs = [
   { key: 'ADMIN', role: 'admin', name: 'Admin', username: 'admin', required: true },
-  { key: 'DOSEN', role: 'admin', name: 'Admin', username: 'dosen' },
+  { key: 'DOSEN', role: 'dosen', name: 'Dosen', username: 'dosen' },
   { key: 'STAFF', role: 'staff', name: 'Staff', username: 'staff' },
 ];
 
@@ -160,7 +160,7 @@ function readAccount(spec) {
     password,
     username,
     role: spec.role,
-    name: envValue('NAME')?.trim() || spec.name,
+    name: spec.key === 'DOSEN' ? spec.name : envValue('NAME')?.trim() || spec.name,
   };
 }
 
@@ -177,14 +177,13 @@ async function upsertAccount(account) {
     throw new Error(`Email atau username akun ${account.username} menunjuk ke pengguna yang berbeda.`);
   }
   const user = emailUser ?? previousEmailUser ?? usernameOwner;
-  // Only the pre-existing evaluation account may move from legacy read-only `lecturer`
-  // to the explicitly configured Admin role. Other role mismatches remain an error.
-  const legacyDosenRole = account.key === 'DOSEN'
+  // Only the designated Dosen account can transition from its former Admin role.
+  const designatedDosenRole = account.key === 'DOSEN'
     && account.username === 'dosen'
     && user?.username === 'dosen'
-    && user.role === 'lecturer'
-    && account.role === 'admin';
-  if (user && user.role !== account.role && !legacyDosenRole) {
+    && user.role === 'admin'
+    && account.role === 'dosen';
+  if (user && user.role !== account.role && !designatedDosenRole) {
     throw new Error(`Akun ${account.username} sudah terhubung ke peran lain; akun tidak diubah.`);
   }
 

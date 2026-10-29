@@ -11,7 +11,7 @@ KeyStock adalah aplikasi web inventaris gudang untuk keyboard mekanis dan akseso
 - CRUD produk dan supplier, pencarian, filter, serta galeri foto.
 - Pencatatan stok masuk, keluar, penyesuaian, dan saldo sebelum/sesudah.
 - Sinkronisasi otomatis saat aplikasi terbuka dan pemuatan versi baru setelah deploy.
-- Hak akses Admin dan Staff; username evaluasi `dosen` memakai hak Admin.
+- Hak akses Admin, Dosen, dan Staff; Dosen memiliki hak administratif setara Admin.
 - Login, pendaftaran Staff dengan persetujuan Admin, reset kata sandi melalui SMTP, dan cookie sesi JWT.
 - Tema terang/gelap dan tata letak responsif.
 
@@ -54,10 +54,10 @@ Akun ini dibuat untuk database lokal saja. Password di bawah tidak boleh digunak
 | Username | Peran | Password lokal |
 | --- | --- | --- |
 | `admin` | Admin | `LocalAdmin!2026` |
-| `dosen` | Admin | `LocalDosen!2026` |
+| `dosen` | Dosen | `LocalDosen!2026` |
 | `staff` | Staff | `LocalStaff!2026` |
 
-Untuk akun live, bagikan kredensial kepada penguji lewat kanal submission yang aksesnya dibatasi; jangan masukkan password produksi ke repository atau file dump publik. Pendaftaran baru menunggu persetujuan Admin. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
+Untuk akun live, bagikan kredensial kepada penilai lewat kanal submission yang aksesnya dibatasi; jangan masukkan password produksi ke repository atau file dump publik. Pendaftaran baru menunggu persetujuan Admin atau Dosen. Tanpa konfigurasi SMTP, pemulihan password tidak tersedia.
 
 `npm run db:fresh` menghapus dan membuat ulang tabel serta data lokal. Jangan jalankan pada database berisi data penting. `npm run db:accounts` menyelaraskan akun dari `.env`; perintah ini dapat memperbarui nama, email, password, status aktif, dan versi sesi akun. Periksa konfigurasi terlebih dahulu sebelum menjalankannya, khususnya di production.
 
@@ -81,7 +81,7 @@ Deploy rutin berjalan setelah perubahan di-push ke branch `main`, jika GitHub Ac
 
 - Password disimpan sebagai bcrypt hash; JWT berada di cookie `HttpOnly`, dan operasi yang mengubah data memerlukan token CSRF.
 - Validasi dilakukan di server; Sequelize memakai parameter binding untuk query terstruktur. Vue menampilkan nilai sebagai teks dan API menggunakan Helmet/CSP.
-- Admin-only routes membatasi pengelolaan pengguna, produk, dan supplier; Staff hanya mendapat operasi sesuai role.
+- Admin dan Dosen dapat mengelola pengguna, produk, dan supplier; Staff dapat melihat data dan mencatat pergerakan stok.
 - `.env` dikecualikan dari Git. Gunakan secret berbeda untuk lokal dan production.
 - Dump [database/keystock-demo.sql](database/keystock-demo.sql) berisi `DROP TABLE` dan hanya untuk database lokal kosong yang boleh ditimpa. Jangan impor dump itu ke VPS.
 - Backup production harus dienkripsi dan disalin ke penyimpanan di luar VPS. Volume Docker bukan backup.

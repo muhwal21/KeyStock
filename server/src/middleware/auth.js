@@ -1,5 +1,6 @@
 import { User } from '../models/index.js';
 import { config } from '../config.js';
+import { ADMIN_ROLES } from '../constants.js';
 import { clearAccessCookie, verifyAccessToken } from '../services/authTokenService.js';
 
 export async function resolveAuthenticatedUser(req) {
@@ -37,7 +38,8 @@ export async function requireAuth(req, res, next) {
 
 export function requireRole(...roles) {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    const allowedRoles = roles.includes('admin') ? [...new Set([...roles, ...ADMIN_ROLES])] : roles;
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
       return res.status(403).json({ message: 'Akses tidak diizinkan untuk peran ini.' });
     }
     return next();

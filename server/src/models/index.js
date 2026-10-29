@@ -17,7 +17,7 @@ export const User = sequelize.define('User', {
   username: { type: DataTypes.STRING(40), allowNull: true, unique: true },
   email: { type: DataTypes.STRING(190), allowNull: false, unique: true, validate: { isEmail: true } },
   password_hash: { type: DataTypes.STRING(255), allowNull: false },
-  role: { type: DataTypes.ENUM('admin', 'staff', 'lecturer'), allowNull: false, defaultValue: 'staff' },
+  role: { type: DataTypes.ENUM('admin', 'staff', 'dosen'), allowNull: false, defaultValue: 'staff' },
   is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   approval_status: { type: DataTypes.ENUM('pending', 'approved', 'rejected'), allowNull: false, defaultValue: 'approved' },
   token_version: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 },

@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(40) NULL,
   email VARCHAR(190) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  -- `lecturer` is retained for existing read-only accounts; seeded evaluation login `dosen` is Admin.
-  role ENUM('admin', 'staff', 'lecturer') NOT NULL DEFAULT 'staff',
+  role ENUM('admin', 'staff', 'dosen') NOT NULL DEFAULT 'staff',
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   approval_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',
   token_version INT UNSIGNED NOT NULL DEFAULT 0,

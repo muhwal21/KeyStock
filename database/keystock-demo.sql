@@ -9,7 +9,7 @@
 --
 -- Akun uji (login pakai username atau email):
 --   admin / admin@keystock.local / LocalAdmin!2026   -> admin
---   dosen / dosen@keystock.local / LocalDosen!2026   -> admin
+--   dosen / dosen@keystock.local / LocalDosen!2026   -> dosen (hak setara Admin)
 --   staff / staff@keystock.local / LocalStaff!2026   -> staff
 --
 -- Stok, harga beli/jual, lokasi rak, dan riwayat pergerakan adalah data simulasi.
@@ -336,7 +336,7 @@ CREATE TABLE `users` (
   `username` varchar(40) DEFAULT NULL,
   `email` varchar(190) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `role` enum('admin','staff','lecturer') NOT NULL DEFAULT 'staff',
+  `role` enum('admin','staff','dosen') NOT NULL DEFAULT 'staff',
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
   `token_version` int(10) unsigned NOT NULL DEFAULT 0,
@@ -374,7 +374,7 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES
 (1,'Admin','admin','admin@keystock.local','$2b$12$fL7i.iTsbJhFDv22tyd4ce3EUi1BtLPF3ewzUA145jFgyMmiFbSge','admin',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39'),
 (2,'Staff','staff','staff@keystock.local','$2b$12$yh6zJQLohtDmkB2WAf9jFOwN2YBXvoOxzu.RxGtVDiBRB44dAzM6u','staff',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39'),
-(3,'Admin','dosen','dosen@keystock.local','$2b$12$63Wu0qBPBowEV8lrqdicUuoXGtrUGKpNql5iW3YeyD8V6iVj2BK62','admin',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39');
+(3,'Dosen','dosen','dosen@keystock.local','$2b$12$63Wu0qBPBowEV8lrqdicUuoXGtrUGKpNql5iW3YeyD8V6iVj2BK62','dosen',1,'approved',0,'2026-10-28 14:08:39','2026-10-28 14:08:39');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

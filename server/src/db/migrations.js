@@ -36,7 +36,40 @@ async function migrateAuthFields(queryInterface) {
   if (!columns.token_version) {
     await queryInterface.addColumn('users', 'token_version', { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 });
   }
-  await sequelize.query("ALTER TABLE users MODIFY role ENUM('admin','staff','lecturer') NOT NULL DEFAULT 'staff'");
+}
+
+// Normalize old role values without silently changing access for unrelated accounts.
+async function migrateRoleNames() {
+  const [columns] = await sequelize.query("SHOW COLUMNS FROM users WHERE Field = 'role'");
+  const roleType = String(columns[0]?.Type ?? columns[0]?.type ?? '');
+  const currentRoles = [...roleType.matchAll(/'([^']+)'/g)].map((match) => match[1]);
+  if (!currentRoles.includes('admin') || !currentRoles.includes('staff')) {
+    throw new Error('Tipe users.role tidak sesuai dengan skema yang diharapkan; role tidak diubah.');
+  }
+  const supportedRoles = new Set(['admin', 'staff', 'dosen']);
+  const hasOlderRoleValues = currentRoles.some((role) => !supportedRoles.has(role));
+  if (hasOlderRoleValues) {
+    const [unmappedRows] = await sequelize.query("SELECT COUNT(*) AS count FROM users WHERE role NOT IN ('admin', 'staff', 'dosen') AND COALESCE(username, '') <> 'dosen'");
+    if (Number(unmappedRows[0]?.count ?? 0) > 0) {
+      throw new Error('Ada akun selain username dosen dengan peran lama; tentukan perannya sebelum migrasi.');
+    }
+  }
+
+  if (!currentRoles.includes('dosen')) {
+    const widenedRoles = [...currentRoles, 'dosen'];
+    await sequelize.query(`ALTER TABLE users MODIFY role ENUM(${widenedRoles.map((role) => `'${role}'`).join(',')}) NOT NULL DEFAULT 'staff'`);
+  }
+
+  await sequelize.query("UPDATE users SET name = 'Dosen', role = 'dosen', token_version = token_version + 1 WHERE username = 'dosen' AND (name <> 'Dosen' OR role <> 'dosen')");
+
+  const [unexpectedRows] = await sequelize.query("SELECT COUNT(*) AS count FROM users WHERE role NOT IN ('admin', 'staff', 'dosen')");
+  if (Number(unexpectedRows[0]?.count ?? 0) > 0) {
+    throw new Error('Masih ada akun dengan peran lama yang belum dipetakan; role enum tidak diubah.');
+  }
+
+  if (currentRoles.join(',') !== 'admin,staff,dosen') {
+    await sequelize.query("ALTER TABLE users MODIFY role ENUM('admin','staff','dosen') NOT NULL DEFAULT 'staff'");
+  }
 }
 
 // Products created before the gallery existed get their single image_url as the first photo.
@@ -134,6 +167,7 @@ export async function migrateInventoryFields() {
   await migratePasswordResetForeignKey(queryInterface);
   await migrateUsernames(queryInterface);
   await migrateAuthFields(queryInterface);
+  await migrateRoleNames();
   await migrateMovementFinance(queryInterface);
   await sequelize.query(`
     UPDATE stock_movements

@@ -1,10 +1,10 @@
-import { col, fn } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { isEmailConfigured } from '../config.js';
+import { ADMIN_ROLES, hasAdminAccess } from '../constants.js';
 import { StockMovement, User } from '../models/index.js';
 import { sendReviewResult } from '../services/emailService.js';
 
-// Admin-only user management. Self-registration creates staff accounts; an admin can
-// promote, demote, or deactivate them here.
+// Admin and Dosen manage accounts. Self-registration creates Staff accounts.
 export async function listUsers(req, res, next) {
   try {
     const users = await User.findAll({
@@ -35,11 +35,12 @@ export async function updateUser(req, res, next) {
       return res.status(400).json({ message: 'Pendaftaran harus disetujui admin sebelum akun dapat diaktifkan.' });
     }
 
-    const removesAdmin = user.role === 'admin' && user.is_active && (req.body.role !== 'admin' || !req.body.is_active);
+    const removesAdmin = hasAdminAccess(user.role) && user.is_active
+      && (!hasAdminAccess(req.body.role) || !req.body.is_active);
     if (removesAdmin) {
-      const activeAdmins = await User.count({ where: { role: 'admin', is_active: true } });
+      const activeAdmins = await User.count({ where: { role: { [Op.in]: ADMIN_ROLES }, is_active: true } });
       if (activeAdmins <= 1) {
-        return res.status(400).json({ message: 'Minimal harus ada satu admin aktif.' });
+        return res.status(400).json({ message: 'Minimal harus ada satu akun Admin atau Dosen aktif.' });
       }
     }
 

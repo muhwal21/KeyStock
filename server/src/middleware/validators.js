@@ -74,7 +74,7 @@ export const resetPasswordSchema = z.object({
 });
 
 export const userUpdateSchema = z.object({
-  role: z.enum(['admin', 'staff', 'lecturer']),
+  role: z.enum(['admin', 'dosen', 'staff']),
   is_active: z.boolean(),
 });
 export const reviewUserSchema = z.object({ action: z.enum(['approve', 'reject']) });

@@ -519,7 +519,7 @@ html[data-theme="dark"] .modal-form select {
 /* Summary chips on the product, supplier and user pages */
 .product-stat-grid, .supplier-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
 .supplier-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.user-summary-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.user-summary-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .product-stat-card, .supplier-summary-card { display: flex; min-height: 72px; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
 .product-stat-card { justify-content: space-between; }
 .product-stat-card span, .supplier-summary-card small { color: var(--muted); font-size: 12px; }
@@ -746,6 +746,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .kpi-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi-chip { min-width: 0; }
   .user-meta { display: none; }
+  .user-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .user-chip { padding-right: 3px; }
   .nav-item { padding: 0 13px; }
 }

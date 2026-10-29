@@ -134,18 +134,19 @@ const baseNavItems = [
   { id: 'suppliers', label: 'Supplier', short: 'Supplier', icon: Truck },
   { id: 'movements', label: 'Pergerakan stok', short: 'Stok', icon: ArrowDownUp },
 ];
-// The user-management page is only listed for admins; the API enforces the same rule.
-const navItems = computed(() => (user.value?.role === 'admin'
+// Admin and Dosen share administrative permissions; the API enforces the same rule.
+const isAdmin = computed(() => ['admin', 'dosen'].includes(user.value?.role));
+const navItems = computed(() => (isAdmin.value
   ? [...baseNavItems, { id: 'users', label: 'Pengguna', short: 'Pengguna', icon: Users }]
   : baseNavItems));
 
 const roleRules = [
-  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, staff: true },
-  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, staff: true },
-  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, staff: false },
-  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, staff: false },
-  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, staff: false },
-  { action: 'Mengubah peran, menyetujui, dan menonaktifkan pengguna', admin: true, staff: false },
+  { action: 'Melihat ringkasan, laba rugi, produk, supplier, dan riwayat stok', admin: true, dosen: true, staff: true },
+  { action: 'Mencatat stok masuk, stok keluar, dan penyesuaian beserta alasannya', admin: true, dosen: true, staff: true },
+  { action: 'Menambah, mengubah, dan mengarsipkan produk (harga dan lokasi rak)', admin: true, dosen: true, staff: false },
+  { action: 'Mengunggah, mengurutkan, dan menghapus foto produk', admin: true, dosen: true, staff: false },
+  { action: 'Menambah, mengubah, dan mengarsipkan supplier', admin: true, dosen: true, staff: false },
+  { action: 'Mengubah peran, menyetujui, dan menonaktifkan pengguna', admin: true, dosen: true, staff: false },
 ];
 
 watchEffect(() => {
@@ -406,7 +407,7 @@ async function loadAll({ clear = true, background = false } = {}) {
   if (!background) loading.value = true;
   if (clear) clearNotices();
   try {
-    const supplierPath = user.value?.role === 'admin' ? '/suppliers?includeArchived=true' : '/suppliers';
+    const supplierPath = isAdmin.value ? '/suppliers?includeArchived=true' : '/suppliers';
     const requests = [get('/dashboard'), get('/categories'), get('/products'), get(supplierPath), get('/stock-movements')];
     if (hasProductFilters()) requests.push(get(productQuery()));
     const [summary, categoryData, catalogData, supplierData, movementData, filteredData] = await Promise.all(requests);
@@ -530,7 +531,7 @@ async function navigate(page) {
   loading.value = true;
   try {
     if (page === 'products') {
-      const supplierPath = user.value.role === 'admin' ? '/suppliers?includeArchived=true' : '/suppliers';
+      const supplierPath = isAdmin.value ? '/suppliers?includeArchived=true' : '/suppliers';
       const [catalogData, categoryData, supplierData, filteredData] = await Promise.all([
         get('/products'), get('/categories'), get(supplierPath), hasProductFilters() ? get(productQuery()) : null,
       ]);
@@ -539,7 +540,7 @@ async function navigate(page) {
       categories.value = categoryData.categories;
       suppliers.value = supplierData.suppliers;
     } else if (page === 'suppliers') {
-      const supplierPath = user.value.role === 'admin' ? '/suppliers?includeArchived=true' : '/suppliers';
+      const supplierPath = isAdmin.value ? '/suppliers?includeArchived=true' : '/suppliers';
       const [supplierData, productData] = await Promise.all([get(supplierPath), get('/products')]);
       suppliers.value = supplierData.suppliers;
       catalog.value = productData.products;
@@ -1191,7 +1192,7 @@ onBeforeUnmount(() => {
         <button class="round-button" type="button" :title="themeMode === 'dark' ? 'Mode terang' : 'Mode gelap'" :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'" @click="toggleTheme"><Sun v-if="themeMode === 'dark'" :size="17" /><Moon v-else :size="17" /></button>
         <div class="user-chip">
           <div class="avatar">{{ user.name?.slice(0, 1).toUpperCase() }}</div>
-          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'admin' ? 'Admin' : user.role === 'lecturer' ? 'Akses terbatas' : 'Staff' }}</span></div>
+          <div class="user-meta"><strong>{{ user.name }}</strong><span>@{{ user.username }} · {{ user.role === 'dosen' ? 'Dosen' : user.role === 'admin' ? 'Admin' : 'Staff' }}</span></div>
         </div>
         <button class="round-button" type="button" title="Keluar" aria-label="Keluar" :disabled="busy" @click="logout"><LogOut :size="17" /></button>
       </div>
@@ -1231,7 +1232,7 @@ onBeforeUnmount(() => {
             <div class="toolbar-actions">
               <button class="round-button" type="button" title="Unduh stok (CSV)" aria-label="Unduh stok (CSV)" @click="exportInventoryCsv"><Download :size="17" /></button>
               <span class="sync-status" :class="{ offline: syncStatus === 'offline' }" :title="syncStatus === 'offline' ? 'Akan mencoba kembali secara otomatis' : 'Data disinkronkan otomatis setiap 30 detik saat halaman aktif'"><span class="sync-status-dot"></span>{{ syncStatus === 'offline' ? 'Mencoba menyambungkan' : 'Sinkron otomatis' }}</span>
-              <button v-if="user.role !== 'lecturer'" class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
+              <button class="button primary pill" type="button" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button>
             </div>
           </section>
 
@@ -1355,7 +1356,7 @@ onBeforeUnmount(() => {
         <template v-else-if="activePage === 'products'">
           <section class="page-heading">
             <div><h1>Produk</h1><p>Kelola SKU, brand, supplier, harga, dan lokasi penyimpanan.</p></div>
-            <div class="heading-actions"><button v-if="user.role === 'admin'" class="button primary" @click="openCreateProduct()"><Plus :size="16" /> Tambah produk</button></div>
+            <div class="heading-actions"><button v-if="isAdmin" class="button primary" @click="openCreateProduct()"><Plus :size="16" /> Tambah produk</button></div>
           </section>
           <section class="product-stat-grid" aria-label="Ringkasan produk yang ditampilkan">
             <article class="product-stat-card"><span>SKU ditampilkan</span><strong>{{ formatNumber(productStats.sku) }}</strong></article>
@@ -1378,10 +1379,10 @@ onBeforeUnmount(() => {
                 <td data-label="Stok" class="span-2"><span class="stock-count" :class="stockState(product).tone">{{ formatNumber(product.warehouse_stock) }} <small>unit</small></span><small class="cell-subtext">min. {{ formatNumber(product.reorder_point) }}</small></td>
                 <td data-label="Lokasi" class="span-2"><span class="location-tag">{{ product.storage_location || '—' }}</span></td>
                 <td data-label="Kondisi" class="span-2"><span class="stock-badge" :class="stockState(product).tone"><span></span>{{ stockState(product).label }}</span></td>
-                <td class="cell-actions"><div class="row-actions"><button class="icon-button subtle" type="button" title="Lihat detail" aria-label="Lihat detail produk" @click="openProductDetail(product)"><Eye :size="15" /></button><button v-if="user.role !== 'lecturer'" class="icon-button subtle" title="Catat pergerakan stok" aria-label="Catat pergerakan stok" @click="openMovement(product)"><ArrowDownUp :size="15" /></button><template v-if="user.role === 'admin'"><button class="icon-button subtle" title="Edit produk" aria-label="Edit produk" @click="openEditProduct(product)"><Settings :size="15" /></button><button class="icon-button danger-quiet" title="Arsipkan produk" aria-label="Arsipkan produk" @click="archiveProduct(product)"><X :size="15" /></button></template></div></td>
+                <td class="cell-actions"><div class="row-actions"><button class="icon-button subtle" type="button" title="Lihat detail" aria-label="Lihat detail produk" @click="openProductDetail(product)"><Eye :size="15" /></button><button class="icon-button subtle" title="Catat pergerakan stok" aria-label="Catat pergerakan stok" @click="openMovement(product)"><ArrowDownUp :size="15" /></button><template v-if="isAdmin"><button class="icon-button subtle" title="Edit produk" aria-label="Edit produk" @click="openEditProduct(product)"><Settings :size="15" /></button><button class="icon-button danger-quiet" title="Arsipkan produk" aria-label="Arsipkan produk" @click="archiveProduct(product)"><X :size="15" /></button></template></div></td>
               </tr>
             </tbody></table></div>
-            <div v-else class="empty-state"><div class="empty-icon"><Package :size="22" /></div><strong>Produk tidak ditemukan</strong><span>Ubah kata pencarian atau filter, lalu coba lagi.</span><button v-if="user.role === 'admin'" class="button secondary small-button" @click="openCreateProduct()"><Plus :size="15" /> Tambah produk pertama</button></div>
+          <div v-else class="empty-state"><div class="empty-icon"><Package :size="22" /></div><strong>Produk tidak ditemukan</strong><span>Ubah kata pencarian atau filter, lalu coba lagi.</span><button v-if="isAdmin" class="button secondary small-button" @click="openCreateProduct()"><Plus :size="15" /> Tambah produk pertama</button></div>
             <div class="table-footer"><span>Menampilkan <strong>{{ filteredProducts.length }}</strong> produk</span><span class="table-footer-note"><ShieldCheck :size="14" /> Harga beli tidak diasumsikan dari harga katalog.</span></div>
           </section>
         </template>
@@ -1389,18 +1390,18 @@ onBeforeUnmount(() => {
         <template v-else-if="activePage === 'suppliers'">
           <section class="page-heading">
             <div><h1>Supplier</h1><p>Catat toko atau distributor tempat produk diperoleh. Brand produk dikelola terpisah.</p></div>
-            <div class="heading-actions"><button v-if="user.role === 'admin'" class="button primary" @click="openCreateSupplier()"><Plus :size="16" /> Tambah supplier</button></div>
+            <div class="heading-actions"><button v-if="isAdmin" class="button primary" @click="openCreateSupplier()"><Plus :size="16" /> Tambah supplier</button></div>
           </section>
           <section class="supplier-summary-grid"><article class="supplier-summary-card"><span class="supplier-summary-icon"><Truck :size="17" /></span><div><small>Supplier aktif</small><strong>{{ suppliers.filter((supplier) => supplier.is_active).length }}</strong></div></article><article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><Building2 :size="17" /></span><div><small>Produk dengan supplier</small><strong>{{ catalog.filter((product) => product.supplier_id).length }}</strong></div></article><article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><AlertTriangle :size="17" /></span><div><small>Kontak perlu dilengkapi</small><strong>{{ suppliers.filter((supplier) => supplier.is_active && !supplier.phone && !supplier.email).length }}</strong></div></article></section>
           <div v-if="loading" class="loading-inline panel"><span class="spinner"></span> Memuat supplier...</div>
           <section v-else-if="suppliers.length" class="supplier-grid"><article v-for="supplier in suppliers" :key="supplier.id" class="panel supplier-card" :class="{ archived: !supplier.is_active }">
-            <div class="supplier-card-head"><div class="supplier-avatar"><Truck :size="18" /></div><span class="stock-badge" :class="supplier.is_active ? 'good' : 'empty'"><span></span>{{ supplier.is_active ? 'Aktif' : 'Diarsipkan' }}</span><div v-if="user.role === 'admin'" class="supplier-actions"><button class="icon-button subtle" title="Edit supplier" aria-label="Edit supplier" @click="openEditSupplier(supplier)"><Settings :size="15" /></button><button v-if="supplier.is_active" class="icon-button danger-quiet" title="Arsipkan supplier" aria-label="Arsipkan supplier" @click="archiveSupplier(supplier)"><X :size="15" /></button></div></div>
+            <div class="supplier-card-head"><div class="supplier-avatar"><Truck :size="18" /></div><span class="stock-badge" :class="supplier.is_active ? 'good' : 'empty'"><span></span>{{ supplier.is_active ? 'Aktif' : 'Diarsipkan' }}</span><div v-if="isAdmin" class="supplier-actions"><button class="icon-button subtle" title="Edit supplier" aria-label="Edit supplier" @click="openEditSupplier(supplier)"><Settings :size="15" /></button><button v-if="supplier.is_active" class="icon-button danger-quiet" title="Arsipkan supplier" aria-label="Arsipkan supplier" @click="archiveSupplier(supplier)"><X :size="15" /></button></div></div>
             <h2>{{ supplier.name }}</h2><p class="supplier-contact-person">{{ supplier.contact_person || 'Kontak person belum dicatat' }}</p>
             <div class="supplier-contact-list"><span v-if="supplier.phone"><Phone :size="15" />{{ supplier.phone }}</span><span v-else class="missing-contact"><Phone :size="15" />Nomor telepon belum dicatat</span><a v-if="supplier.email" :href="`mailto:${supplier.email}`"><Mail :size="15" />{{ supplier.email }}</a><span v-else class="missing-contact"><Mail :size="15" />Email belum dicatat</span><span v-if="supplier.city"><MapPin :size="15" />{{ supplier.city }}</span><a v-if="supplier.website" :href="supplier.website" target="_blank" rel="noopener noreferrer"><ExternalLink :size="15" />Buka situs supplier</a></div>
             <div v-if="supplier.phone || supplier.email" class="supplier-quick-actions"><a v-if="whatsappUrl(supplier.phone)" class="wa-button" :href="whatsappUrl(supplier.phone)" target="_blank" rel="noopener noreferrer" :aria-label="`Chat WhatsApp ${supplier.name}`"><MessageCircle :size="15" /> WhatsApp</a><a v-if="telUrl(supplier.phone)" class="button secondary small-action" :href="telUrl(supplier.phone)"><Phone :size="14" /> Telepon</a><a v-if="supplier.email" class="button secondary small-action" :href="`mailto:${supplier.email}`"><Mail :size="14" /> Email</a></div>
             <div class="supplier-card-footer"><span><Package :size="14" /> {{ productsForSupplier(supplier.id) }} produk terhubung</span><span v-if="supplier.notes" class="supplier-note">{{ supplier.notes }}</span></div>
           </article></section>
-          <section v-else class="panel empty-state supplier-empty"><div class="empty-icon"><Truck :size="22" /></div><strong>Belum ada supplier</strong><span>Tambahkan supplier untuk menghubungkan produk dengan sumber pembelian.</span><button v-if="user.role === 'admin'" class="button secondary small-button" @click="openCreateSupplier()"><Plus :size="15" /> Tambah supplier</button></section>
+          <section v-else class="panel empty-state supplier-empty"><div class="empty-icon"><Truck :size="22" /></div><strong>Belum ada supplier</strong><span>Tambahkan supplier untuk menghubungkan produk dengan sumber pembelian.</span><button v-if="isAdmin" class="button secondary small-button" @click="openCreateSupplier()"><Plus :size="15" /> Tambah supplier</button></section>
         </template>
 
         <template v-else-if="activePage === 'users'">
@@ -1410,6 +1411,7 @@ onBeforeUnmount(() => {
           <section class="supplier-summary-grid user-summary-grid">
             <article class="supplier-summary-card"><span class="supplier-summary-icon"><UserCheck :size="17" /></span><div><small>Pengguna aktif</small><strong>{{ users.filter((entry) => entry.is_active).length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><ShieldCheck :size="17" /></span><div><small>Admin aktif</small><strong>{{ users.filter((entry) => entry.is_active && entry.role === 'admin').length }}</strong></div></article>
+            <article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><ShieldCheck :size="17" /></span><div><small>Dosen aktif</small><strong>{{ users.filter((entry) => entry.is_active && entry.role === 'dosen').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserPlus :size="17" /></span><div><small>Menunggu review</small><strong>{{ users.filter((entry) => entry.approval_status === 'pending').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserX :size="17" /></span><div><small>Nonaktif</small><strong>{{ users.filter((entry) => !entry.is_active).length }}</strong></div></article>
           </section>
@@ -1418,7 +1420,7 @@ onBeforeUnmount(() => {
             <div v-else class="table-scroll"><table class="data-table user-table stack-table"><thead><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Catatan stok</th><th>Bergabung</th><th>Aksi</th></tr></thead><tbody>
               <tr v-for="entry in users" :key="entry.id" :class="{ 'is-inactive': !entry.is_active }">
                 <td class="cell-primary"><div class="user-cell"><div class="avatar">{{ entry.name?.slice(0, 1).toUpperCase() }}</div><div><strong>{{ entry.name }} <span v-if="entry.id === user.id" class="you-tag">Anda</span></strong><small>@{{ entry.username ?? '—' }} · {{ entry.email }}</small></div></div></td>
-                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="staff">Staff</option><option v-if="entry.role === 'lecturer'" value="lecturer" disabled>Akses terbatas</option></select></td>
+                <td data-label="Peran"><select class="filter-select role-select" :value="entry.role" :disabled="busy || entry.id === user.id" :aria-label="`Peran ${entry.name}`" @change="changeUserRole(entry, $event.target.value)"><option value="admin">Admin</option><option value="dosen">Dosen</option><option value="staff">Staff</option></select></td>
                 <td data-label="Status"><span class="stock-badge" :class="entry.approval_status === 'pending' ? 'low' : entry.is_active ? 'good' : 'empty'"><span></span>{{ entry.approval_status === 'pending' ? 'Menunggu review' : entry.approval_status === 'rejected' ? 'Ditolak' : entry.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                 <td data-label="Catatan stok">{{ formatNumber(entry.movement_count) }} catatan</td>
                 <td data-label="Bergabung">{{ formatDate(entry.createdAt ?? entry.created_at) }}</td>
@@ -1429,8 +1431,8 @@ onBeforeUnmount(() => {
           </section>
           <section class="panel access-panel">
             <div class="panel-heading"><div><div class="panel-kicker">AKSES PENGGUNA</div><h2>Rincian hak akses</h2><p>Setiap peran memiliki akses sesuai tanggung jawabnya.</p></div></div>
-            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Staff</th></tr></thead><tbody>
-              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td></tr>
+            <div class="table-scroll"><table class="data-table access-table"><thead><tr><th>Aksi</th><th>Admin</th><th>Dosen</th><th>Staff</th></tr></thead><tbody>
+              <tr v-for="rule in roleRules" :key="rule.action"><td>{{ rule.action }}</td><td><span class="access-mark" :class="rule.admin ? 'yes' : 'no'">{{ rule.admin ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.dosen ? 'yes' : 'no'">{{ rule.dosen ? 'Boleh' : 'Tidak' }}</span></td><td><span class="access-mark" :class="rule.staff ? 'yes' : 'no'">{{ rule.staff ? 'Boleh' : 'Tidak' }}</span></td></tr>
             </tbody></table></div>
           </section>
         </template>
@@ -1438,7 +1440,7 @@ onBeforeUnmount(() => {
         <template v-else>
           <section class="page-heading">
             <div><h1>Pergerakan stok</h1><p>Riwayat stok masuk, stok keluar, dan penyesuaian.</p></div>
-            <div class="heading-actions"><button v-if="user.role !== 'lecturer'" class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
+            <div class="heading-actions"><button class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
           </section>
           <section class="panel movement-panel">
             <div class="panel-heading"><div><div class="panel-kicker">STOCK MOVEMENTS</div><h2>Riwayat inventaris</h2><p>{{ filteredMovements.length }} dari {{ movements.length }} catatan terbaru</p></div><div class="audit-tag"><History :size="15" /> Riwayat tercatat</div></div>
@@ -1565,7 +1567,7 @@ onBeforeUnmount(() => {
     <ProductDetailModal
       v-if="detailProductId"
       :product-id="detailProductId"
-      :is-admin="user.role === 'admin'"
+      :is-admin="isAdmin"
       @close="closeProductDetail"
       @edit="editFromDetail"
       @record="recordFromDetail"
