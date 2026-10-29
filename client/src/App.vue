@@ -9,6 +9,7 @@ import {
 } from '@lucide/vue';
 import { get, patch, post, put, remove, setCsrfToken } from './api.js';
 import ActivityHeatmap from './components/ActivityHeatmap.vue';
+import PageSkeleton from './components/PageSkeleton.vue';
 import ProductDetailModal from './components/ProductDetailModal.vue';
 import RackMap from './components/RackMap.vue';
 import {
@@ -1042,38 +1043,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div v-if="checkingSession" class="loading-screen" role="status" aria-label="Menyiapkan KeyStock">
-    <div class="boot-skeleton" aria-hidden="true">
-      <header class="boot-header">
-        <span class="skeleton boot-brand-mark"></span><span class="skeleton boot-brand-name"></span>
-        <div class="boot-nav"><span v-for="item in 3" :key="item" class="skeleton boot-nav-item"></span></div>
-        <span class="skeleton boot-avatar"></span>
-      </header>
-      <div class="boot-title"><span class="skeleton boot-title-main"></span><span class="skeleton boot-title-note"></span></div>
-      <div class="boot-stat-grid">
-        <div v-for="item in 4" :key="item" class="boot-stat-card">
-          <span class="skeleton boot-stat-label"></span><span class="skeleton boot-stat-value"></span><span class="skeleton boot-stat-note"></span>
-        </div>
-      </div>
-      <div class="boot-overview-grid">
-        <div class="boot-panel">
-          <div class="boot-panel-heading"><span class="skeleton boot-panel-title"></span><span class="skeleton boot-panel-action"></span></div>
-          <div class="boot-chart"><span v-for="item in 7" :key="item" class="skeleton boot-chart-bar" :class="`bar-${item}`"></span></div>
-        </div>
-        <div class="boot-panel">
-          <div class="boot-panel-heading"><span class="skeleton boot-panel-title"></span><span class="skeleton boot-panel-action"></span></div>
-          <div class="boot-map"><span v-for="item in 24" :key="item" class="skeleton"></span></div>
-        </div>
-      </div>
-      <div class="boot-lower-grid">
-        <div v-for="panel in 2" :key="panel" class="boot-panel boot-list-panel">
-          <span class="skeleton boot-panel-title"></span>
-          <span v-for="item in 3" :key="item" class="skeleton boot-list-row"></span>
-        </div>
-      </div>
-    </div>
-    <span class="visually-hidden">Memuat data inventaris...</span>
-  </div>
+  <PageSkeleton v-if="checkingSession" :page="activePage" />
 
   <div v-else-if="apiUnavailable && !user" class="unavailable-screen">
     <div class="unavailable-card">
