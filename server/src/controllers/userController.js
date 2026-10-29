@@ -4,6 +4,8 @@ import { ADMIN_ROLES, hasAdminAccess } from '../constants.js';
 import { StockMovement, User } from '../models/index.js';
 import { sendReviewResult } from '../services/emailService.js';
 
+const PRIMARY_ADMIN_USERNAME = 'admin';
+
 // Admin and Dosen manage accounts. Self-registration creates Staff accounts.
 export async function listUsers(req, res, next) {
   try {
@@ -31,6 +33,9 @@ export async function updateUser(req, res, next) {
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: 'Pengguna tidak ditemukan.' });
+    if (user.username === PRIMARY_ADMIN_USERNAME) {
+      return res.status(403).json({ message: 'Akun Admin utama dilindungi dan tidak dapat diubah dari menu pengguna.' });
+    }
     if (req.body.is_active && user.approval_status !== 'approved') {
       return res.status(400).json({ message: 'Pendaftaran harus disetujui admin sebelum akun dapat diaktifkan.' });
     }
@@ -56,6 +61,9 @@ export async function reviewUser(req, res, next) {
   try {
     const user = await User.findByPk(Number(req.params.id));
     if (!user) return res.status(404).json({ message: 'Pengguna tidak ditemukan.' });
+    if (user.username === PRIMARY_ADMIN_USERNAME) {
+      return res.status(403).json({ message: 'Akun Admin utama dilindungi dan tidak dapat diubah dari menu pengguna.' });
+    }
     if (user.approval_status !== 'pending') return res.status(409).json({ message: 'Pendaftaran ini sudah ditinjau.' });
 
     const approved = req.body.action === 'approve';
