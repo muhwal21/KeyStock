@@ -449,8 +449,10 @@ button.rack-box:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba
 .pager span { margin-right: 4px; }
 .activity-pager-bottom { justify-content: flex-end; margin: 12px 0 0; padding: 10px 0; border-top: 1px solid var(--line-soft); }
 .data-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 2px 4px; color: var(--muted); font-size: 12px; }
+.pagination-count { min-width: 0; white-space: nowrap; }
 .data-pagination-controls { display: flex; align-items: center; gap: 8px; }
 .pagination-page { min-width: 84px; text-align: center; font-variant-numeric: tabular-nums; }
+.pagination-page-short { display: none; }
 .activity-card .table-scroll, .table-panel .table-scroll, .movement-panel .table-scroll { scroll-margin-top: 84px; }
 .status-pill { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid transparent; border-radius: 999px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
 .status-pill.kind-in { color: var(--green); border-color: var(--green-border); background: var(--green-soft); }
@@ -1044,8 +1046,9 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .search-field { min-width: 100%; }
   .filter-select { min-width: 0; flex: 1 1 calc(50% - 4px); }
   .table-footer { align-items: flex-start; flex-direction: column; justify-content: center; padding: 10px 0; }
-  .data-pagination { align-items: flex-start; flex-direction: column; gap: 8px; }
-  .data-pagination-controls { width: 100%; justify-content: space-between; }
+  .data-pagination { gap: 8px; font-size: 11px; }
+  .data-pagination-controls { flex: 0 0 auto; gap: 5px; }
+  .pagination-page { min-width: 76px; }
   .supplier-summary-grid { grid-template-columns: 1fr; }
   .supplier-summary-grid:not(.user-summary-grid) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .supplier-summary-grid:not(.user-summary-grid) .supplier-summary-card { min-height: 102px; align-items: flex-start; flex-direction: column; gap: 8px; padding: 12px; }
@@ -1086,6 +1089,12 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .kpi-chip { padding-right: 7px; padding-left: 7px; }
   .kpi-chip strong { font-size: 18px; }
   .kpi-delta { gap: 2px; font-size: 9px; white-space: nowrap; }
+  .data-pagination { gap: 5px; font-size: 10px; }
+  .data-pagination-controls { gap: 3px; }
+  .data-pagination-controls .round-button { width: 30px; height: 30px; flex: 0 0 30px; }
+  .pagination-page { min-width: 30px; }
+  .pagination-page-long { display: none; }
+  .pagination-page-short { display: inline; }
   .toolbar-actions { flex-wrap: wrap; }
   .toolbar-actions .button { flex: 1 1 100%; justify-content: center; }
   .user-summary-grid { gap: 8px; }
