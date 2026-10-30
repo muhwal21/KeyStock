@@ -65,6 +65,11 @@ export const registerSchema = z.object({
 });
 
 export const emailSchema = z.object({ email });
+export const accountHelpRequestSchema = z.object({
+  account_identifier: plainText({ min: 3, max: 190, label: 'Username atau email akun' }).transform((value) => value.toLowerCase()),
+  contact_email: email,
+  message: optionalText({ max: 500, label: 'Pesan' }),
+});
 export const resetPasswordSchema = z.object({
   token: z.string().min(32).max(200),
   password: strongPassword,

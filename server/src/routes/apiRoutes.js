@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { login, getCsrfToken, getCurrentUser, logout, register, requestPasswordReset, resetPassword } from '../controllers/authController.js';
+import { createAccountHelpRequest, listAccountHelpRequests, resolveAccountHelpRequest } from '../controllers/accountHelpController.js';
 import { getDashboard } from '../controllers/dashboardController.js';
 import { createProduct, deleteProduct, getProduct, listCategories, listProducts, updateProduct } from '../controllers/productController.js';
 import { deleteImage, listImages, reorderImages, sendImageFile, uploadImage } from '../controllers/productImageController.js';
@@ -11,7 +12,7 @@ import { requireAuth, requireRole } from '../middleware/auth.js';
 import { isEmailConfigured } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
 import {
-  emailSchema, imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, resetPasswordSchema,
+  accountHelpRequestSchema, emailSchema, imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, resetPasswordSchema,
   reviewUserSchema, supplierSchema, userUpdateSchema,
 } from '../middleware/validators.js';
 
@@ -49,6 +50,7 @@ router.get('/auth/me', getCurrentUser);
 router.post('/auth/register', registerLimiter, validateBody(registerSchema), register);
 router.post('/auth/login', loginLimiter, validateBody(loginSchema), login);
 router.post('/auth/forgot-password', resetLimiter, validateBody(emailSchema), requestPasswordReset);
+router.post('/auth/password-help', resetLimiter, validateBody(accountHelpRequestSchema), createAccountHelpRequest);
 router.post('/auth/reset-password', resetLimiter, validateBody(resetPasswordSchema), resetPassword);
 router.post('/auth/logout', logout);
 
@@ -72,6 +74,8 @@ router.delete('/products/:id/images/:imageId', requireRole('admin'), deleteImage
 router.get('/stock-movements', listMovements);
 router.post('/stock-movements', requireRole('admin', 'staff'), validateBody(movementSchema), createMovement);
 router.get('/users', requireRole('admin'), listUsers);
+router.get('/users/account-help-requests', requireRole('admin'), listAccountHelpRequests);
+router.patch('/users/account-help-requests/:id/resolve', requireRole('admin'), resolveAccountHelpRequest);
 router.patch('/users/:id', requireRole('admin'), validateBody(userUpdateSchema), updateUser);
 router.patch('/users/:id/review', requireRole('admin'), validateBody(reviewUserSchema), reviewUser);
 

@@ -37,7 +37,8 @@
 - **Supplier** — CRUD supplier beserta kontak WhatsApp, telepon, dan email.
 - **Pergerakan stok** — stok masuk, keluar, dan penyesuaian dengan riwayat saldo sebelum/sesudah.
 - **Pengguna** — persetujuan pendaftaran, pengaturan peran, dan aktivasi akun.
-- **Autentikasi** — registrasi, login dengan username atau email, logout, opsi "Ingat saya", serta pemulihan password melalui email jika SMTP dikonfigurasi.
+- **Autentikasi** — registrasi, login dengan username atau email, logout, opsi "Ingat saya", dan pemulihan akun.
+- **Bantuan lupa kata sandi** — pengguna mengirim permintaan ke daftar tindak lanjut Admin. Admin meninjau identitas dan menghubungi alamat email yang dicantumkan secara manual; kata sandi tidak diminta atau disimpan dalam permintaan.
 - **Antarmuka** — tema terang/gelap, tampilan responsif, dan sinkronisasi data otomatis.
 
 ## Teknologi
@@ -199,7 +200,7 @@ Jalankan `db:accounts` hanya setelah memeriksa nilai akun di `.env`, terutama sa
 
 ## Database
 
-Database MySQL terdiri dari tujuh tabel:
+Database MySQL terdiri dari delapan tabel:
 
 | Tabel | Isi |
 | --- | --- |
@@ -210,6 +211,7 @@ Database MySQL terdiri dari tujuh tabel:
 | `product_images` | Foto produk |
 | `stock_movements` | Riwayat stok masuk, keluar, dan penyesuaian |
 | `password_resets` | Token pemulihan kata sandi |
+| `account_help_requests` | Permintaan bantuan pemulihan akun yang ditinjau Admin |
 
 Diagram ERD tersedia di [`docs/uas/erd.md`](docs/uas/erd.md). Dokumen [alur request](docs/uas/alur-request.md) dan [arsitektur](docs/uas/arsitektur.md) menjelaskan proses aplikasi; skema database ada di [`database/schema.sql`](database/schema.sql).
 

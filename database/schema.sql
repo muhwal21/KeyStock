@@ -117,3 +117,18 @@ CREATE TABLE IF NOT EXISTS password_resets (
   INDEX idx_password_resets_user (user_id),
   INDEX idx_password_resets_expiry (expires_at)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS account_help_requests (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  account_identifier VARCHAR(190) NOT NULL,
+  contact_email VARCHAR(190) NOT NULL,
+  message VARCHAR(500) NULL,
+  status ENUM('open', 'resolved') NOT NULL DEFAULT 'open',
+  handled_by INT UNSIGNED NULL,
+  handled_at DATETIME NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  CONSTRAINT fk_account_help_requests_handler FOREIGN KEY (handled_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
+  INDEX idx_account_help_requests_status_created (status, created_at),
+  INDEX idx_account_help_requests_handler (handled_by)
+) ENGINE=InnoDB;

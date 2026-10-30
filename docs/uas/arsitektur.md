@@ -38,3 +38,4 @@ flowchart LR
 | Pergerakan stok | `/api/stock-movements` | `stockMovementController` + `stockService` | `StockMovement`, `Product`, `User` | Admin, Dosen, Staff |
 | Pengguna | `/api/users` | `userController` | `User`, `StockMovement` | Admin |
 | Autentikasi | `/api/auth/*` | `authController` | `User`, `PasswordReset` | Publik/akun sendiri |
+| Bantuan akun | `/api/auth/password-help`, `/api/users/account-help-requests` | `accountHelpController` | `AccountHelpRequest`, `User` | Publik mengirim; Admin meninjau |

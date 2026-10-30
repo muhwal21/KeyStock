@@ -47,7 +47,6 @@ function toggleTheme() {
 
 const checkingSession = ref(true);
 const apiUnavailable = ref(false);
-const passwordRecoveryAvailable = ref(false);
 const PAGE_STORAGE_KEY = 'keystock-active-page';
 const PAGE_IDS = new Set(['overview', 'products', 'suppliers', 'movements', 'users']);
 
@@ -95,6 +94,7 @@ const categories = ref([]);
 const suppliers = ref([]);
 const movements = ref([]);
 const users = ref([]);
+const accountHelpRequests = ref([]);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 const selectedSupplier = ref('');
@@ -121,14 +121,14 @@ const registrationSubmitted = ref(false);
 const showPassword = ref(false);
 const loginForm = reactive({ identifier: '', password: '', rememberMe: false });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
-const forgotForm = reactive({ email: '' });
+const accountHelpForm = reactive({ account_identifier: '', contact_email: '', message: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
 const hasUnsavedChanges = computed(() => {
   if (busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
     || pendingConfirmation.value || detailBusy.value) return true;
   if (user.value) return false;
   if (authMode.value === 'register') return Object.values(registerForm).some(Boolean);
-  if (authMode.value === 'forgot') return Boolean(forgotForm.email);
+  if (authMode.value === 'forgot') return Object.values(accountHelpForm).some(Boolean);
   if (authMode.value === 'reset') return Boolean(resetForm.password || resetForm.password_confirmation);
   return Boolean(loginForm.identifier || loginForm.password);
 });
@@ -538,8 +538,9 @@ async function syncAutomatically() {
     if (!synced) return;
     if (activePage.value === 'users') {
       try {
-        const data = await get('/users');
+        const [data, helpData] = await Promise.all([get('/users'), get('/users/account-help-requests')]);
         users.value = data.users;
+        accountHelpRequests.value = helpData.requests;
       } catch (error) {
         handleBackgroundSyncError(error);
       }
@@ -626,8 +627,9 @@ async function navigate(page) {
       suppliers.value = supplierData.suppliers;
       catalog.value = productData.products;
     } else if (targetPage === 'users') {
-      const data = await get('/users');
+      const [data, helpData] = await Promise.all([get('/users'), get('/users/account-help-requests')]);
       users.value = data.users;
+      accountHelpRequests.value = helpData.requests;
     } else {
       const data = await get('/stock-movements');
       movements.value = data.movements;
@@ -694,15 +696,18 @@ async function submitRegister() {
   }
 }
 
-async function submitForgotPassword() {
+async function submitAccountHelpRequest() {
   busy.value = true;
   clearNotices();
+  fieldErrors.value = {};
   try {
     if (!csrfToken.value) await refreshCsrf();
-    const result = await post('/auth/forgot-password', forgotForm);
+    const result = await post('/auth/password-help', accountHelpForm);
+    Object.assign(accountHelpForm, { account_identifier: '', contact_email: '', message: '' });
     successMessage.value = result.message;
   } catch (error) {
-    handleError(error);
+    errorMessage.value = error.message || 'Permintaan bantuan belum bisa dikirim. Coba lagi.';
+    fieldErrors.value = error.fields ?? {};
   } finally {
     busy.value = false;
   }
@@ -969,6 +974,20 @@ function reviewAccount(target, action) {
   };
 }
 
+async function resolveAccountHelpRequest(request) {
+  busy.value = true;
+  clearNotices();
+  try {
+    await patch(`/users/account-help-requests/${request.id}/resolve`, {});
+    accountHelpRequests.value = accountHelpRequests.value.filter((entry) => entry.id !== request.id);
+    showSuccess('Permintaan bantuan ditandai selesai. Jika perlu, hubungi pengguna secara manual melalui email yang dicantumkan.');
+  } catch (error) {
+    handleError(error);
+  } finally {
+    busy.value = false;
+  }
+}
+
 function cancelPendingConfirmation() {
   if (!busy.value) pendingConfirmation.value = null;
 }
@@ -1070,12 +1089,8 @@ onMounted(async () => {
   window.addEventListener('online', handlePageVisibility);
   try {
     await refreshCsrf();
-    const [session, health] = await Promise.all([
-      get('/auth/me'),
-      get('/health').catch(() => ({ features: {} })),
-    ]);
+    const session = await get('/auth/me');
     user.value = session.user;
-    passwordRecoveryAvailable.value = health.features?.passwordRecovery === true;
     if (user.value) await navigate(activePage.value);
   } catch (error) {
     apiUnavailable.value = true;
@@ -1126,7 +1141,7 @@ onBeforeUnmount(() => {
           <span class="auth-icon"><component :is="authMode === 'register' ? UserPlus : LogIn" :size="22" /></span>
           <span class="auth-kicker"><span class="eyebrow-dot"></span> Inventaris gudang keyboard</span>
           <h1 id="auth-title">{{ authMode === 'login' ? 'Masuk ke KeyStock' : authMode === 'register' ? 'Daftar akun' : authMode === 'forgot' ? 'Lupa kata sandi?' : 'Buat kata sandi baru' }}</h1>
-          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : authMode === 'register' ? 'Pendaftaran akun staff akan ditinjau oleh admin.' : authMode === 'forgot' ? 'Kami akan mengirim tautan pemulihan ke email akun Anda.' : 'Pilih kata sandi baru untuk akun KeyStock Anda.' }}</p>
+          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : authMode === 'register' ? 'Pendaftaran akun staff akan ditinjau oleh admin.' : authMode === 'forgot' ? 'Kirim permintaan bantuan kepada Admin untuk memulihkan akses akun.' : 'Pilih kata sandi baru untuk akun KeyStock Anda.' }}</p>
         </div>
 
         <div v-if="!registrationSubmitted && ['login', 'register'].includes(authMode)" class="auth-tabs" role="tablist" aria-label="Pilih masuk atau daftar">
@@ -1157,7 +1172,7 @@ onBeforeUnmount(() => {
             {{ busy ? 'Memeriksa...' : 'Masuk ke inventaris' }}
             <ArrowRight v-if="!busy" :size="17" />
           </button>
-          <button v-if="passwordRecoveryAvailable" class="button secondary full" type="button" @click="switchAuthMode('forgot')">Lupa kata sandi?</button>
+          <button class="button secondary full" type="button" @click="switchAuthMode('forgot')">Lupa kata sandi?</button>
         </form>
 
         <form v-else-if="authMode === 'register'" class="auth-form" novalidate @submit.prevent="submitRegister">
@@ -1197,9 +1212,11 @@ onBeforeUnmount(() => {
           </button>
         </form>
 
-        <form v-else-if="authMode === 'forgot'" class="auth-form" @submit.prevent="submitForgotPassword">
-          <div class="auth-field"><label for="forgot-email">Email akun</label><div class="input-wrap"><Mail :size="17" /><input id="forgot-email" v-model="forgotForm.email" type="email" autocomplete="email" maxlength="190" placeholder="nama@email.com" required /></div></div>
-          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim...' : 'Kirim tautan pemulihan' }}<ArrowRight v-if="!busy" :size="17" /></button>
+        <form v-else-if="authMode === 'forgot'" class="auth-form" @submit.prevent="submitAccountHelpRequest">
+          <div class="auth-field"><label for="help-account-identifier">Username atau email akun</label><div class="input-wrap" :class="{ invalid: fieldErrors.account_identifier }"><AtSign :size="17" /><input id="help-account-identifier" v-model="accountHelpForm.account_identifier" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="190" placeholder="Username atau email yang dipakai masuk" required /></div><small v-if="fieldErrors.account_identifier" class="field-error">{{ fieldErrors.account_identifier }}</small></div>
+          <div class="auth-field"><label for="help-contact-email">Email untuk dihubungi</label><div class="input-wrap" :class="{ invalid: fieldErrors.contact_email }"><Mail :size="17" /><input id="help-contact-email" v-model="accountHelpForm.contact_email" type="email" autocomplete="email" maxlength="190" placeholder="nama@email.com" required /></div><small v-if="fieldErrors.contact_email" class="field-error">{{ fieldErrors.contact_email }}</small></div>
+          <div class="auth-field"><label for="help-message">Pesan untuk Admin (opsional)</label><textarea id="help-message" v-model="accountHelpForm.message" maxlength="500" rows="3" placeholder="Jelaskan kendala Anda, tanpa menuliskan kata sandi."></textarea><small v-if="fieldErrors.message" class="field-error">{{ fieldErrors.message }}</small><small class="field-hint">Permintaan tersimpan di menu Pengguna. Email otomatis belum tersedia; Admin meninjau dan menindaklanjuti secara manual.</small></div>
+          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim permintaan...' : 'Kirim permintaan ke Admin' }}<ArrowRight v-if="!busy" :size="17" /></button>
           <button class="button secondary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
         </form>
 
@@ -1473,6 +1490,19 @@ onBeforeUnmount(() => {
             <article class="supplier-summary-card"><span class="supplier-summary-icon contact-icon"><ShieldCheck :size="17" /></span><div><small>Dosen aktif</small><strong>{{ users.filter((entry) => entry.is_active && entry.role === 'dosen').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserPlus :size="17" /></span><div><small>Menunggu review</small><strong>{{ users.filter((entry) => entry.approval_status === 'pending').length }}</strong></div></article>
             <article class="supplier-summary-card"><span class="supplier-summary-icon warning-icon"><UserX :size="17" /></span><div><small>Nonaktif</small><strong>{{ users.filter((entry) => !entry.is_active).length }}</strong></div></article>
+          </section>
+          <section class="panel account-help-panel">
+            <div class="panel-heading"><div><div class="panel-kicker">BANTUAN AKUN</div><h2>Permintaan lupa kata sandi</h2><p>{{ accountHelpRequests.length }} permintaan menunggu tindak lanjut.</p></div></div>
+            <p class="account-help-guidance">Email otomatis belum aktif. Verifikasi identitas pemilik akun sebelum membantu pemulihan, lalu hubungi melalui email yang dicantumkan.</p>
+            <div v-if="loading && !accountHelpRequests.length" class="loading-inline"><span class="spinner"></span> Memuat permintaan...</div>
+            <div v-else-if="accountHelpRequests.length" class="account-help-list">
+              <article v-for="request in accountHelpRequests" :key="request.id" class="account-help-item">
+                <div class="account-help-item-head"><strong>{{ request.account_identifier }}</strong><span class="stock-badge low"><span></span>Menunggu</span></div>
+                <dl><div><dt>Email kontak</dt><dd><a :href="`mailto:${request.contact_email}`">{{ request.contact_email }}</a></dd></div><div v-if="request.message"><dt>Pesan</dt><dd>{{ request.message }}</dd></div></dl>
+                <div class="account-help-item-footer"><small>{{ formatDate(request.createdAt ?? request.created_at) }}</small><button class="button secondary small-action" type="button" :disabled="busy" @click="resolveAccountHelpRequest(request)"><Check :size="14" /> Tandai selesai</button></div>
+              </article>
+            </div>
+            <div v-else class="empty-state compact-empty"><div class="empty-icon"><Mail :size="20" /></div><strong>Belum ada permintaan</strong><span>Permintaan bantuan lupa kata sandi akan tampil di sini.</span></div>
           </section>
           <section class="panel table-panel">
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat pengguna...</div>

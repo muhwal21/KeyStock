@@ -365,6 +365,24 @@ CREATE TABLE `password_resets` (
   CONSTRAINT `fk_password_resets_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Users can ask an administrator to review account-access problems without SMTP.
+DROP TABLE IF EXISTS `account_help_requests`;
+CREATE TABLE `account_help_requests` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `account_identifier` varchar(190) NOT NULL,
+  `contact_email` varchar(190) NOT NULL,
+  `message` varchar(500) DEFAULT NULL,
+  `status` enum('open','resolved') NOT NULL DEFAULT 'open',
+  `handled_by` int(10) unsigned DEFAULT NULL,
+  `handled_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `account_help_requests_status_created_at` (`status`,`created_at`),
+  KEY `account_help_requests_handled_by` (`handled_by`),
+  CONSTRAINT `fk_account_help_requests_handler` FOREIGN KEY (`handled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Dumping data for table `users`
 --

@@ -595,6 +595,19 @@ html[data-theme="dark"] .modal-form select {
 .user-table .is-inactive td.cell-actions { opacity: 1; }
 .access-panel { margin-top: 14px; padding: 18px; }
 .access-panel code { padding: 1px 6px; border-radius: 6px; background: var(--surface-3); font-size: 11px; }
+.account-help-panel { margin-bottom: 14px; padding: 18px; }
+.account-help-guidance { margin: -4px 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.account-help-list { display: grid; gap: 10px; }
+.account-help-item { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.account-help-item-head, .account-help-item-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.account-help-item-head > strong { min-width: 0; color: var(--ink); overflow-wrap: anywhere; }
+.account-help-item dl { display: grid; gap: 8px; margin: 0; }
+.account-help-item dl > div { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 10px; font-size: 12px; }
+.account-help-item dt { color: var(--muted); }
+.account-help-item dd { min-width: 0; margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.account-help-item dd a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+.account-help-item-footer small { color: var(--muted); font-size: 11px; }
+.account-help-item-footer .button { flex: 0 0 auto; }
 .access-table td:first-child { color: var(--ink-2); }
 .access-mark { display: inline-flex; padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
 .access-mark.yes { color: var(--green); background: var(--green-soft); }
@@ -846,6 +859,9 @@ html[data-theme="dark"] .auth-card { box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
 .auth-card .notice { margin-bottom: 14px; }
 .auth-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .auth-field label { display: block; margin-bottom: 7px; color: var(--ink-2); font-size: 12.5px; font-weight: 500; }
+.auth-field textarea { width: 100%; min-height: 84px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; outline: 0; color: var(--ink); background: var(--surface-2); font: inherit; font-size: 14px; resize: vertical; }
+.auth-field textarea:focus { border-color: var(--line-strong); background: var(--surface); box-shadow: 0 0 0 4px var(--focus-ring); }
+.auth-field textarea::placeholder { color: var(--faint); }
 .input-wrap { display: flex; min-height: 48px; align-items: center; gap: 10px; padding: 0 6px 0 14px; border: 1px solid var(--line); border-radius: 14px; color: var(--muted); background: var(--surface-2); transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease; }
 .input-wrap:focus-within { border-color: var(--line-strong); color: var(--ink); background: var(--surface); box-shadow: 0 0 0 4px var(--focus-ring); }
 .input-wrap.invalid { border-color: var(--red-border); box-shadow: 0 0 0 3px var(--red-soft); }
@@ -1010,6 +1026,9 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 }
 
 @media (max-width: 620px) {
+  .account-help-panel { padding: 14px; }
+  .account-help-item dl > div { grid-template-columns: 80px minmax(0, 1fr); gap: 8px; }
+  .account-help-item-footer { align-items: flex-end; }
   .update-notice { flex-direction: column; gap: 4px; }
   .loading-screen { padding: 0; }
   .boot-skeleton { gap: 10px; padding: 0 16px 20px; }

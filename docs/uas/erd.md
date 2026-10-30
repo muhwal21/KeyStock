@@ -1,11 +1,12 @@
 # ERD KeyStock
 
-ERD ini mengikuti tujuh tabel aplikasi dan relasi foreign key pada MySQL. Produk yang diarsipkan memakai `is_active = false`; riwayat stok tidak dihapus saat produk diarsipkan.
+ERD ini mengikuti delapan tabel aplikasi dan relasi foreign key pada MySQL. Produk yang diarsipkan memakai `is_active = false`; riwayat stok tidak dihapus saat produk diarsipkan.
 
 ```mermaid
 erDiagram
   USERS ||--o{ STOCK_MOVEMENTS : mencatat
   USERS ||--o{ PASSWORD_RESETS : menerima
+  USERS o|--o{ ACCOUNT_HELP_REQUESTS : menindaklanjuti
   CATEGORIES ||--o{ PRODUCTS : mengelompokkan
   SUPPLIERS o|--o{ PRODUCTS : memasok
   PRODUCTS ||--o{ PRODUCT_IMAGES : memiliki
@@ -76,6 +77,15 @@ erDiagram
     datetime expires_at
     datetime used_at
   }
+  ACCOUNT_HELP_REQUESTS {
+    int id PK
+    string account_identifier
+    string contact_email
+    string message
+    enum status
+    int handled_by FK
+    datetime handled_at
+  }
 ```
 
 ## Kardinalitas dan alasan
@@ -85,5 +95,6 @@ erDiagram
 - Satu produk dapat memiliki beberapa foto dan catatan pergerakan. Foto ikut dihapus jika produk dihapus secara fisik; produk aktif dalam aplikasi diarsipkan secara soft delete. Riwayat pergerakan menolak penghapusan fisik produk (`ON DELETE RESTRICT`).
 - Satu pengguna mencatat banyak pergerakan stok. Catatan menyimpan saldo sebelum/sesudah dan snapshot harga untuk audit serta laporan historis.
 - Satu pengguna dapat memiliki beberapa catatan reset sandi. Token asli tidak disimpan, hanya hash; catatan reset ikut dibersihkan saat akun dihapus (`ON DELETE CASCADE`).
+- Permintaan bantuan lupa kata sandi dicatat tanpa mengungkap ke pengirim apakah akun cocok. Admin meninjau identitas dan menindaklanjuti secara manual; `handled_by` menjadi foreign key opsional yang dikosongkan jika akun Admin dihapus (`ON DELETE SET NULL`).
 
 Seed membuat peran Admin (`admin`), Dosen (`dosen`), dan Staff (`staff`). Dosen memiliki hak administratif yang sama dengan Admin; Staff dapat melihat inventaris dan mencatat pergerakan stok, tetapi tidak mengelola produk, supplier, atau akun.

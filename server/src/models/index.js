@@ -31,6 +31,19 @@ export const PasswordReset = sequelize.define('PasswordReset', {
   used_at: { type: DataTypes.DATE, allowNull: true },
 }, { tableName: 'password_resets', indexes: [{ fields: ['user_id'] }, { fields: ['expires_at'] }] });
 
+export const AccountHelpRequest = sequelize.define('AccountHelpRequest', {
+  id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+  account_identifier: { type: DataTypes.STRING(190), allowNull: false },
+  contact_email: { type: DataTypes.STRING(190), allowNull: false },
+  message: { type: DataTypes.STRING(500), allowNull: true },
+  status: { type: DataTypes.ENUM('open', 'resolved'), allowNull: false, defaultValue: 'open' },
+  handled_by: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+  handled_at: { type: DataTypes.DATE, allowNull: true },
+}, {
+  tableName: 'account_help_requests',
+  indexes: [{ fields: ['status', 'created_at'] }, { fields: ['handled_by'] }],
+});
+
 export const Category = sequelize.define('Category', {
   id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
   slug: { type: DataTypes.STRING(80), allowNull: false, unique: true },
@@ -117,5 +130,7 @@ User.hasMany(StockMovement, { foreignKey: 'user_id', as: 'movements', onDelete: 
 StockMovement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 User.hasMany(PasswordReset, { foreignKey: 'user_id', as: 'passwordResets', onDelete: 'CASCADE' });
 PasswordReset.belongsTo(User, { foreignKey: 'user_id', as: 'user', onDelete: 'CASCADE' });
+User.hasMany(AccountHelpRequest, { foreignKey: 'handled_by', as: 'handledAccountHelpRequests', onDelete: 'SET NULL' });
+AccountHelpRequest.belongsTo(User, { foreignKey: 'handled_by', as: 'handler', onDelete: 'SET NULL' });
 
 export { DataTypes };
