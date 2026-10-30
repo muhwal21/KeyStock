@@ -1443,7 +1443,7 @@ onBeforeUnmount(() => {
               <span>{{ productRange }} dari {{ filteredProducts.length }} produk</span>
               <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman produk sebelumnya" :disabled="productPage <= 1" @click="changeProductPage(productPage - 1)"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ productPage }} dari {{ productPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman produk berikutnya" :disabled="productPage >= productPageCount" @click="changeProductPage(productPage + 1)"><ChevronRight :size="16" /></button></div>
             </nav>
-            <div class="table-footer"><span>Menampilkan <strong>{{ productRange }}</strong> dari {{ filteredProducts.length }} produk</span><span class="table-footer-note"><ShieldCheck :size="14" /> Harga beli tidak diasumsikan dari harga katalog.</span></div>
+            <div class="table-footer"><span>Menampilkan <strong>{{ productRange }}</strong> dari {{ filteredProducts.length }} produk</span></div>
           </section>
         </template>
 
