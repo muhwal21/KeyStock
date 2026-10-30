@@ -880,9 +880,11 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 
 /* Below 900px the pill navigation becomes a floating bottom tab bar. */
 @media (max-width: 900px) {
+  .boot-skeleton { padding: 0 16px 20px; }
   .overview-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "activity" "rack" "priority" "finance"; }
   .analytic-card { min-height: 0; }
   .boot-header { min-height: 64px; grid-template-columns: auto 1fr; }
+  .boot-header-actions .boot-header-action:first-child { display: none; }
   .boot-nav { position: fixed; z-index: 30; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); left: 10px; display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 4px; padding: 6px; border-radius: 22px; box-shadow: var(--shadow-pop); }
   .boot-nav-item { width: auto; height: 50px; border-radius: 16px; }
   .boot-overview-grid, .boot-lower-grid { grid-template-columns: 1fr; }
@@ -921,8 +923,8 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .overview-toolbar { margin-bottom: 12px; padding-top: 7px; padding-bottom: 7px; }
 }
 
-/* Tables become stacked cards on narrow screens instead of scrolling sideways. */
-@media (max-width: 720px) {
+/* Tables become stacked cards on tablets and phones instead of scrolling sideways. */
+@media (max-width: 900px) {
   .stack-table, .stack-table tbody { display: block; width: 100%; min-width: 0 !important; }
   .stack-table thead { display: none; }
   .stack-table tr { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 14px 2px; border-bottom: 1px solid var(--line-soft); }
