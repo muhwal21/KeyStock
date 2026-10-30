@@ -1373,6 +1373,11 @@ onBeforeUnmount(() => {
               </tr>
             </tbody></table></div>
             <div v-else class="empty-state compact-empty"><div class="empty-icon"><History :size="21" /></div><strong>Belum ada aktivitas</strong><span>Catat stok masuk, keluar, atau penyesuaian untuk mengisi daftar ini.</span></div>
+            <nav v-if="activityPageCount > 1 && pagedActivities.length" class="pager activity-pager-bottom" aria-label="Navigasi halaman aktivitas terbaru">
+              <span>{{ activityRange }}</span>
+              <button class="round-button small" type="button" aria-label="Halaman aktivitas sebelumnya" :disabled="activityPage <= 1" @click="activityPage -= 1"><ChevronLeft :size="16" /></button>
+              <button class="round-button small" type="button" aria-label="Halaman aktivitas berikutnya" :disabled="activityPage >= activityPageCount" @click="activityPage += 1"><ChevronRight :size="16" /></button>
+            </nav>
           </section>
         </template>
 

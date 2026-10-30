@@ -192,8 +192,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
       </div>
 
       <div v-else-if="product" class="detail-layout">
+        <button class="icon-button subtle detail-close-mobile" type="button" title="Tutup" aria-label="Tutup" :disabled="busy" @click="emit('close')"><X :size="18" /></button>
         <div class="detail-gallery">
-          <button class="icon-button subtle detail-close-mobile" type="button" title="Tutup" aria-label="Tutup" :disabled="busy" @click="emit('close')"><X :size="18" /></button>
           <div class="gallery-main">
             <img :src="currentImage?.url ?? PLACEHOLDER_IMAGE" :alt="`Foto ${product.name}`" @error="onImageError" />
             <span v-if="images.length && activeIndex === 0" class="gallery-badge">Foto utama</span>
@@ -204,7 +204,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
             <span v-if="images.length" class="gallery-count">{{ activeIndex + 1 }} / {{ images.length }}</span>
           </div>
 
-          <div class="gallery-thumbs">
+          <div v-if="managing || images.length > 1" class="gallery-thumbs">
             <div v-for="(image, index) in images" :key="image.id" class="thumb" :class="{ active: index === activeIndex }">
               <button type="button" class="thumb-image" :aria-label="`Lihat foto ${index + 1}`" @click="showImage(index)"><img :src="image.url" alt="" loading="lazy" @error="onImageError" /></button>
               <div v-if="managing" class="thumb-tools">
