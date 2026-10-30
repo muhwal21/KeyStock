@@ -1148,10 +1148,13 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 .wa-button:hover { background: #1fbd5a; }
 .clickable-name { padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
 .clickable-name:hover strong, .clickable-name:hover { text-decoration: underline; }
+@media (min-width: 861px) and (max-width: 1100px) {
+  .gallery-main { height: min(50vh, 480px); min-height: 280px; flex: 0 0 auto; }
+}
 @media (max-width: 860px) {
   .detail-layout { grid-template-columns: 1fr; }
-  .detail-gallery { border-right: 0; border-bottom: 1px solid var(--line); }
-  .gallery-main { flex: 0 0 auto; min-height: 0; aspect-ratio: 4 / 3; }
+  .detail-gallery { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .gallery-main { height: clamp(220px, 45vw, 420px); min-height: 0; flex: 0 0 auto; }
   .detail-skeleton { min-height: 0; grid-template-columns: 1fr; }
   .detail-skeleton-gallery { border-right: 0; border-bottom: 1px solid var(--line); }
   .detail-skeleton-image { flex: 0 0 auto; min-height: 0; aspect-ratio: 4 / 3; }
