@@ -84,6 +84,7 @@ function boxHeight(product) {
         <span><i class="low"></i>Perlu restock</span>
         <span><i class="empty"></i>Habis</span>
         <span><i class="free"></i>Slot kosong</span>
+        <span><i class="selected"></i>Terpilih</span>
       </div>
       <div class="pill-filters rack-filters" role="tablist" aria-label="Filter rak">
         <button type="button" role="tab" :aria-selected="!rackFilter" :class="{ active: !rackFilter }" @click="rackFilter = ''">Semua rak</button>
@@ -92,7 +93,7 @@ function boxHeight(product) {
     </div>
 
     <div class="rack-grid" :class="{ single: rackFilter }">
-      <div v-for="rack in visibleRacks" :key="rack.id" class="rack" :class="{ wide: rack.slotCount >= 6 }">
+      <div v-for="rack in visibleRacks" :key="rack.id" class="rack" :class="[{ wide: rack.slotCount >= 6 }, { 'rack-a': rack.id === 'A' }]">
         <div class="rack-title"><strong>Rak {{ rack.id }}</strong><span>{{ rack.note }}</span><small>{{ rack.filled }}/{{ rack.total }} slot</small></div>
         <div class="rack-scroll">
           <div class="rack-frame" :style="{ '--slots': rack.slotCount }">
