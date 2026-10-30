@@ -121,7 +121,7 @@ const registrationSubmitted = ref(false);
 const showPassword = ref(false);
 const loginForm = reactive({ identifier: '', password: '', rememberMe: false });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
-const accountHelpForm = reactive({ account_identifier: '', message: '' });
+const accountHelpForm = reactive({ account_identifier: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
 const hasUnsavedChanges = computed(() => {
   if (busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
@@ -709,7 +709,7 @@ async function submitAccountHelpRequest() {
       if (error.status !== 503) throw error;
       result = await post('/auth/password-help', accountHelpForm);
     }
-    Object.assign(accountHelpForm, { account_identifier: '', message: '' });
+    accountHelpForm.account_identifier = '';
     successMessage.value = result.message;
   } catch (error) {
     errorMessage.value = error.message || 'Permintaan bantuan belum bisa dikirim. Coba lagi.';
@@ -1221,7 +1221,7 @@ onBeforeUnmount(() => {
 
         <form v-else-if="authMode === 'forgot'" class="auth-form" @submit.prevent="submitAccountHelpRequest">
           <div class="auth-field"><label for="help-account-identifier">Username atau email akun</label><div class="input-wrap" :class="{ invalid: fieldErrors.account_identifier }"><AtSign :size="17" /><input id="help-account-identifier" v-model="accountHelpForm.account_identifier" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="190" placeholder="Username atau email yang dipakai masuk" required /></div><small v-if="fieldErrors.account_identifier" class="field-error">{{ fieldErrors.account_identifier }}</small></div>
-          <div class="auth-field"><label for="help-message">Pesan tambahan (opsional)</label><textarea id="help-message" v-model="accountHelpForm.message" maxlength="500" rows="3" placeholder="Jelaskan kendala Anda, tanpa menuliskan kata sandi."></textarea><small v-if="fieldErrors.message" class="field-error">{{ fieldErrors.message }}</small><small class="field-hint">Anda tidak perlu memasukkan email lagi. Jika email otomatis belum tersedia, Admin akan menindaklanjuti melalui email akun yang terdaftar.</small></div>
+          <p class="field-hint">Jika email otomatis belum tersedia, Admin akan menindaklanjuti melalui email akun yang terdaftar.</p>
           <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim permintaan...' : 'Kirim permintaan pemulihan' }}<ArrowRight v-if="!busy" :size="17" /></button>
           <button class="button secondary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
         </form>
