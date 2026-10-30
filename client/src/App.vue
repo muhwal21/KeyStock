@@ -212,6 +212,16 @@ const productStats = computed(() => {
 const selectedMovementProduct = computed(() => (
   catalog.value.find((product) => String(product.id) === String(movementForm.product_id)) ?? null
 ));
+const productBrandOptions = computed(() => {
+  const brands = new Map();
+  for (const product of catalog.value) {
+    const brand = String(product.brand ?? '').trim();
+    if (!brand) continue;
+    const normalized = brand.toLocaleLowerCase('id-ID');
+    if (!brands.has(normalized)) brands.set(normalized, brand);
+  }
+  return [...brands.values()].sort((a, b) => a.localeCompare(b, 'id-ID', { sensitivity: 'base' }));
+});
 
 // Preview of the balance after saving, mirroring the rules in server/src/services/stockService.js.
 const movementPreview = computed(() => {
@@ -1560,6 +1570,7 @@ onBeforeUnmount(() => {
       <section class="modal-card product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
         <header class="modal-header"><div><div class="eyebrow muted-eyebrow">PRODUCT REGISTER</div><h2 id="product-modal-title">{{ editingProduct ? 'Edit produk' : 'Tambah produk' }}</h2></div><button class="icon-button subtle" type="button" title="Tutup" aria-label="Tutup" @click="productModalOpen = false"><X :size="18" /></button></header>
         <form class="modal-form" @submit.prevent="saveProduct">
+          <datalist id="product-brand-options"><option v-for="brand in productBrandOptions" :key="brand" :value="brand" /></datalist>
           <div class="modal-body">
             <div v-if="formError" class="notice error-notice" role="alert"><AlertTriangle :size="17" />{{ formError }}</div>
             <fieldset class="form-section">
@@ -1567,7 +1578,7 @@ onBeforeUnmount(() => {
               <div class="form-grid">
                 <label class="full-field" :class="{ invalid: fieldErrors.name }">Nama produk<input v-model="productForm.name" required maxlength="190" placeholder="Contoh: Gateron Milky Yellow Pro" /><small v-if="fieldErrors.name" class="field-error">{{ fieldErrors.name }}</small></label>
                 <label :class="{ invalid: fieldErrors.sku }">SKU<input v-model="productForm.sku" required maxlength="100" pattern="[A-Za-z0-9._-]+" title="Huruf, angka, titik, garis bawah, atau tanda hubung" placeholder="gateron-milky-yellow-pro" /><small v-if="fieldErrors.sku" class="field-error">{{ fieldErrors.sku }}</small></label>
-                <label :class="{ invalid: fieldErrors.brand }">Brand / pembuat<input v-model="productForm.brand" required maxlength="120" placeholder="Contoh: Gateron" /><small v-if="fieldErrors.brand" class="field-error">{{ fieldErrors.brand }}</small></label>
+                <label :class="{ invalid: fieldErrors.brand }">Brand / pembuat<input v-model="productForm.brand" list="product-brand-options" required maxlength="120" placeholder="Pilih atau ketik brand" /><small class="field-hint">Pilih saran yang ada atau ketik brand baru.</small><small v-if="fieldErrors.brand" class="field-error">{{ fieldErrors.brand }}</small></label>
                 <label :class="{ invalid: fieldErrors.category_id }">Kategori<select v-model="productForm.category_id" required><option value="" disabled>Pilih kategori</option><option v-for="category in categories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select><small v-if="fieldErrors.category_id" class="field-error">{{ fieldErrors.category_id }}</small></label>
                 <label :class="{ invalid: fieldErrors.reorder_point }">Batas minimum stok<input v-model="productForm.reorder_point" type="number" min="0" step="1" required /><small v-if="fieldErrors.reorder_point" class="field-error">{{ fieldErrors.reorder_point }}</small></label>
               </div>
