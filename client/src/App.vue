@@ -1608,8 +1608,8 @@ onBeforeUnmount(() => {
             <div v-if="selectedMovementProduct" class="stock-preview" :class="{ invalid: movementPreview?.invalid }" aria-live="polite">
               <div><span>Stok sekarang</span><strong>{{ formatNumber(selectedMovementProduct.warehouse_stock) }} <small>unit</small></strong></div>
               <span class="stock-preview-arrow">→</span>
-              <div><span>Setelah disimpan</span><strong>{{ movementPreview ? formatNumber(movementPreview.after) : '—' }} <small v-if="movementPreview">unit</small></strong></div>
-              <p v-if="movementPreview?.invalid">Stok keluar melebihi stok yang tersedia.</p>
+              <div><span>Setelah disimpan</span><strong>{{ movementPreview?.invalid ? 'Stok tidak cukup' : movementPreview ? formatNumber(movementPreview.after) : '—' }} <small v-if="movementPreview && !movementPreview.invalid">unit</small></strong></div>
+              <p v-if="movementPreview?.invalid">Jumlah yang dimasukkan melebihi stok tersedia.</p>
             </div>
             <div v-if="selectedMovementProduct && movementPreview && !movementPreview.invalid" class="value-preview" aria-live="polite">
               <template v-if="movementPreview.value">
