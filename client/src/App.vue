@@ -1092,7 +1092,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="auth-field">
             <label for="password">Kata sandi</label>
-            <div class="input-wrap"><Lock :size="17" /><input id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" placeholder="Masukkan kata sandi" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
+            <div class="input-wrap"><Lock :size="17" /><input id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" placeholder="Kata sandi" required /><button class="reveal-button" type="button" :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><EyeOff v-if="showPassword" :size="17" /><Eye v-else :size="17" /></button></div>
           </div>
           <label class="remember-check"><input v-model="loginForm.rememberMe" type="checkbox" /><span>Ingat saya</span></label>
           <button class="button primary full auth-submit" type="submit" :disabled="busy">
@@ -1111,7 +1111,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="auth-field">
             <label for="register-username">Username</label>
-            <div class="input-wrap" :class="{ invalid: fieldErrors.username }"><AtSign :size="17" /><input id="register-username" v-model="registerForm.username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="30" placeholder="huruf kecil, angka, titik, _" required /></div>
+            <div class="input-wrap" :class="{ invalid: fieldErrors.username }"><AtSign :size="17" /><input id="register-username" v-model="registerForm.username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="30" placeholder="contoh: staff_1" required /></div>
             <small v-if="fieldErrors.username" class="field-error">{{ fieldErrors.username }}</small>
           </div>
           <div class="auth-field">
