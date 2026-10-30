@@ -86,6 +86,9 @@ const ACTIVITY_PAGE_SIZE = 8;
 const productPage = ref(1);
 const movementPage = ref(1);
 const DATA_PAGE_SIZE = 10;
+const activityCard = ref(null);
+const productTablePanel = ref(null);
+const movementTablePanel = ref(null);
 const products = ref([]); // rows shown in the product table (may be filtered)
 const catalog = ref([]); // every active product, used by dropdowns and counts
 const categories = ref([]);
@@ -332,6 +335,31 @@ const activityRange = computed(() => {
   const start = (activityPage.value - 1) * ACTIVITY_PAGE_SIZE + 1;
   return `${start}–${Math.min(total, start + ACTIVITY_PAGE_SIZE - 1)} dari ${total}`;
 });
+
+function scrollToTableStart(panelRef) {
+  nextTick(() => {
+    const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    panelRef.value?.querySelector('.table-scroll')?.scrollIntoView({ behavior, block: 'start' });
+  });
+}
+
+function changeActivityPage(page) {
+  if (page < 1 || page > activityPageCount.value || page === activityPage.value) return;
+  activityPage.value = page;
+  scrollToTableStart(activityCard);
+}
+
+function changeProductPage(page) {
+  if (page < 1 || page > productPageCount.value || page === productPage.value) return;
+  productPage.value = page;
+  scrollToTableStart(productTablePanel);
+}
+
+function changeMovementPage(page) {
+  if (page < 1 || page > movementPageCount.value || page === movementPage.value) return;
+  movementPage.value = page;
+  scrollToTableStart(movementTablePanel);
+}
 
 function setActivityFilter(id) {
   activityFilter.value = id;
@@ -1347,7 +1375,7 @@ onBeforeUnmount(() => {
             </article>
           </section>
 
-          <section class="panel activity-card">
+          <section ref="activityCard" class="panel activity-card">
             <div class="card-head activity-head">
               <h2>Aktivitas terbaru</h2>
               <div class="pill-filters" role="tablist" aria-label="Filter aktivitas">
@@ -1355,8 +1383,8 @@ onBeforeUnmount(() => {
               </div>
               <div class="pager">
                 <span>{{ activityRange }}</span>
-                <button class="round-button small" type="button" aria-label="Halaman sebelumnya" :disabled="activityPage <= 1" @click="activityPage -= 1"><ChevronLeft :size="16" /></button>
-                <button class="round-button small" type="button" aria-label="Halaman berikutnya" :disabled="activityPage >= activityPageCount" @click="activityPage += 1"><ChevronRight :size="16" /></button>
+                <button class="round-button small" type="button" aria-label="Halaman sebelumnya" :disabled="activityPage <= 1" @click="changeActivityPage(activityPage - 1)"><ChevronLeft :size="16" /></button>
+                <button class="round-button small" type="button" aria-label="Halaman berikutnya" :disabled="activityPage >= activityPageCount" @click="changeActivityPage(activityPage + 1)"><ChevronRight :size="16" /></button>
               </div>
             </div>
             <div v-if="loading && !movements.length" class="loading-inline"><span class="spinner"></span> Memuat aktivitas...</div>
@@ -1375,8 +1403,8 @@ onBeforeUnmount(() => {
             <div v-else class="empty-state compact-empty"><div class="empty-icon"><History :size="21" /></div><strong>Belum ada aktivitas</strong><span>Catat stok masuk, keluar, atau penyesuaian untuk mengisi daftar ini.</span></div>
             <nav v-if="activityPageCount > 1 && pagedActivities.length" class="pager activity-pager-bottom" aria-label="Navigasi halaman aktivitas terbaru">
               <span>{{ activityRange }}</span>
-              <button class="round-button small" type="button" aria-label="Halaman aktivitas sebelumnya" :disabled="activityPage <= 1" @click="activityPage -= 1"><ChevronLeft :size="16" /></button>
-              <button class="round-button small" type="button" aria-label="Halaman aktivitas berikutnya" :disabled="activityPage >= activityPageCount" @click="activityPage += 1"><ChevronRight :size="16" /></button>
+              <button class="round-button small" type="button" aria-label="Halaman aktivitas sebelumnya" :disabled="activityPage <= 1" @click="changeActivityPage(activityPage - 1)"><ChevronLeft :size="16" /></button>
+              <button class="round-button small" type="button" aria-label="Halaman aktivitas berikutnya" :disabled="activityPage >= activityPageCount" @click="changeActivityPage(activityPage + 1)"><ChevronRight :size="16" /></button>
             </nav>
           </section>
         </template>
@@ -1392,7 +1420,7 @@ onBeforeUnmount(() => {
             <article class="product-stat-card"><span>Perlu restock</span><strong :class="productStats.lowStock ? 'stat-warning' : ''">{{ formatNumber(productStats.lowStock) }}</strong></article>
             <article class="product-stat-card"><span>SKU dengan supplier</span><strong>{{ formatNumber(productStats.supplied) }}</strong></article>
           </section>
-          <section class="panel table-panel">
+          <section ref="productTablePanel" class="panel table-panel">
             <div class="table-toolbar"><div class="search-field"><Search :size="17" /><input v-model="searchQuery" type="search" placeholder="Cari nama, SKU, atau brand..." @keydown.enter="applyProductFilters" /><button v-if="searchQuery" class="clear-search" aria-label="Hapus pencarian" @click="searchQuery = ''; applyProductFilters()"><X :size="14" /></button></div>
               <select v-model="selectedCategory" class="filter-select" :class="{ 'filter-active': Boolean(selectedCategory) }" aria-label="Filter kategori" @change="applyProductFilters"><option value="">Semua kategori</option><option v-for="category in categories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select>
               <select v-model="selectedSupplier" class="filter-select" :class="{ 'filter-active': Boolean(selectedSupplier) }" aria-label="Filter supplier"><option value="">Semua supplier</option><option v-for="supplier in suppliers.filter((entry) => entry.is_active)" :key="supplier.id" :value="String(supplier.id)">{{ supplier.name }}</option></select>
@@ -1413,7 +1441,7 @@ onBeforeUnmount(() => {
           <div v-else class="empty-state"><div class="empty-icon"><Package :size="22" /></div><strong>Produk tidak ditemukan</strong><span>Ubah kata pencarian atau filter, lalu coba lagi.</span><button v-if="isAdmin" class="button secondary small-button" @click="openCreateProduct()"><Plus :size="15" /> Tambah produk pertama</button></div>
             <nav v-if="productPageCount > 1" class="data-pagination" aria-label="Navigasi halaman produk">
               <span>{{ productRange }} dari {{ filteredProducts.length }} produk</span>
-              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman produk sebelumnya" :disabled="productPage <= 1" @click="productPage -= 1"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ productPage }} dari {{ productPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman produk berikutnya" :disabled="productPage >= productPageCount" @click="productPage += 1"><ChevronRight :size="16" /></button></div>
+              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman produk sebelumnya" :disabled="productPage <= 1" @click="changeProductPage(productPage - 1)"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ productPage }} dari {{ productPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman produk berikutnya" :disabled="productPage >= productPageCount" @click="changeProductPage(productPage + 1)"><ChevronRight :size="16" /></button></div>
             </nav>
             <div class="table-footer"><span>Menampilkan <strong>{{ productRange }}</strong> dari {{ filteredProducts.length }} produk</span><span class="table-footer-note"><ShieldCheck :size="14" /> Harga beli tidak diasumsikan dari harga katalog.</span></div>
           </section>
@@ -1474,7 +1502,7 @@ onBeforeUnmount(() => {
             <div><h1>Pergerakan stok</h1><p>Riwayat stok masuk, stok keluar, dan penyesuaian.</p></div>
             <div class="heading-actions"><button class="button primary" @click="openMovement()"><Plus :size="16" /> Catat pergerakan</button></div>
           </section>
-          <section class="panel movement-panel">
+          <section ref="movementTablePanel" class="panel movement-panel">
             <div class="panel-heading"><div><div class="panel-kicker">STOCK MOVEMENTS</div><h2>Riwayat inventaris</h2><p>{{ filteredMovements.length }} dari {{ movements.length }} catatan terbaru</p></div><div class="audit-tag"><History :size="15" /> Riwayat tercatat</div></div>
             <div class="table-toolbar"><div class="search-field"><Search :size="17" /><input v-model="movementSearch" type="search" placeholder="Cari produk, SKU, pengguna, atau catatan..." aria-label="Cari riwayat stok" /><button v-if="movementSearch" class="clear-search" type="button" aria-label="Hapus pencarian" @click="movementSearch = ''"><X :size="14" /></button></div><select v-model="movementTypeFilter" class="filter-select" :class="{ 'filter-active': Boolean(movementTypeFilter) }" aria-label="Filter jenis pergerakan"><option value="">Semua aktivitas</option><option value="IN">Stok masuk</option><option value="OUT">Stok keluar</option><option value="ADJUSTMENT">Penyesuaian</option></select></div>
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat riwayat...</div>
@@ -1484,7 +1512,7 @@ onBeforeUnmount(() => {
             <div v-else class="empty-state"><div class="empty-icon"><History :size="22" /></div><strong>{{ movements.length ? 'Tidak ada catatan yang cocok' : 'Belum ada riwayat' }}</strong><span>{{ movements.length ? 'Ubah kata pencarian atau filter aktivitas.' : 'Setiap perubahan saldo akan dicatat di halaman ini.' }}</span></div>
             <nav v-if="movementPageCount > 1 && filteredMovements.length" class="data-pagination" aria-label="Navigasi halaman pergerakan stok">
               <span>{{ movementRange }} dari {{ filteredMovements.length }} catatan</span>
-              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman pergerakan sebelumnya" :disabled="movementPage <= 1" @click="movementPage -= 1"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ movementPage }} dari {{ movementPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman pergerakan berikutnya" :disabled="movementPage >= movementPageCount" @click="movementPage += 1"><ChevronRight :size="16" /></button></div>
+              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman pergerakan sebelumnya" :disabled="movementPage <= 1" @click="changeMovementPage(movementPage - 1)"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ movementPage }} dari {{ movementPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman pergerakan berikutnya" :disabled="movementPage >= movementPageCount" @click="changeMovementPage(movementPage + 1)"><ChevronRight :size="16" /></button></div>
             </nav>
           </section>
         </template>
