@@ -1305,7 +1305,7 @@ onBeforeUnmount(() => {
             </article>
 
             <section class="panel rack-panel" aria-labelledby="rack-map-title">
-              <div class="card-head"><h2 id="rack-map-title">Peta rak gudang</h2><span class="card-note">Tinggi kardus = jumlah stok</span></div>
+              <div class="card-head"><h2 id="rack-map-title">Peta rak gudang</h2><span class="card-note">Tinggi kotak menunjukkan jumlah stok</span></div>
               <RackMap compact :products="catalog" :selected-id="overviewProductId" @select="(id) => { overviewProductId = String(id); openProductDetail(id); }" />
             </section>
 

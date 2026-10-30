@@ -124,7 +124,7 @@ function boxHeight(product) {
 
     <div class="rack-foot">
       <span>{{ racks.length }} rak · {{ totals.levels }} tingkat · {{ totals.slots }} slot · {{ totals.filled }} terisi<template v-if="unplacedCount"> · {{ unplacedCount }} produk belum punya lokasi</template></span>
-      <span>Kode lokasi <strong>RAK-TINGKAT-SLOT</strong>, mis. A-1-05 · klik kardus untuk detail</span>
+      <span>Kode lokasi <strong>RAK-TINGKAT-SLOT</strong>, mis. A-1-05 · Klik kotak untuk melihat detail produk</span>
     </div>
   </div>
 </template>
