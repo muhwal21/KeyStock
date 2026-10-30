@@ -923,6 +923,13 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .overview-toolbar { margin-bottom: 12px; padding-top: 7px; padding-bottom: 7px; }
 }
 
+@media (min-width: 901px) and (max-width: 1024px) {
+  .app-header { gap: 10px; padding-right: 20px; padding-left: 20px; }
+  .app-header .hide-mobile { display: none; }
+  .header-actions { gap: 6px; }
+  .nav-item { padding-right: 9px; padding-left: 9px; font-size: 12.5px; }
+}
+
 /* Tables become stacked cards on tablets and phones instead of scrolling sideways. */
 @media (max-width: 900px) {
   .stack-table, .stack-table tbody { display: block; width: 100%; min-width: 0 !important; }
@@ -958,6 +965,12 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .activity-head .pill-filters { order: 3; width: 100%; margin-left: 0; overflow-x: auto; }
   .rack-grid { grid-template-columns: 1fr; }
   .rack-filters { width: 100%; margin-left: 0; overflow-x: auto; }
+}
+
+@media (max-width: 760px) {
+  .table-toolbar { flex-wrap: wrap; }
+  .search-field { min-width: 0; flex-basis: 100%; }
+  .filter-select { min-width: 0; flex: 1 1 calc(33.333% - 6px); }
 }
 
 @media (max-width: 620px) {
@@ -1018,6 +1031,7 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
   .table-footer { align-items: flex-start; flex-direction: column; justify-content: center; padding: 10px 0; }
   .supplier-summary-grid { grid-template-columns: 1fr; }
   .user-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .user-summary-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .app-footer { flex-direction: column; font-size: 10px; }
   .auth-topbar { padding: 16px 16px 4px; }
   .auth-card { padding: 24px 18px 20px; border-radius: 24px; }
