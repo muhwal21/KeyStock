@@ -1421,7 +1421,7 @@ onBeforeUnmount(() => {
                 <td class="cell-actions"><div class="row-actions"><template v-if="entry.approval_status === 'pending' && entry.username !== 'admin'"><button class="button primary small-action" type="button" :disabled="busy" @click="reviewAccount(entry, 'approve')">Setujui</button><button class="button secondary small-action danger-outline" type="button" :disabled="busy" @click="reviewAccount(entry, 'reject')">Tolak</button></template><button v-else-if="entry.id !== user.id && entry.username !== 'admin'" class="button secondary small-action" :class="{ 'danger-outline': entry.is_active }" type="button" :disabled="busy" @click="toggleUserActive(entry)"><component :is="entry.is_active ? UserX : UserCheck" :size="15" />{{ entry.is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button><span v-else-if="entry.username === 'admin'" class="you-tag">Akun utama dilindungi</span></div></td>
               </tr>
             </tbody></table></div>
-            <div class="table-footer"><span>Akun baru menunggu persetujuan Admin atau Dosen dan akan aktif sebagai Staff.</span><span class="table-footer-note"><ShieldCheck :size="14" /> Akun Admin utama tidak dapat diubah atau dinonaktifkan.</span></div>
+            <div class="table-footer"><span>Pendaftaran baru menunggu persetujuan administrator. Setelah disetujui, akun akan aktif dengan akses Staff.</span><span class="table-footer-note"><ShieldCheck :size="14" /> Akun Admin utama tidak dapat diubah atau dinonaktifkan.</span></div>
           </section>
           <section class="panel access-panel">
             <div class="panel-heading"><div><div class="panel-kicker">AKSES PENGGUNA</div><h2>Rincian hak akses</h2><p>Setiap peran memiliki akses sesuai tanggung jawabnya.</p></div></div>
