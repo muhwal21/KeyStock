@@ -98,7 +98,7 @@ function boxHeight(product) {
         <div class="rack-scroll">
           <div class="rack-frame" :style="{ '--slots': rack.slotCount }">
             <div v-for="level in rack.levels" :key="level.level" class="rack-level">
-              <span class="rack-level-label">Tkt {{ level.level }}</span>
+              <span class="rack-level-label">T{{ level.level }}</span>
               <template v-for="slot in level.slots" :key="slot.code">
                 <button
                   v-if="slot.product"
