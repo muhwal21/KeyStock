@@ -83,6 +83,9 @@ const overviewProductId = ref('');
 const activityFilter = ref('');
 const activityPage = ref(1);
 const ACTIVITY_PAGE_SIZE = 8;
+const productPage = ref(1);
+const movementPage = ref(1);
+const DATA_PAGE_SIZE = 10;
 const products = ref([]); // rows shown in the product table (may be filtered)
 const catalog = ref([]); // every active product, used by dropdowns and counts
 const categories = ref([]);
@@ -180,6 +183,19 @@ const today = new Intl.DateTimeFormat('id-ID', {
 const filteredProducts = computed(() => products.value.filter((product) => (
   !selectedSupplier.value || String(product.supplier_id) === selectedSupplier.value
 )));
+const productPageCount = computed(() => Math.max(1, Math.ceil(filteredProducts.value.length / DATA_PAGE_SIZE)));
+const pagedProducts = computed(() => {
+  const start = (productPage.value - 1) * DATA_PAGE_SIZE;
+  return filteredProducts.value.slice(start, start + DATA_PAGE_SIZE);
+});
+const productRange = computed(() => {
+  const total = filteredProducts.value.length;
+  if (!total) return '0–0';
+  const start = (productPage.value - 1) * DATA_PAGE_SIZE + 1;
+  return `${start}–${Math.min(total, start + DATA_PAGE_SIZE - 1)}`;
+});
+watch([searchQuery, selectedCategory, selectedSupplier, stockFilter], () => { productPage.value = 1; });
+watch(productPageCount, (count) => { if (productPage.value > count) productPage.value = count; });
 const productStats = computed(() => {
   const rows = filteredProducts.value;
   return {
@@ -256,6 +272,19 @@ const filteredMovements = computed(() => {
       .some((value) => value?.toLowerCase().includes(term));
   });
 });
+const movementPageCount = computed(() => Math.max(1, Math.ceil(filteredMovements.value.length / DATA_PAGE_SIZE)));
+const pagedMovements = computed(() => {
+  const start = (movementPage.value - 1) * DATA_PAGE_SIZE;
+  return filteredMovements.value.slice(start, start + DATA_PAGE_SIZE);
+});
+const movementRange = computed(() => {
+  const total = filteredMovements.value.length;
+  if (!total) return '0–0';
+  const start = (movementPage.value - 1) * DATA_PAGE_SIZE + 1;
+  return `${start}–${Math.min(total, start + DATA_PAGE_SIZE - 1)}`;
+});
+watch([movementSearch, movementTypeFilter], () => { movementPage.value = 1; });
+watch(movementPageCount, (count) => { if (movementPage.value > count) movementPage.value = count; });
 
 // Live checklist under the register password field; mirrors registerSchema on the server.
 const passwordChecks = computed(() => {
@@ -1366,7 +1395,7 @@ onBeforeUnmount(() => {
             </div>
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat produk...</div>
             <div v-else-if="filteredProducts.length" class="table-scroll"><table class="data-table product-table stack-table"><thead><tr><th>Produk</th><th>Supplier / kontak</th><th>Harga beli / jual</th><th>Stok</th><th>Lokasi</th><th>Kondisi</th><th>Aksi</th></tr></thead><tbody>
-              <tr v-for="product in filteredProducts" :key="product.id">
+              <tr v-for="product in pagedProducts" :key="product.id">
                 <td class="cell-primary"><button type="button" class="product-cell clickable-name" :aria-label="`Buka detail ${product.name}`" @click="openProductDetail(product)"><img class="product-thumb" :src="product.image_url || '/keyboard-placeholder.svg'" :alt="product.name" loading="lazy" @error="onImageError" /><div><strong :title="product.name">{{ product.name }}</strong><small>{{ product.brand }} · {{ product.category?.name ?? 'Lainnya' }} · {{ product.sku }}</small></div></button></td>
                 <td data-label="Supplier"><div class="supplier-cell"><strong>{{ product.supplier?.name ?? 'Belum ditentukan' }}</strong><small>{{ product.supplier?.phone || product.supplier?.email || 'Kontak belum dicatat' }}</small></div></td>
                 <td data-label="Harga beli / jual" class="money-pair-cell"><div><span>Beli</span><strong :class="{ 'is-empty': product.purchase_price == null }">{{ formatMoney(product.purchase_price, product.currency, '—') }}</strong></div><div><span>Jual</span><strong :class="{ 'is-empty': product.selling_price == null }">{{ formatMoney(product.selling_price, product.currency, '—') }}</strong></div><small v-if="pricing(product).unitProfit != null" class="margin-tag" :class="pricing(product).unitProfit > 0 ? 'up' : pricing(product).unitProfit < 0 ? 'down' : ''">Untung {{ formatSignedMoney(pricing(product).unitProfit, product.currency) }}/unit · {{ formatPercent(pricing(product).margin) }}</small><small v-if="product.price_min != null || product.price_max != null" class="cell-subtext">Ref. {{ formatReferencePrice(product) }}</small></td>
@@ -1377,7 +1406,11 @@ onBeforeUnmount(() => {
               </tr>
             </tbody></table></div>
           <div v-else class="empty-state"><div class="empty-icon"><Package :size="22" /></div><strong>Produk tidak ditemukan</strong><span>Ubah kata pencarian atau filter, lalu coba lagi.</span><button v-if="isAdmin" class="button secondary small-button" @click="openCreateProduct()"><Plus :size="15" /> Tambah produk pertama</button></div>
-            <div class="table-footer"><span>Menampilkan <strong>{{ filteredProducts.length }}</strong> produk</span><span class="table-footer-note"><ShieldCheck :size="14" /> Harga beli tidak diasumsikan dari harga katalog.</span></div>
+            <nav v-if="productPageCount > 1" class="data-pagination" aria-label="Navigasi halaman produk">
+              <span>{{ productRange }} dari {{ filteredProducts.length }} produk</span>
+              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman produk sebelumnya" :disabled="productPage <= 1" @click="productPage -= 1"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ productPage }} dari {{ productPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman produk berikutnya" :disabled="productPage >= productPageCount" @click="productPage += 1"><ChevronRight :size="16" /></button></div>
+            </nav>
+            <div class="table-footer"><span>Menampilkan <strong>{{ productRange }}</strong> dari {{ filteredProducts.length }} produk</span><span class="table-footer-note"><ShieldCheck :size="14" /> Harga beli tidak diasumsikan dari harga katalog.</span></div>
           </section>
         </template>
 
@@ -1441,9 +1474,13 @@ onBeforeUnmount(() => {
             <div class="table-toolbar"><div class="search-field"><Search :size="17" /><input v-model="movementSearch" type="search" placeholder="Cari produk, SKU, pengguna, atau catatan..." aria-label="Cari riwayat stok" /><button v-if="movementSearch" class="clear-search" type="button" aria-label="Hapus pencarian" @click="movementSearch = ''"><X :size="14" /></button></div><select v-model="movementTypeFilter" class="filter-select" :class="{ 'filter-active': Boolean(movementTypeFilter) }" aria-label="Filter jenis pergerakan"><option value="">Semua aktivitas</option><option value="IN">Stok masuk</option><option value="OUT">Stok keluar</option><option value="ADJUSTMENT">Penyesuaian</option></select></div>
             <div v-if="loading" class="loading-inline"><span class="spinner"></span> Memuat riwayat...</div>
             <div v-else-if="filteredMovements.length" class="table-scroll"><table class="data-table movement-table stack-table"><thead><tr><th>Aktivitas</th><th>Produk</th><th>Stok sebelum / sesudah</th><th>Jumlah</th><th>Nilai</th><th>Dicatat oleh</th><th>Waktu</th><th>Catatan</th></tr></thead><tbody>
-              <tr v-for="item in filteredMovements" :key="item.id"><td data-label="Aktivitas"><span class="movement-kind" :class="`kind-${item.movement_type.toLowerCase()}`"><component :is="movementIcon(item.movement_type)" :size="14" /> {{ movementLabel(item.movement_type) }}</span><small class="cell-subtext">{{ reasonLabel(item.reason) }}</small></td><td class="cell-primary"><button type="button" class="clickable-name" @click="openProductDetail(item.product)"><strong>{{ item.product?.name }}</strong></button><small class="cell-subtext">{{ item.product?.brand }} · {{ item.product?.sku }}</small></td><td data-label="Sebelum → sesudah"><span class="balance-pair">{{ formatNumber(item.stock_before) }} <span>→</span> <strong>{{ formatNumber(item.stock_after) }}</strong></span></td><td data-label="Jumlah"><strong :class="movementTone(item.movement_type)">{{ movementSign(item.movement_type) }}{{ formatNumber(item.quantity) }}</strong> unit</td><td data-label="Nilai" class="value-cell"><template v-if="recordedValue(item)"><strong :class="`${recordedValue(item).tone}-value`">{{ formatValue(recordedValue(item), item.currency) }}</strong><small class="cell-subtext">{{ recordedValue(item).label }}</small></template><span v-else class="is-empty">—</span></td><td data-label="Dicatat oleh">{{ item.user?.name }}</td><td data-label="Waktu">{{ formatDate(item.createdAt ?? item.created_at) }}</td><td data-label="Catatan" class="note-cell">{{ item.note || '—' }}</td></tr>
+              <tr v-for="item in pagedMovements" :key="item.id"><td data-label="Aktivitas"><span class="movement-kind" :class="`kind-${item.movement_type.toLowerCase()}`"><component :is="movementIcon(item.movement_type)" :size="14" /> {{ movementLabel(item.movement_type) }}</span><small class="cell-subtext">{{ reasonLabel(item.reason) }}</small></td><td class="cell-primary"><button type="button" class="clickable-name" @click="openProductDetail(item.product)"><strong>{{ item.product?.name }}</strong></button><small class="cell-subtext">{{ item.product?.brand }} · {{ item.product?.sku }}</small></td><td data-label="Sebelum → sesudah"><span class="balance-pair">{{ formatNumber(item.stock_before) }} <span>→</span> <strong>{{ formatNumber(item.stock_after) }}</strong></span></td><td data-label="Jumlah"><strong :class="movementTone(item.movement_type)">{{ movementSign(item.movement_type) }}{{ formatNumber(item.quantity) }}</strong> unit</td><td data-label="Nilai" class="value-cell"><template v-if="recordedValue(item)"><strong :class="`${recordedValue(item).tone}-value`">{{ formatValue(recordedValue(item), item.currency) }}</strong><small class="cell-subtext">{{ recordedValue(item).label }}</small></template><span v-else class="is-empty">—</span></td><td data-label="Dicatat oleh">{{ item.user?.name }}</td><td data-label="Waktu">{{ formatDate(item.createdAt ?? item.created_at) }}</td><td data-label="Catatan" class="note-cell">{{ item.note || '—' }}</td></tr>
             </tbody></table></div>
             <div v-else class="empty-state"><div class="empty-icon"><History :size="22" /></div><strong>{{ movements.length ? 'Tidak ada catatan yang cocok' : 'Belum ada riwayat' }}</strong><span>{{ movements.length ? 'Ubah kata pencarian atau filter aktivitas.' : 'Setiap perubahan saldo akan dicatat di halaman ini.' }}</span></div>
+            <nav v-if="movementPageCount > 1 && filteredMovements.length" class="data-pagination" aria-label="Navigasi halaman pergerakan stok">
+              <span>{{ movementRange }} dari {{ filteredMovements.length }} catatan</span>
+              <div class="data-pagination-controls"><button class="round-button small" type="button" aria-label="Halaman pergerakan sebelumnya" :disabled="movementPage <= 1" @click="movementPage -= 1"><ChevronLeft :size="16" /></button><span class="pagination-page">Halaman {{ movementPage }} dari {{ movementPageCount }}</span><button class="round-button small" type="button" aria-label="Halaman pergerakan berikutnya" :disabled="movementPage >= movementPageCount" @click="movementPage += 1"><ChevronRight :size="16" /></button></div>
+            </nav>
           </section>
         </template>
 
