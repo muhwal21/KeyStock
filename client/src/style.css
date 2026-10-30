@@ -528,9 +528,9 @@ button.rack-box:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba
   -webkit-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2386868e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 6.25 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 13px center;
-  background-size: 14px;
+  background-repeat: no-repeat !important;
+  background-position: right 13px center !important;
+  background-size: 14px 14px !important;
   cursor: pointer;
   transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
 }
@@ -541,8 +541,11 @@ button.rack-box:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba
 html[data-theme="dark"] .filter-select,
 html[data-theme="dark"] .modal-form select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23a5a5ae' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 6.25 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat !important;
+  background-position: right 13px center !important;
+  background-size: 14px 14px !important;
 }
-.filter-select.filter-active { color: var(--control-selected-ink); border-color: var(--control-selected-border); background-color: var(--control-selected-bg); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 6.25 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E"); box-shadow: var(--control-selected-shadow); }
+.filter-select.filter-active { color: var(--control-selected-ink); border-color: var(--control-selected-border); background-color: var(--control-selected-bg); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 6.25 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E"); background-repeat: no-repeat !important; background-position: right 13px center !important; background-size: 14px 14px !important; box-shadow: var(--control-selected-shadow); }
 .filter-select.filter-active:focus-visible { outline: none; box-shadow: var(--control-selected-shadow), 0 0 0 3px var(--focus-ring); }
 .filter-select option:checked { color: var(--control-selected-ink); background-color: var(--control-selected-bg); }
 .role-select { min-width: 110px; height: 34px; }
@@ -805,7 +808,8 @@ html:has(.modal-backdrop), body:has(.modal-backdrop) { overflow: hidden; }
 .modal-form input, .modal-form select, .modal-form textarea { display: block; width: 100%; min-height: 44px; margin-top: 7px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); outline: none; color: var(--ink); background-color: var(--surface-2); font-size: 14px; transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease; }
 .modal-form select { padding-right: 40px; }
 .modal-form textarea { min-height: 86px; padding: 11px 14px; resize: vertical; line-height: 1.5; }
-.modal-form input:focus, .modal-form select:focus, .modal-form textarea:focus { border-color: var(--line-strong); background: var(--surface); box-shadow: 0 0 0 3px var(--focus-ring); }
+.modal-form input:focus, .modal-form textarea:focus { border-color: var(--line-strong); background-color: var(--surface); box-shadow: 0 0 0 3px var(--focus-ring); }
+.modal-form select:focus { border-color: var(--line-strong); background-color: var(--surface); box-shadow: 0 0 0 3px var(--focus-ring); }
 .modal-form input::placeholder, .modal-form textarea::placeholder { color: var(--faint); }
 .modal-form label.invalid { color: var(--red); }
 .modal-form label.invalid input, .modal-form label.invalid select, .modal-form label.invalid textarea { border-color: var(--red-border); box-shadow: 0 0 0 3px var(--red-soft); }
