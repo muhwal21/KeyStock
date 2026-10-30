@@ -939,6 +939,27 @@ html[data-theme="dark"] .small-spinner { border-color: rgba(0, 0, 0, .25); borde
 }
 
 /* Tables become stacked cards on tablets and phones instead of scrolling sideways. */
+@media (max-width: 1280px) {
+  .product-table.stack-table, .product-table.stack-table tbody,
+  .movement-table.stack-table, .movement-table.stack-table tbody { display: block; width: 100%; min-width: 0 !important; }
+  .product-table.stack-table thead, .movement-table.stack-table thead { display: none; }
+  .product-table.stack-table tr, .movement-table.stack-table tr { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 14px 2px; border-bottom: 1px solid var(--line-soft); }
+  .product-table.stack-table tbody tr:last-child, .movement-table.stack-table tbody tr:last-child { border-bottom: 0; }
+  .product-table.stack-table tbody tr:hover td, .movement-table.stack-table tbody tr:hover td { background: transparent; }
+  .product-table.stack-table td, .movement-table.stack-table td { grid-column: span 3; min-width: 0; padding: 0 !important; border: 0 !important; }
+  .product-table.stack-table td.span-2 { grid-column: span 2; }
+  .product-table.stack-table td[data-label]::before, .movement-table.stack-table td[data-label]::before { display: block; margin-bottom: 4px; color: var(--muted); font-size: 10.5px; font-weight: 500; content: attr(data-label); }
+  .product-table.stack-table td.cell-primary, .product-table.stack-table td.cell-actions,
+  .movement-table.stack-table td.cell-primary, .movement-table.stack-table td.cell-actions { grid-column: 1 / -1; }
+  .product-table.stack-table td.cell-actions, .product-table.stack-table td.cell-actions .row-actions { display: flex; justify-content: flex-end; }
+  .product-table.stack-table .product-cell, .product-table.stack-table .supplier-cell, .product-table.stack-table .money-pair-cell { min-width: 0; }
+  .product-table.stack-table .product-cell strong, .product-table.stack-table .product-cell small,
+  .product-table.stack-table .supplier-cell strong, .product-table.stack-table .supplier-cell small { max-width: none; white-space: normal; }
+  .product-table.stack-table .margin-tag { display: inline-block; max-width: 100%; line-height: 1.35; overflow-wrap: anywhere; white-space: normal; }
+  .movement-table.stack-table .note-cell { max-width: none; grid-column: 1 / -1; white-space: normal; }
+  .product-table.stack-table .row-actions .icon-button { width: 38px; height: 38px; flex-basis: 38px; }
+}
+
 @media (max-width: 900px) {
   .stack-table, .stack-table tbody { display: block; width: 100%; min-width: 0 !important; }
   .stack-table thead { display: none; }
