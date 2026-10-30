@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import catalog from './catalog.json' with { type: 'json' };
 import { Category, Product, ProductImage, sequelize, StockMovement, Supplier, User } from '../models/index.js';
 import { migrateInventoryFields } from '../db/migrations.js';
+import { productGalleryAssets } from './productGalleryAssets.js';
 
 const categoryLabels = {
   keyboard: 'Keyboard',
@@ -284,6 +285,9 @@ async function seed({ fresh = false, accountsOnly = false } = {}) {
       if (created) {
         inserted += 1;
         if (product.image_url) await ProductImage.create({ product_id: product.id, url: product.image_url, sort_order: 0 }, { transaction });
+        for (const [imageIndex, url] of (productGalleryAssets[source.id] ?? []).entries()) {
+          await ProductImage.create({ product_id: product.id, url, sort_order: imageIndex + (product.image_url ? 1 : 0) }, { transaction });
+        }
         const history = demoHistory(index, product.warehouse_stock);
         await StockMovement.create({
           product_id: product.id,

@@ -1,6 +1,7 @@
 import { DataTypes, Op } from 'sequelize';
 import catalog from '../seeders/catalog.json' with { type: 'json' };
 import { sequelize, Product, ProductImage } from '../models/index.js';
+import { productGalleryAssets } from '../seeders/productGalleryAssets.js';
 
 // Usernames were added after the first release: add the column, fill it for existing
 // accounts from the email name, then make it unique.
@@ -78,6 +79,28 @@ async function migrateProductImages() {
   for (const product of products) {
     const count = await ProductImage.count({ where: { product_id: product.id } });
     if (count === 0) await ProductImage.create({ product_id: product.id, url: product.image_url, sort_order: 0 });
+  }
+}
+
+// Add bundled official gallery angles without duplicating images on repeated syncs.
+async function migrateProductGalleryAssets() {
+  for (const [sku, urls] of Object.entries(productGalleryAssets)) {
+    const product = await Product.findOne({ attributes: ['id'], where: { sku } });
+    if (!product) continue;
+
+    const images = await ProductImage.findAll({
+      attributes: ['url', 'sort_order'],
+      where: { product_id: product.id },
+      order: [['sort_order', 'ASC'], ['id', 'ASC']],
+    });
+    const existingUrls = new Set(images.map((image) => image.url));
+    let nextOrder = images.reduce((max, image) => Math.max(max, Number(image.sort_order)), -1) + 1;
+    for (const url of urls) {
+      if (existingUrls.has(url)) continue;
+      await ProductImage.create({ product_id: product.id, url, sort_order: nextOrder });
+      existingUrls.add(url);
+      nextOrder += 1;
+    }
   }
 }
 
@@ -210,4 +233,5 @@ export async function migrateInventoryFields() {
   }
   await migrateProductImages();
   await migrateCatalogImageUrls();
+  await migrateProductGalleryAssets();
 }
