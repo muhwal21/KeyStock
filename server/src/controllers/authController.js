@@ -98,7 +98,9 @@ export async function requestPasswordReset(req, res, next) {
     return res.status(503).json({ message: 'Pemulihan kata sandi belum tersedia. Silakan hubungi admin.' });
   }
   try {
-    const user = await User.findOne({ where: { email: req.body.email.toLowerCase(), is_active: true, approval_status: 'approved' } });
+    const identifier = req.body.identifier;
+    const where = identifier.includes('@') ? { email: identifier } : { username: identifier };
+    const user = await User.findOne({ where: { ...where, is_active: true, approval_status: 'approved' } });
     if (user) {
       await PasswordReset.destroy({ where: { user_id: user.id } });
       const token = randomBytes(32).toString('base64url');
@@ -106,7 +108,7 @@ export async function requestPasswordReset(req, res, next) {
       try { await sendPasswordResetEmail(user, token); }
       catch (error) { await reset.destroy(); throw error; }
     }
-    return res.json({ message: 'Jika email terdaftar, tautan pemulihan akan dikirim.' });
+    return res.json({ message: 'Jika akun terdaftar, tautan pemulihan dikirim ke email yang terdaftar pada akun tersebut.' });
   } catch (error) {
     return next(error);
   }

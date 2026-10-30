@@ -1,14 +1,17 @@
-import { AccountHelpRequest } from '../models/index.js';
+import { AccountHelpRequest, User } from '../models/index.js';
 
 export async function createAccountHelpRequest(req, res, next) {
   try {
+    const identifier = req.body.account_identifier;
+    const where = identifier.includes('@') ? { email: identifier } : { username: identifier };
+    const account = await User.findOne({ where, attributes: ['email'] });
     await AccountHelpRequest.create({
-      account_identifier: req.body.account_identifier,
-      contact_email: req.body.contact_email,
+      account_identifier: identifier,
+      contact_email: account?.email ?? null,
       message: req.body.message,
     });
     return res.status(202).json({
-      message: 'Permintaan bantuan tersimpan untuk ditinjau Admin. Tindak lanjut akan dilakukan secara manual melalui email yang dicantumkan.',
+      message: 'Permintaan bantuan tercatat. Admin akan meninjau akun dan menindaklanjuti melalui email yang terdaftar jika akun ditemukan.',
     });
   } catch (error) {
     return next(error);

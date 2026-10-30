@@ -34,7 +34,7 @@ export const PasswordReset = sequelize.define('PasswordReset', {
 export const AccountHelpRequest = sequelize.define('AccountHelpRequest', {
   id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
   account_identifier: { type: DataTypes.STRING(190), allowNull: false },
-  contact_email: { type: DataTypes.STRING(190), allowNull: false },
+  contact_email: { type: DataTypes.STRING(190), allowNull: true },
   message: { type: DataTypes.STRING(500), allowNull: true },
   status: { type: DataTypes.ENUM('open', 'resolved'), allowNull: false, defaultValue: 'open' },
   handled_by: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },

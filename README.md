@@ -38,7 +38,7 @@
 - **Pergerakan stok** — stok masuk, keluar, dan penyesuaian dengan riwayat saldo sebelum/sesudah.
 - **Pengguna** — persetujuan pendaftaran, pengaturan peran, dan aktivasi akun.
 - **Autentikasi** — registrasi, login dengan username atau email, logout, opsi "Ingat saya", dan pemulihan akun.
-- **Bantuan lupa kata sandi** — pengguna mengirim permintaan ke daftar tindak lanjut Admin. Admin meninjau identitas dan menghubungi alamat email yang dicantumkan secara manual; kata sandi tidak diminta atau disimpan dalam permintaan.
+- **Lupa kata sandi** — pengguna cukup memasukkan username atau email akun. Jika SMTP aktif, tautan pemulihan dikirim ke email yang tersimpan pada akun; jika belum aktif, permintaan masuk ke daftar tindak lanjut Admin menggunakan email akun tersebut. Kata sandi tidak pernah diminta atau disimpan dalam permintaan.
 - **Antarmuka** — tema terang/gelap, tampilan responsif, dan sinkronisasi data otomatis.
 
 ## Teknologi
@@ -183,7 +183,7 @@ Akun di atas hanya berlaku untuk database lokal. Login dapat menggunakan usernam
 
 > **Pengujian KeyStock:** [Buka aplikasi live](https://keystock.tech). Gunakan akun Dosen untuk mencoba fitur administratif dan akun Staff untuk melihat inventaris serta mencatat pergerakan stok. Username dan kata sandi tersedia di dokumen submission yang dibagikan terpisah kepada dosen. Akun Admin utama tidak dibagikan; akses Dosen setara Admin, tetapi akun utama tetap terlindungi.
 >
-> Pemulihan kata sandi belum aktif karena SMTP belum dikonfigurasi di live.
+> Pengiriman tautan pemulihan otomatis belum aktif karena SMTP belum dikonfigurasi di live. Form lupa kata sandi tetap menerima permintaan dan meneruskannya ke Admin dengan menggunakan email yang tercatat pada akun.
 
 ## Perintah
 

@@ -64,10 +64,11 @@ export const registerSchema = z.object({
   path: ['password_confirmation'], message: 'Konfirmasi kata sandi tidak sama.',
 });
 
-export const emailSchema = z.object({ email });
+const accountIdentifier = plainText({ min: 3, max: 190, label: 'Username atau email akun' })
+  .transform((value) => value.toLowerCase());
+export const passwordRecoverySchema = z.object({ identifier: accountIdentifier });
 export const accountHelpRequestSchema = z.object({
-  account_identifier: plainText({ min: 3, max: 190, label: 'Username atau email akun' }).transform((value) => value.toLowerCase()),
-  contact_email: email,
+  account_identifier: accountIdentifier,
   message: optionalText({ max: 500, label: 'Pesan' }),
 });
 export const resetPasswordSchema = z.object({

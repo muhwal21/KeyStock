@@ -185,9 +185,22 @@ async function migratePasswordResetForeignKey(queryInterface) {
   });
 }
 
+// The recovery form now uses the account identifier only. Store the registered email
+// on the request when a matching account exists; unmatched identifiers have no email.
+async function migrateAccountHelpContactEmail(queryInterface) {
+  const columns = await queryInterface.describeTable('account_help_requests');
+  if (columns.contact_email && !columns.contact_email.allowNull) {
+    await queryInterface.changeColumn('account_help_requests', 'contact_email', {
+      type: DataTypes.STRING(190),
+      allowNull: true,
+    });
+  }
+}
+
 export async function migrateInventoryFields() {
   const queryInterface = sequelize.getQueryInterface();
   await migratePasswordResetForeignKey(queryInterface);
+  await migrateAccountHelpContactEmail(queryInterface);
   await migrateUsernames(queryInterface);
   await migrateAuthFields(queryInterface);
   await migrateRoleNames();

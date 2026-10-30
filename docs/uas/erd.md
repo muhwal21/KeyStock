@@ -80,7 +80,7 @@ erDiagram
   ACCOUNT_HELP_REQUESTS {
     int id PK
     string account_identifier
-    string contact_email
+    string contact_email "nullable; email akun yang cocok"
     string message
     enum status
     int handled_by FK
@@ -95,6 +95,6 @@ erDiagram
 - Satu produk dapat memiliki beberapa foto dan catatan pergerakan. Foto ikut dihapus jika produk dihapus secara fisik; produk aktif dalam aplikasi diarsipkan secara soft delete. Riwayat pergerakan menolak penghapusan fisik produk (`ON DELETE RESTRICT`).
 - Satu pengguna mencatat banyak pergerakan stok. Catatan menyimpan saldo sebelum/sesudah dan snapshot harga untuk audit serta laporan historis.
 - Satu pengguna dapat memiliki beberapa catatan reset sandi. Token asli tidak disimpan, hanya hash; catatan reset ikut dibersihkan saat akun dihapus (`ON DELETE CASCADE`).
-- Permintaan bantuan lupa kata sandi dicatat tanpa mengungkap ke pengirim apakah akun cocok. Admin meninjau identitas dan menindaklanjuti secara manual; `handled_by` menjadi foreign key opsional yang dikosongkan jika akun Admin dihapus (`ON DELETE SET NULL`).
+- Permintaan bantuan lupa kata sandi dicatat tanpa mengungkap ke pengirim apakah akun cocok. Sistem mengambil `contact_email` dari alamat akun yang cocok; field ini nullable jika username/email tidak ditemukan. Admin meninjau identitas dan menindaklanjuti secara manual; `handled_by` menjadi foreign key opsional yang dikosongkan jika akun Admin dihapus (`ON DELETE SET NULL`).
 
 Seed membuat peran Admin (`admin`), Dosen (`dosen`), dan Staff (`staff`). Dosen memiliki hak administratif yang sama dengan Admin; Staff dapat melihat inventaris dan mencatat pergerakan stok, tetapi tidak mengelola produk, supplier, atau akun.

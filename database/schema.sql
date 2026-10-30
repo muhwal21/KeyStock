@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS password_resets (
 CREATE TABLE IF NOT EXISTS account_help_requests (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   account_identifier VARCHAR(190) NOT NULL,
-  contact_email VARCHAR(190) NOT NULL,
+  contact_email VARCHAR(190) NULL,
   message VARCHAR(500) NULL,
   status ENUM('open', 'resolved') NOT NULL DEFAULT 'open',
   handled_by INT UNSIGNED NULL,

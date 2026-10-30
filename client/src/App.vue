@@ -121,7 +121,7 @@ const registrationSubmitted = ref(false);
 const showPassword = ref(false);
 const loginForm = reactive({ identifier: '', password: '', rememberMe: false });
 const registerForm = reactive({ name: '', username: '', email: '', password: '', password_confirmation: '' });
-const accountHelpForm = reactive({ account_identifier: '', contact_email: '', message: '' });
+const accountHelpForm = reactive({ account_identifier: '', message: '' });
 const resetForm = reactive({ password: '', password_confirmation: '' });
 const hasUnsavedChanges = computed(() => {
   if (busy.value || loading.value || productModalOpen.value || supplierModalOpen.value || movementModalOpen.value
@@ -702,12 +702,19 @@ async function submitAccountHelpRequest() {
   fieldErrors.value = {};
   try {
     if (!csrfToken.value) await refreshCsrf();
-    const result = await post('/auth/password-help', accountHelpForm);
-    Object.assign(accountHelpForm, { account_identifier: '', contact_email: '', message: '' });
+    let result;
+    try {
+      result = await post('/auth/forgot-password', { identifier: accountHelpForm.account_identifier });
+    } catch (error) {
+      if (error.status !== 503) throw error;
+      result = await post('/auth/password-help', accountHelpForm);
+    }
+    Object.assign(accountHelpForm, { account_identifier: '', message: '' });
     successMessage.value = result.message;
   } catch (error) {
     errorMessage.value = error.message || 'Permintaan bantuan belum bisa dikirim. Coba lagi.';
     fieldErrors.value = error.fields ?? {};
+    if (fieldErrors.value.identifier) fieldErrors.value.account_identifier = fieldErrors.value.identifier;
   } finally {
     busy.value = false;
   }
@@ -980,7 +987,7 @@ async function resolveAccountHelpRequest(request) {
   try {
     await patch(`/users/account-help-requests/${request.id}/resolve`, {});
     accountHelpRequests.value = accountHelpRequests.value.filter((entry) => entry.id !== request.id);
-    showSuccess('Permintaan bantuan ditandai selesai. Jika perlu, hubungi pengguna secara manual melalui email yang dicantumkan.');
+    showSuccess('Permintaan bantuan ditandai selesai. Jika perlu, hubungi pengguna melalui email akun yang terdaftar.');
   } catch (error) {
     handleError(error);
   } finally {
@@ -1141,7 +1148,7 @@ onBeforeUnmount(() => {
           <span class="auth-icon"><component :is="authMode === 'register' ? UserPlus : LogIn" :size="22" /></span>
           <span class="auth-kicker"><span class="eyebrow-dot"></span> Inventaris gudang keyboard</span>
           <h1 id="auth-title">{{ authMode === 'login' ? 'Masuk ke KeyStock' : authMode === 'register' ? 'Daftar akun' : authMode === 'forgot' ? 'Lupa kata sandi?' : 'Buat kata sandi baru' }}</h1>
-          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : authMode === 'register' ? 'Pendaftaran akun staff akan ditinjau oleh admin.' : authMode === 'forgot' ? 'Kirim permintaan bantuan kepada Admin untuk memulihkan akses akun.' : 'Pilih kata sandi baru untuk akun KeyStock Anda.' }}</p>
+          <p>{{ authMode === 'login' ? 'Pantau produk, supplier, dan pergerakan stok dari satu tempat.' : authMode === 'register' ? 'Pendaftaran akun staff akan ditinjau oleh admin.' : authMode === 'forgot' ? 'Masukkan username atau email akun. Tautan dikirim ke email terdaftar jika pemulihan otomatis aktif.' : 'Pilih kata sandi baru untuk akun KeyStock Anda.' }}</p>
         </div>
 
         <div v-if="!registrationSubmitted && ['login', 'register'].includes(authMode)" class="auth-tabs" role="tablist" aria-label="Pilih masuk atau daftar">
@@ -1214,9 +1221,8 @@ onBeforeUnmount(() => {
 
         <form v-else-if="authMode === 'forgot'" class="auth-form" @submit.prevent="submitAccountHelpRequest">
           <div class="auth-field"><label for="help-account-identifier">Username atau email akun</label><div class="input-wrap" :class="{ invalid: fieldErrors.account_identifier }"><AtSign :size="17" /><input id="help-account-identifier" v-model="accountHelpForm.account_identifier" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="190" placeholder="Username atau email yang dipakai masuk" required /></div><small v-if="fieldErrors.account_identifier" class="field-error">{{ fieldErrors.account_identifier }}</small></div>
-          <div class="auth-field"><label for="help-contact-email">Email untuk dihubungi</label><div class="input-wrap" :class="{ invalid: fieldErrors.contact_email }"><Mail :size="17" /><input id="help-contact-email" v-model="accountHelpForm.contact_email" type="email" autocomplete="email" maxlength="190" placeholder="nama@email.com" required /></div><small v-if="fieldErrors.contact_email" class="field-error">{{ fieldErrors.contact_email }}</small></div>
-          <div class="auth-field"><label for="help-message">Pesan untuk Admin (opsional)</label><textarea id="help-message" v-model="accountHelpForm.message" maxlength="500" rows="3" placeholder="Jelaskan kendala Anda, tanpa menuliskan kata sandi."></textarea><small v-if="fieldErrors.message" class="field-error">{{ fieldErrors.message }}</small><small class="field-hint">Permintaan tersimpan di menu Pengguna. Email otomatis belum tersedia; Admin meninjau dan menindaklanjuti secara manual.</small></div>
-          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim permintaan...' : 'Kirim permintaan ke Admin' }}<ArrowRight v-if="!busy" :size="17" /></button>
+          <div class="auth-field"><label for="help-message">Pesan tambahan (opsional)</label><textarea id="help-message" v-model="accountHelpForm.message" maxlength="500" rows="3" placeholder="Jelaskan kendala Anda, tanpa menuliskan kata sandi."></textarea><small v-if="fieldErrors.message" class="field-error">{{ fieldErrors.message }}</small><small class="field-hint">Anda tidak perlu memasukkan email lagi. Jika email otomatis belum tersedia, Admin akan menindaklanjuti melalui email akun yang terdaftar.</small></div>
+          <button class="button primary full auth-submit" type="submit" :disabled="busy">{{ busy ? 'Mengirim permintaan...' : 'Kirim permintaan pemulihan' }}<ArrowRight v-if="!busy" :size="17" /></button>
           <button class="button secondary full" type="button" @click="switchAuthMode('login')">Kembali ke login</button>
         </form>
 
@@ -1493,12 +1499,12 @@ onBeforeUnmount(() => {
           </section>
           <section class="panel account-help-panel">
             <div class="panel-heading"><div><div class="panel-kicker">BANTUAN AKUN</div><h2>Permintaan lupa kata sandi</h2><p>{{ accountHelpRequests.length }} permintaan menunggu tindak lanjut.</p></div></div>
-            <p class="account-help-guidance">Email otomatis belum aktif. Verifikasi identitas pemilik akun sebelum membantu pemulihan, lalu hubungi melalui email yang dicantumkan.</p>
+            <p class="account-help-guidance">Verifikasi identitas pemilik akun sebelum membantu pemulihan. Email tindak lanjut diambil dari alamat yang terdaftar pada akun.</p>
             <div v-if="loading && !accountHelpRequests.length" class="loading-inline"><span class="spinner"></span> Memuat permintaan...</div>
             <div v-else-if="accountHelpRequests.length" class="account-help-list">
               <article v-for="request in accountHelpRequests" :key="request.id" class="account-help-item">
                 <div class="account-help-item-head"><strong>{{ request.account_identifier }}</strong><span class="stock-badge low"><span></span>Menunggu</span></div>
-                <dl><div><dt>Email kontak</dt><dd><a :href="`mailto:${request.contact_email}`">{{ request.contact_email }}</a></dd></div><div v-if="request.message"><dt>Pesan</dt><dd>{{ request.message }}</dd></div></dl>
+                <dl><div><dt>Email akun</dt><dd v-if="request.contact_email"><a :href="`mailto:${request.contact_email}`">{{ request.contact_email }}</a></dd><dd v-else>Email akun tidak ditemukan; periksa username yang dikirim.</dd></div><div v-if="request.message"><dt>Pesan</dt><dd>{{ request.message }}</dd></div></dl>
                 <div class="account-help-item-footer"><small>{{ formatDate(request.createdAt ?? request.created_at) }}</small><button class="button secondary small-action" type="button" :disabled="busy" @click="resolveAccountHelpRequest(request)"><Check :size="14" /> Tandai selesai</button></div>
               </article>
             </div>

@@ -21,6 +21,8 @@ flowchart LR
 
 `client/src/api.js` mengirim request same-origin ke `/api`. `server/src/routes/apiRoutes.js` memasang route; `server/src/middleware/csrf.js` memeriksa request yang mengubah data. Route privat melewati `requireAuth`; route pengelolaan akun, produk, dan supplier mengizinkan Admin serta Dosen. Controller memvalidasi/menyusun response, service menampung logika lintas model, Sequelize memetakan model ke MySQL, lalu Vue memperbarui state dari JSON. Staff dapat mencatat pergerakan stok, tetapi tidak mengelola akun atau master produk/supplier.
 
+Pada pemulihan kata sandi, pengguna memasukkan username atau email akun satu kali. Jika SMTP aktif, backend mencari email terdaftar dan mengirim tautan sekali pakai. Jika SMTP belum aktif, frontend meneruskan permintaan ke antrean bantuan Admin; backend menyimpan email dari akun yang cocok, tanpa meminta pengguna mengetikkan alamat itu lagi.
+
 ## Lingkungan dan deployment
 
 - Lokal: `.env` + MySQL Docker development + Vite dev server.
@@ -38,4 +40,5 @@ flowchart LR
 | Pergerakan stok | `/api/stock-movements` | `stockMovementController` + `stockService` | `StockMovement`, `Product`, `User` | Admin, Dosen, Staff |
 | Pengguna | `/api/users` | `userController` | `User`, `StockMovement` | Admin |
 | Autentikasi | `/api/auth/*` | `authController` | `User`, `PasswordReset` | Publik/akun sendiri |
-| Bantuan akun | `/api/auth/password-help`, `/api/users/account-help-requests` | `accountHelpController` | `AccountHelpRequest`, `User` | Publik mengirim; Admin meninjau |
+| Pemulihan kata sandi | `/api/auth/forgot-password`, `/api/auth/password-help` | `authController`, `accountHelpController` | `PasswordReset`, `AccountHelpRequest`, `User` | Publik meminta; email akun digunakan |
+| Bantuan akun | `/api/users/account-help-requests` | `accountHelpController` | `AccountHelpRequest`, `User` | Admin meninjau dan menandai selesai |

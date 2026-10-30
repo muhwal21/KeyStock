@@ -12,7 +12,7 @@ import { requireAuth, requireRole } from '../middleware/auth.js';
 import { isEmailConfigured } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
 import {
-  accountHelpRequestSchema, emailSchema, imageOrderSchema, loginSchema, movementSchema, productSchema, registerSchema, resetPasswordSchema,
+  accountHelpRequestSchema, imageOrderSchema, loginSchema, movementSchema, passwordRecoverySchema, productSchema, registerSchema, resetPasswordSchema,
   reviewUserSchema, supplierSchema, userUpdateSchema,
 } from '../middleware/validators.js';
 
@@ -40,6 +40,13 @@ const resetLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Terlalu banyak permintaan pemulihan. Coba lagi beberapa menit.' },
 });
+const accountHelpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { message: 'Terlalu banyak permintaan bantuan akun. Coba lagi beberapa menit.' },
+});
 
 router.get('/health', (req, res) => res.json({
   status: 'ok',
@@ -49,8 +56,8 @@ router.get('/auth/csrf', getCsrfToken);
 router.get('/auth/me', getCurrentUser);
 router.post('/auth/register', registerLimiter, validateBody(registerSchema), register);
 router.post('/auth/login', loginLimiter, validateBody(loginSchema), login);
-router.post('/auth/forgot-password', resetLimiter, validateBody(emailSchema), requestPasswordReset);
-router.post('/auth/password-help', resetLimiter, validateBody(accountHelpRequestSchema), createAccountHelpRequest);
+router.post('/auth/forgot-password', resetLimiter, validateBody(passwordRecoverySchema), requestPasswordReset);
+router.post('/auth/password-help', accountHelpLimiter, validateBody(accountHelpRequestSchema), createAccountHelpRequest);
 router.post('/auth/reset-password', resetLimiter, validateBody(resetPasswordSchema), resetPassword);
 router.post('/auth/logout', logout);
 

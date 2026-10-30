@@ -370,7 +370,7 @@ DROP TABLE IF EXISTS `account_help_requests`;
 CREATE TABLE `account_help_requests` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `account_identifier` varchar(190) NOT NULL,
-  `contact_email` varchar(190) NOT NULL,
+  `contact_email` varchar(190) DEFAULT NULL,
   `message` varchar(500) DEFAULT NULL,
   `status` enum('open','resolved') NOT NULL DEFAULT 'open',
   `handled_by` int(10) unsigned DEFAULT NULL,
